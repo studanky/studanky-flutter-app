@@ -1,18 +1,11 @@
 import 'package:go_router/go_router.dart';
+import 'package:studanky_flutter_app/core/navigation/app_routes/app_route.dart';
 import 'package:studanky_flutter_app/features/main_page/main_screen_page.dart';
 import 'package:studanky_flutter_app/features/map/map_screen_page.dart';
 import 'package:studanky_flutter_app/features/qr_scan/qr_scan_screen_page.dart';
 
-enum AppRoute {
-  scan('/scan'),
-  map('/map');
-
-  const AppRoute(this.path);
-  final String path;
-}
-
 final GoRouter appRouter = GoRouter(
-  initialLocation: AppRoute.scan.path,
+  initialLocation: AppRoutes.scan.path,
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
@@ -21,8 +14,8 @@ final GoRouter appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: AppRoute.scan.path,
-              name: AppRoute.scan.name,
+              path: AppRoutes.scan.path,
+              name: AppRoutes.scan.name,
               builder: (context, state) => const QrScanScreenPage(),
             ),
           ],
@@ -30,8 +23,8 @@ final GoRouter appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: AppRoute.map.path,
-              name: AppRoute.map.name,
+              path: AppRoutes.map.path,
+              name: AppRoutes.map.name,
               builder: (context, state) => const MapScreenPage(),
             ),
           ],
