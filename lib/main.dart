@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:studanky_flutter_app/features/main_page/main_screen_page.dart';
+import 'package:studanky_flutter_app/router/app_router.dart';
 
 void main() {
   runApp(const MainApp());
@@ -10,6 +10,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: MainScreenPage());
+    return MaterialApp.router(routerConfig: appRouter);
   }
 }
