@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class MainScreenPage extends StatelessWidget {
-  const MainScreenPage({super.key, required this.navigationShell});
+class MainPage extends StatelessWidget {
+  const MainPage({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
