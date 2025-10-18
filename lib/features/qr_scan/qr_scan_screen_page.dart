@@ -6,6 +6,6 @@ class QrScanScreenPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: QrScanScreenContent());
+    return const QrScanScreenContent();
   }
 }

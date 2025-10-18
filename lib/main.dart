@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:studanky_flutter_app/router/app_router.dart';
+import 'package:studanky_flutter_app/core/navigation/router/app_router.dart';
 
 void main() {
   runApp(const MainApp());
