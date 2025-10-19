@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/svg.dart';
+
 import 'package:studanky_flutter_app/features/map/models/map_marker.dart';
 
 Marker buildMarker(MapMarker marker) {

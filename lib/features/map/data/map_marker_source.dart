@@ -14,6 +14,9 @@ class InMemoryMapMarkerSource implements MapMarkerSource {
 
   final List<MapMarker> _markers;
 
+  /// Returns an immutable view of all markers held in memory.
+  List<MapMarker> get allMarkers => List.unmodifiable(_markers);
+
   @override
   Future<List<MapMarker>> loadMarkers(LatLngBounds bounds) async {
     return _markers
