@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:studanky_flutter_app/core/config/mapy_config.dart';
+import 'package:studanky_flutter_app/core/constants/map_constants.dart';
 import 'package:studanky_flutter_app/features/map/models/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map/providers/map_marker_providers.dart';
 import 'package:studanky_flutter_app/features/map/providers/map_search_providers.dart';
@@ -47,20 +47,6 @@ class _MapContentState extends ConsumerState<MapContent> {
   /// Triggers an initial marker load once the map is fully initialised.
   void _onMapReady() {
     _refreshMarkersForBounds(_mapController.camera.visibleBounds);
-  }
-
-  /// Reacts to camera changes and fetches markers for the new viewport.
-  void _handleMapEvent(MapEvent event) {
-    if (event is MapEventMoveEnd ||
-        event is MapEventRotateEnd ||
-        event is MapEventFlingAnimationEnd ||
-        event is MapEventDoubleTapZoomEnd ||
-        event is MapEventNonRotatedSizeChange) {
-      _refreshMarkersForBounds(event.camera.visibleBounds);
-    } else if (event is MapEventMove &&
-        event.source == MapEventSource.mapController) {
-      _refreshMarkersForBounds(event.camera.visibleBounds);
-    }
   }
 
   /// Requests the notifier to ensure the current bounds are populated.
@@ -110,13 +96,9 @@ class _MapContentState extends ConsumerState<MapContent> {
                       InteractiveFlag.drag,
                 ),
                 onMapReady: _onMapReady,
-                onMapEvent: _handleMapEvent,
               ),
               children: [
-                TileLayer(
-                  urlTemplate:
-                      'https://api.mapy.com/v1/maptiles/basic/256/{z}/{x}/{y}?apikey=${MapyConfig.apiKey}',
-                ),
+                TileLayer(urlTemplate: MapConstants.mapTilesMapy),
                 MarkerLayer(markers: markers),
               ],
             ),

@@ -3,20 +3,20 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:studanky_flutter_app/core/config/mapy_config.dart';
+import 'package:studanky_flutter_app/core/constants/map_constants.dart';
 import 'package:studanky_flutter_app/features/map/data/in_memory_map_search_source.dart';
 import 'package:studanky_flutter_app/features/map/data/map_marker_source.dart';
 import 'package:studanky_flutter_app/features/map/data/map_marker_source_adapter.dart';
 import 'package:studanky_flutter_app/features/map/data/map_search_source.dart';
-import 'package:studanky_flutter_app/features/map/data/mapy_suggest_api_client.dart';
-import 'package:studanky_flutter_app/features/map/data/mapy_suggest_search_source.dart';
+import 'package:studanky_flutter_app/features/map/data/map_suggest_api_client.dart';
+import 'package:studanky_flutter_app/features/map/data/map_suggest_search_source.dart';
 import 'package:studanky_flutter_app/features/map/models/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map/providers/map_marker_providers.dart';
 
 final _dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: MapyConfig.suggestBaseUrl,
+      baseUrl: MapConstants.suggestBaseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       sendTimeout: const Duration(seconds: 10),
@@ -29,13 +29,13 @@ final _dioProvider = Provider<Dio>((ref) {
 /// Provides the active search backend. Defaults to the Mapy.cz suggest API,
 /// falling back to simple in-memory search when no API key is supplied.
 final mapSearchSourceProvider = Provider<MapSearchSource>((ref) {
-  const apiKey = MapyConfig.apiKey;
+  const apiKey = MapConstants.apiKey;
   if (apiKey.isNotEmpty) {
-    final apiClient = MapySuggestApiClient(
+    final apiClient = MapSuggestApiClient(
       dio: ref.watch(_dioProvider),
       apiKey: apiKey,
     );
-    return MapySuggestSearchSource(apiClient: apiClient);
+    return MapSuggestSearchSource(apiClient: apiClient);
   }
 
   final markerSource = ref.read(mapMarkerSourceProvider);
