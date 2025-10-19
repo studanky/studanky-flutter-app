@@ -4,10 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+
 import 'package:studanky_flutter_app/core/config/mapy_config.dart';
 import 'package:studanky_flutter_app/features/map/data/map_marker_source.dart';
 import 'package:studanky_flutter_app/features/map/models/map_marker.dart';
 import 'package:studanky_flutter_app/features/map/models/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map/models/mapy_suggest_response.dart';
 
 /// Contract implemented by all marker search backends.
 abstract class MapSearchSource {
@@ -91,23 +93,24 @@ class MapySuggestSearchSource implements MapSearchSource {
       }
 
       final decoded = jsonDecode(response.body) as Map<String, dynamic>;
-      final items = (decoded['items'] as List?) ?? const [];
-      final results = <MapSearchResult>[];
-
-      for (final item in items) {
-        if (item is! Map<String, dynamic>) continue;
-        final name = (item['name'] as String?)?.trim();
-        final position = item['position'];
-        if (name == null || name.isEmpty || position is! Map) continue;
-
-        final lat = _parseCoordinate(position['lat'] ?? position['latitude']);
-        final lon = _parseCoordinate(position['lon'] ?? position['longitude']);
-        if (lat == null || lon == null) continue;
-
-        results.add(
-          MapSearchResult(label: name, position: LatLng(lat, lon), raw: item),
-        );
-      }
+      final suggest = MapySuggestResponse.fromJson(decoded);
+      final results = suggest.items
+          .map((item) {
+            final name = item.name?.trim();
+            final position = item.position;
+            final lat = position?.lat;
+            final lon = position?.lon;
+            if (name == null || name.isEmpty || lat == null || lon == null) {
+              return null;
+            }
+            return MapSearchResult(
+              label: name,
+              position: LatLng(lat, lon),
+              raw: item.toJson(),
+            );
+          })
+          .whereType<MapSearchResult>()
+          .toList(growable: false);
 
       _cache[cacheKey] = results;
       return results;
@@ -115,14 +118,6 @@ class MapySuggestSearchSource implements MapSearchSource {
       debugPrint('Mapy suggest request failed: $error\n$stackTrace');
       return const [];
     }
-  }
-
-  static double? _parseCoordinate(Object? value) {
-    if (value is num) return value.toDouble();
-    if (value is String) {
-      return double.tryParse(value);
-    }
-    return null;
   }
 }
 
