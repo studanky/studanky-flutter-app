@@ -1,19 +1,24 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:studanky_flutter_app/core/config/mapy_config.dart';
 import 'package:studanky_flutter_app/features/map/data/map_marker_source.dart';
 import 'package:studanky_flutter_app/features/map/data/map_search_sources.dart';
 import 'package:studanky_flutter_app/features/map/models/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map/providers/map_marker_providers.dart';
 
-final _httpClientProvider = Provider<http.Client>((ref) {
-  final client = http.Client();
-  ref.onDispose(client.close);
-  return client;
+final _dioProvider = Provider<Dio>((ref) {
+  final dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+      sendTimeout: const Duration(seconds: 10),
+    ),
+  );
+  ref.onDispose(dio.close);
+  return dio;
 });
 
 /// Provides the active search backend. Defaults to the Mapy.cz suggest API,
@@ -22,7 +27,7 @@ final mapSearchSourceProvider = Provider<MapSearchSource>((ref) {
   const apiKey = MapyConfig.apiKey;
   if (apiKey.isNotEmpty) {
     return MapySuggestSearchSource(
-      client: ref.watch(_httpClientProvider),
+      client: ref.watch(_dioProvider),
       apiKey: apiKey,
     );
   }

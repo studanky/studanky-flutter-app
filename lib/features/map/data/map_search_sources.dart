@@ -1,14 +1,12 @@
-import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
-
 import 'package:studanky_flutter_app/core/config/mapy_config.dart';
 import 'package:studanky_flutter_app/features/map/data/map_marker_source.dart';
 import 'package:studanky_flutter_app/features/map/models/map_marker.dart';
 import 'package:studanky_flutter_app/features/map/models/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map/models/mapy_suggest_item.dart';
 import 'package:studanky_flutter_app/features/map/models/mapy_suggest_response.dart';
 
 /// Contract implemented by all marker search backends.
@@ -48,14 +46,14 @@ class InMemoryMapSearchSource implements MapSearchSource {
 /// in-memory caching keyed by the normalised query string.
 class MapySuggestSearchSource implements MapSearchSource {
   MapySuggestSearchSource({
-    required http.Client client,
+    required Dio client,
     required this.apiKey,
     this.language = 'cs',
     this.limit = 5,
     this.types = const ['regional.address'],
   }) : _client = client;
 
-  final http.Client _client;
+  final Dio _client;
   final String apiKey;
   final String language;
   final int limit;
@@ -74,32 +72,29 @@ class MapySuggestSearchSource implements MapSearchSource {
       return cached;
     }
 
-    final uri =
-        Uri.https(MapyConfig.suggestBaseUrl, '/v1/suggest', <String, String>{
+    try {
+      final response = await _client.get<Map<String, dynamic>>(
+        'https://${MapyConfig.suggestBaseUrl}/v1/suggest',
+        queryParameters: <String, dynamic>{
           'lang': language,
-          'limit': '$limit',
+          'limit': limit,
           'type': types.join(','),
           'apikey': apiKey,
           'query': trimmed,
-        });
+        },
+      );
 
-    try {
-      final response = await _client.get(uri);
-      if (response.statusCode != 200) {
-        debugPrint(
-          'Mapy suggest request failed with status ${response.statusCode}',
-        );
+      final data = response.data;
+      if (data == null) {
         return const [];
       }
 
-      final decoded = jsonDecode(response.body) as Map<String, dynamic>;
-      final suggest = MapySuggestResponse.fromJson(decoded);
+      final suggest = MapySuggestResponse.fromJson(data);
       final results = suggest.items
-          .map((item) {
+          .map((MapySuggestItem item) {
             final name = item.name?.trim();
-            final position = item.position;
-            final lat = position?.lat;
-            final lon = position?.lon;
+            final lat = item.position?.lat;
+            final lon = item.position?.lon;
             if (name == null || name.isEmpty || lat == null || lon == null) {
               return null;
             }
@@ -114,7 +109,7 @@ class MapySuggestSearchSource implements MapSearchSource {
 
       _cache[cacheKey] = results;
       return results;
-    } catch (error, stackTrace) {
+    } on DioException catch (error, stackTrace) {
       debugPrint('Mapy suggest request failed: $error\n$stackTrace');
       return const [];
     }
