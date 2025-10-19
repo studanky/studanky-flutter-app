@@ -8,6 +8,7 @@ The map stack is powered by Flutter Map and Riverpod:
 
 - `lib/features/map/providers/map_marker_providers.dart` keeps the marker cache responsive. `MapMarkerState` separates fetched markers from user-added points, while `MapMarkerNotifier` lazily loads markers as the camera moves and merges them into a single list for the UI.
 - `lib/features/map/providers/map_search_providers.dart` introduces debounced autocomplete powered by the Mapy.cz suggest API (with caching and a local fallback). `MapSearchNotifier` emits `MapSearchResult` entries for the UI.
+- `lib/features/map/data/mapy_suggest_api_client.dart` wraps the Dio HTTP client and request building for the suggest endpoint; `lib/features/map/data/mapy_suggest_search_source.dart`, `in_memory_map_search_source.dart`, and `map_marker_source_adapter.dart` compose that client (or local data) into caching/lazy-loading `MapSearchSource` implementations, with `logger` providing structured diagnostics.
 - `lib/features/map/models/mapy_suggest_response.dart`, `mapy_suggest_item.dart`, and `mapy_suggest_position.dart` contain the annotated DTOs (`json_serializable`) that decode suggest responses, ensuring the search layer stays type-safe.
 - `lib/features/map/map_content.dart` renders the map, listens to camera events, and presents the search overlay. Selecting a search result recentres the map and keeps the marker cache in sync.
 

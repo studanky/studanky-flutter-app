@@ -1,17 +1,22 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:studanky_flutter_app/core/config/mapy_config.dart';
+import 'package:studanky_flutter_app/features/map/data/in_memory_map_search_source.dart';
 import 'package:studanky_flutter_app/features/map/data/map_marker_source.dart';
-import 'package:studanky_flutter_app/features/map/data/map_search_sources.dart';
+import 'package:studanky_flutter_app/features/map/data/map_marker_source_adapter.dart';
+import 'package:studanky_flutter_app/features/map/data/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map/data/mapy_suggest_api_client.dart';
+import 'package:studanky_flutter_app/features/map/data/mapy_suggest_search_source.dart';
 import 'package:studanky_flutter_app/features/map/models/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map/providers/map_marker_providers.dart';
 
 final _dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
+      baseUrl: MapyConfig.suggestBaseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       sendTimeout: const Duration(seconds: 10),
@@ -26,10 +31,11 @@ final _dioProvider = Provider<Dio>((ref) {
 final mapSearchSourceProvider = Provider<MapSearchSource>((ref) {
   const apiKey = MapyConfig.apiKey;
   if (apiKey.isNotEmpty) {
-    return MapySuggestSearchSource(
-      client: ref.watch(_dioProvider),
+    final apiClient = MapySuggestApiClient(
+      dio: ref.watch(_dioProvider),
       apiKey: apiKey,
     );
+    return MapySuggestSearchSource(apiClient: apiClient);
   }
 
   final markerSource = ref.read(mapMarkerSourceProvider);
@@ -153,7 +159,11 @@ class MapSearchNotifier extends AutoDisposeNotifier<MapSearchState> {
         selected: null,
       );
     } catch (error, stackTrace) {
-      debugPrint('Search failed: $error\n$stackTrace');
+      Logger().e(
+        '[MapSearchNotifier] Search failed for "$query"',
+        error: error,
+        stackTrace: stackTrace,
+      );
       if (token != _lastToken) return;
       state = state.copyWith(
         isSearching: false,

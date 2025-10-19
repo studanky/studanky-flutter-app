@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:logger/logger.dart';
 import 'package:studanky_flutter_app/features/map/data/map_marker_source.dart';
 import 'package:studanky_flutter_app/features/map/models/map_marker.dart';
 
@@ -91,15 +91,11 @@ class MapMarkerNotifier extends AutoDisposeNotifier<MapMarkerState> {
   Future<void> refreshVisibleBounds(LatLngBounds bounds) async {
     final requestBounds = _expandBounds(bounds);
     final cached = state.cachedBounds;
-    if (cached != null && cached.containsBounds(requestBounds)) {
-      return;
-    }
+    if (cached != null && cached.containsBounds(requestBounds)) return;
 
     state = state.copyWith(pendingBounds: requestBounds);
 
-    if (state.isLoading) {
-      return;
-    }
+    if (state.isLoading) return;
 
     await _drainPendingLoads();
   }
@@ -135,7 +131,11 @@ class MapMarkerNotifier extends AutoDisposeNotifier<MapMarkerState> {
           isLoading: false,
         );
       } catch (error, stackTrace) {
-        debugPrint('Failed to load map markers: $error\n$stackTrace');
+        Logger().e(
+          '[MapMarkerNotifier] Failed to load markers',
+          error: error,
+          stackTrace: stackTrace,
+        );
         state = state.copyWith(isLoading: false);
       }
     }

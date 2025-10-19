@@ -6,7 +6,7 @@ class QrScanContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle? messageStyle = Theme.of(context).textTheme.bodyMedium;
+    final messageStyle = Theme.of(context).textTheme.bodyMedium;
     return MobileScanner(
       placeholderBuilder: (context) => const ColoredBox(
         color: Colors.black,
