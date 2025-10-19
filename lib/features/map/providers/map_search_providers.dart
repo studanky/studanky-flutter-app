@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:studanky_flutter_app/core/constants/map_constants.dart';
+import 'package:studanky_flutter_app/core/constants/app_constants.dart';
+import 'package:studanky_flutter_app/features/core/constants/map_constants.dart';
 import 'package:studanky_flutter_app/features/map/data/in_memory_map_search_source.dart';
 import 'package:studanky_flutter_app/features/map/data/map_marker_source.dart';
 import 'package:studanky_flutter_app/features/map/data/map_marker_source_adapter.dart';
@@ -29,7 +30,7 @@ final _dioProvider = Provider<Dio>((ref) {
 /// Provides the active search backend. Defaults to the Mapy.cz suggest API,
 /// falling back to simple in-memory search when no API key is supplied.
 final mapSearchSourceProvider = Provider<MapSearchSource>((ref) {
-  const apiKey = MapConstants.apiKey;
+  const apiKey = AppConstants.apiKey;
   if (apiKey.isNotEmpty) {
     final apiClient = MapSuggestApiClient(
       dio: ref.watch(_dioProvider),

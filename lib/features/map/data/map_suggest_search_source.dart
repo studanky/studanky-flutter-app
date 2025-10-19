@@ -4,8 +4,8 @@ import 'package:logger/logger.dart';
 import 'package:studanky_flutter_app/features/map/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map/data/map_suggest_api_client.dart';
 import 'package:studanky_flutter_app/features/map/models/map_search_result.dart';
-import 'package:studanky_flutter_app/features/map/models/map_suggest_query.dart';
 import 'package:studanky_flutter_app/features/map/models/map_suggest_item.dart';
+import 'package:studanky_flutter_app/features/map/models/map_suggest_query.dart';
 
 /// Remote autocomplete backed by the Mapy.cz suggest API.
 class MapSuggestSearchSource implements MapSearchSource {
@@ -13,7 +13,7 @@ class MapSuggestSearchSource implements MapSearchSource {
     required this.apiClient,
     this.language = 'cs',
     this.limit = 5,
-    this.types = const ['regional.address'],
+    this.types = const ['regional'], // For Adressess, Cities, Regions etc.
   });
 
   final MapSuggestApiClient apiClient;

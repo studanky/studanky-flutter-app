@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Will be changed
 class OfflinePlaceholder extends StatelessWidget {
   const OfflinePlaceholder({
     super.key,

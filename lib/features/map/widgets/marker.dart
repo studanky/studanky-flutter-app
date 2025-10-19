@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:studanky_flutter_app/features/core/constants/map_constants.dart';
 
 import 'package:studanky_flutter_app/features/map/models/map_marker.dart';
 
+// Will be adjusted with design system
 Marker buildMarker(MapMarker marker) {
   return Marker(
     point: marker.position,
@@ -19,7 +21,7 @@ Marker buildMarker(MapMarker marker) {
             color: Colors.grey[100],
             shape: BoxShape.circle,
           ),
-          child: SvgPicture.asset('lib/core/assets/studanka_point.svg'),
+          child: SvgPicture.asset(MapConstants.mapSpringPoint),
         ),
       ],
     ),

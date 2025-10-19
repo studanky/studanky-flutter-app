@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:studanky_flutter_app/core/constants/map_constants.dart';
+import 'package:studanky_flutter_app/features/core/constants/map_constants.dart';
 import 'package:studanky_flutter_app/features/map/models/map_suggest_query.dart';
 import 'package:studanky_flutter_app/features/map/models/map_suggest_response.dart';
 

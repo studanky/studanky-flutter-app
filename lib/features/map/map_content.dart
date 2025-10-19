@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:studanky_flutter_app/core/constants/map_constants.dart';
+import 'package:studanky_flutter_app/features/core/constants/map_constants.dart';
 import 'package:studanky_flutter_app/features/map/models/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map/providers/map_marker_providers.dart';
 import 'package:studanky_flutter_app/features/map/providers/map_search_providers.dart';
@@ -20,7 +20,10 @@ class MapContent extends ConsumerStatefulWidget {
 }
 
 class _MapContentState extends ConsumerState<MapContent> {
-  static const LatLng _zdar = LatLng(49.5630, 15.9398);
+  static const LatLng _zdar = LatLng(
+    49.5630,
+    15.9398,
+  ); // Random initial location - will be chagned later
   static const double _defaultZoom = 14.5;
 
   final MapController _mapController = MapController();

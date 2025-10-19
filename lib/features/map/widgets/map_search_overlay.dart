@@ -5,6 +5,7 @@ import 'package:studanky_flutter_app/features/map/providers/map_search_providers
 import 'package:studanky_flutter_app/features/map/widgets/map_search_result_list.dart';
 
 /// Search input field with drop-down suggestions rendered above the map.
+/// UI will be changed later
 class MapSearchOverlay extends StatelessWidget {
   const MapSearchOverlay({
     super.key,
