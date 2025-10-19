@@ -1,40 +1,60 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:studanky_flutter_app/features/map/providers/map_marker_providers.dart';
 import 'package:studanky_flutter_app/features/map/widgets/marker.dart';
 
-class MapContent extends StatefulWidget {
+/// Displays the interactive map and renders markers managed by Riverpod.
+class MapContent extends ConsumerStatefulWidget {
   const MapContent({super.key});
 
   @override
-  State<MapContent> createState() => _MapContentState();
+  ConsumerState<MapContent> createState() => _MapContentState();
 }
 
-class _MapContentState extends State<MapContent> {
-  final LatLng _zdar = const LatLng(49.5630, 15.9398);
-  final double _defaultZoom = 14.5;
+class _MapContentState extends ConsumerState<MapContent> {
+  static const LatLng _zdar = LatLng(49.5630, 15.9398);
+  static const double _defaultZoom = 14.5;
 
   final MapController _mapController = MapController();
 
-  final List<Marker> _markers = [
-    buildMarker(const LatLng(49.5638, 15.9398), label: 'Zelená hora'),
-    buildMarker(const LatLng(49.5613, 15.9380), label: 'Town Square'),
-  ];
+  MapMarkerNotifier get _markerNotifier =>
+      ref.read(mapMarkerNotifierProvider.notifier);
 
-  void _addMarker(LatLng latLng) {
-    setState(() {
-      _markers.add(
-        buildMarker(
-          latLng,
-          label:
-              '${latLng.latitude.toStringAsFixed(5)}, ${latLng.longitude.toStringAsFixed(5)}',
-        ),
-      );
-    });
+  /// Triggers an initial marker load once the map is fully initialised.
+  void _onMapReady() {
+    _refreshMarkersForBounds(_mapController.camera.visibleBounds);
+  }
+
+  /// Reacts to camera changes and fetches markers for the new viewport.
+  void _handleMapEvent(MapEvent event) {
+    if (event is MapEventMoveEnd ||
+        event is MapEventRotateEnd ||
+        event is MapEventFlingAnimationEnd ||
+        event is MapEventDoubleTapZoomEnd ||
+        event is MapEventNonRotatedSizeChange) {
+      _refreshMarkersForBounds(event.camera.visibleBounds);
+    } else if (event is MapEventMove &&
+        event.source == MapEventSource.mapController) {
+      _refreshMarkersForBounds(event.camera.visibleBounds);
+    }
+  }
+
+  /// Requests the notifier to ensure the current bounds are populated.
+  void _refreshMarkersForBounds(LatLngBounds bounds) {
+    unawaited(_markerNotifier.refreshVisibleBounds(bounds));
   }
 
   @override
   Widget build(BuildContext context) {
+    final markerState = ref.watch(mapMarkerNotifierProvider);
+    final markers = markerState.visibleMarkers
+        .map(buildMarker)
+        .toList(growable: false);
+
     return SizedBox.expand(
       child: Stack(
         children: [
@@ -51,14 +71,15 @@ class _MapContentState extends State<MapContent> {
                       InteractiveFlag.doubleTapZoom |
                       InteractiveFlag.drag,
                 ),
-                onTap: (tapPosition, coord) => _addMarker(coord),
+                onMapReady: _onMapReady,
+                onMapEvent: _handleMapEvent,
               ),
               children: [
                 TileLayer(
                   urlTemplate:
                       'https://api.mapy.com/v1/maptiles/basic/256/{z}/{x}/{y}?apikey=U4_1WylUX52au77JaAJbXlLAGOCvrfCC1L1bVMwGIqQ',
                 ),
-                MarkerLayer(markers: _markers),
+                MarkerLayer(markers: markers),
               ],
             ),
           ),
