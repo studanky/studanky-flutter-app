@@ -1,7 +1,7 @@
 import 'package:flutter_map/flutter_map.dart';
-import 'package:studanky_flutter_app/features/map/data/map_marker_source.dart';
-import 'package:studanky_flutter_app/features/map/data/map_search_source.dart';
-import 'package:studanky_flutter_app/features/map/models/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_page/data/map_marker_source.dart';
+import 'package:studanky_flutter_app/features/map_page/data/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_page/models/map_search_result.dart';
 
 /// Fallback adapter that queries the entire marker source if no dedicated
 /// search backend is configured.
@@ -29,7 +29,8 @@ class MapMarkerSourceAdapter implements MapSearchSource {
         )
         .map(
           (marker) => MapSearchResult(
-            label: marker.label ??
+            label:
+                marker.label ??
                 '${marker.position.latitude.toStringAsFixed(5)}, '
                     '${marker.position.longitude.toStringAsFixed(5)}',
             position: marker.position,

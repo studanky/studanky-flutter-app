@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:studanky_flutter_app/features/map/models/map_suggest_position.dart';
+import 'package:studanky_flutter_app/features/map_page/models/map_suggest_position.dart';
 
 part 'map_suggest_item.g.dart';
 

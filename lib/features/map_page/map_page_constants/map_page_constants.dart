@@ -1,7 +1,7 @@
 import 'package:studanky_flutter_app/core/constants/app_constants.dart';
 
-class MapConstants {
-  const MapConstants._();
+class MapPageConstants {
+  const MapPageConstants._();
 
   static const String suggestHost = 'api.mapy.cz';
   static const String suggestBaseUrl = 'https://$suggestHost';

@@ -1,6 +1,6 @@
-import 'package:studanky_flutter_app/features/map/data/map_search_source.dart';
-import 'package:studanky_flutter_app/features/map/models/map_marker.dart';
-import 'package:studanky_flutter_app/features/map/models/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_page/data/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_page/models/map_marker.dart';
+import 'package:studanky_flutter_app/features/map_page/models/map_search_result.dart';
 
 /// Local search used as a fallback when a remote backend is not available.
 class InMemoryMapSearchSource implements MapSearchSource {
@@ -18,7 +18,8 @@ class InMemoryMapSearchSource implements MapSearchSource {
         )
         .map(
           (marker) => MapSearchResult(
-            label: marker.label ??
+            label:
+                marker.label ??
                 '${marker.position.latitude.toStringAsFixed(5)}, '
                     '${marker.position.longitude.toStringAsFixed(5)}',
             position: marker.position,

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:studanky_flutter_app/features/core/constants/map_constants.dart';
-import 'package:studanky_flutter_app/features/map/models/map_suggest_query.dart';
-import 'package:studanky_flutter_app/features/map/models/map_suggest_response.dart';
+import 'package:studanky_flutter_app/features/map_page/map_page_constants/map_page_constants.dart';
+import 'package:studanky_flutter_app/features/map_page/models/map_suggest_query.dart';
+import 'package:studanky_flutter_app/features/map_page/models/map_suggest_response.dart';
 
 class MapSuggestApiClient {
   MapSuggestApiClient({required this.dio, required this.apiKey});
@@ -11,7 +11,7 @@ class MapSuggestApiClient {
 
   Future<MapSuggestResponse> fetch(MapySuggestQuery query) async {
     final response = await dio.get<Map<String, dynamic>>(
-      MapConstants.suggestPath,
+      MapPageConstants.suggestPath,
       queryParameters: query.toQueryParameters(apiKey),
     );
 

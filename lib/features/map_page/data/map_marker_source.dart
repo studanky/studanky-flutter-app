@@ -1,5 +1,5 @@
 import 'package:flutter_map/flutter_map.dart';
-import 'package:studanky_flutter_app/features/map/models/map_marker.dart';
+import 'package:studanky_flutter_app/features/map_page/models/map_marker.dart';
 
 /// Contract for loading markers that should be rendered inside a map viewport.
 abstract class MapMarkerSource {

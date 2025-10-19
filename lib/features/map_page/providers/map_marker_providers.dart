@@ -4,8 +4,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logger/logger.dart';
-import 'package:studanky_flutter_app/features/map/data/map_marker_source.dart';
-import 'package:studanky_flutter_app/features/map/models/map_marker.dart';
+import 'package:studanky_flutter_app/features/map_page/data/map_marker_source.dart';
+import 'package:studanky_flutter_app/features/map_page/models/map_marker.dart';
 
 /// Immutable snapshot consumed by the `MarkerLayer`.
 ///

@@ -4,20 +4,20 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:studanky_flutter_app/core/constants/app_constants.dart';
-import 'package:studanky_flutter_app/features/core/constants/map_constants.dart';
-import 'package:studanky_flutter_app/features/map/data/in_memory_map_search_source.dart';
-import 'package:studanky_flutter_app/features/map/data/map_marker_source.dart';
-import 'package:studanky_flutter_app/features/map/data/map_marker_source_adapter.dart';
-import 'package:studanky_flutter_app/features/map/data/map_search_source.dart';
-import 'package:studanky_flutter_app/features/map/data/map_suggest_api_client.dart';
-import 'package:studanky_flutter_app/features/map/data/map_suggest_search_source.dart';
-import 'package:studanky_flutter_app/features/map/models/map_search_result.dart';
-import 'package:studanky_flutter_app/features/map/providers/map_marker_providers.dart';
+import 'package:studanky_flutter_app/features/map_page/map_page_constants/map_page_constants.dart';
+import 'package:studanky_flutter_app/features/map_page/data/in_memory_map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_page/data/map_marker_source.dart';
+import 'package:studanky_flutter_app/features/map_page/data/map_marker_source_adapter.dart';
+import 'package:studanky_flutter_app/features/map_page/data/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_page/data/map_suggest_api_client.dart';
+import 'package:studanky_flutter_app/features/map_page/data/map_suggest_search_source.dart';
+import 'package:studanky_flutter_app/features/map_page/models/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_page/providers/map_marker_providers.dart';
 
 final _dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: MapConstants.suggestBaseUrl,
+      baseUrl: MapPageConstants.suggestBaseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       sendTimeout: const Duration(seconds: 10),
