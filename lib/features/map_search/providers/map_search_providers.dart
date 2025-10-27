@@ -30,7 +30,7 @@ final _dioProvider = Provider<Dio>((ref) {
 /// Provides the active search backend. Defaults to the Mapy.cz suggest API,
 /// falling back to simple in-memory search when no API key is supplied.
 final mapSearchSourceProvider = Provider<MapSearchSource>((ref) {
-  const apiKey = AppConstants.apiKey;
+  const apiKey = AppConstants.mapyComApiKey;
   if (apiKey.isNotEmpty) {
     final apiClient = MapSuggestApiClient(
       dio: ref.watch(_dioProvider),
