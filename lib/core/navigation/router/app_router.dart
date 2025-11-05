@@ -1,8 +1,8 @@
 import 'package:go_router/go_router.dart';
 import 'package:studanky_flutter_app/core/navigation/app_routes/app_route.dart';
 import 'package:studanky_flutter_app/features/main_page/main_page.dart';
-import 'package:studanky_flutter_app/features/map/map_page.dart';
-import 'package:studanky_flutter_app/features/qr_scan/qr_scan_page.dart';
+import 'package:studanky_flutter_app/features/map_page/map_page.dart';
+import 'package:studanky_flutter_app/features/qr_scan_page/qr_scan_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: AppRoutes.scan.path,
