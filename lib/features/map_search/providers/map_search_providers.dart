@@ -3,21 +3,21 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:studanky_flutter_app/core/constants/app_constants.dart';
+import 'package:studanky_flutter_app/core/app_constants.dart';
 import 'package:studanky_flutter_app/features/map_page/data/map_marker_source.dart';
-import 'package:studanky_flutter_app/features/map_page/map_page_constants/map_page_constants.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/map_marker_providers.dart';
 import 'package:studanky_flutter_app/features/map_search/data/in_memory_map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_marker_source_adapter.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_search_source.dart';
+import 'package:studanky_flutter_app/features/map_search/map_serach_constants.dart';
 import 'package:studanky_flutter_app/features/map_search/models/map_search_result.dart';
 
 final _dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: MapPageConstants.suggestBaseUrl,
+      baseUrl: MapSerachConstants.suggestBaseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       sendTimeout: const Duration(seconds: 10),
