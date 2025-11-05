@@ -1,3 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter Run (verbose)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": ["--verbose"]
+    }
+  ]
+}
+
 // {
 //   "version": "0.2.0",
 //   "configurations": [
