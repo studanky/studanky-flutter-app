@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class MainPage extends StatelessWidget {
-  const MainPage({super.key, required this.navigationShell});
+class BottomNavigationScaffold extends StatelessWidget {
+  const BottomNavigationScaffold({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
@@ -21,8 +21,8 @@ class MainPage extends StatelessWidget {
         currentIndex: navigationShell.currentIndex,
         onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.qr_code), label: 'Scan'),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.qr_code), label: 'Scan'),
         ],
       ),
     );
