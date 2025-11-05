@@ -1,6 +1,6 @@
 {
-  "helloWorld": "Hello World!",
-  "@helloWorld": {
-    "description": "The conventional newborn programmer greeting"
-  }
+  "bottom_nav_bar_item_map": "Mapa",
+  "@bottom_nav_bar_item_map": {},
+  "bottom_nav_bar_item_scanner": "QR sken",
+  "@bottom_nav_bar_item_scanner": {}
 }

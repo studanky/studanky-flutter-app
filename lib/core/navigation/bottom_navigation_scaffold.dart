@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:studanky_flutter_app/l10n/extension.dart';
 
 class BottomNavigationScaffold extends StatelessWidget {
   const BottomNavigationScaffold({super.key, required this.navigationShell});
@@ -20,9 +21,15 @@ class BottomNavigationScaffold extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: navigationShell.currentIndex,
         onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-          BottomNavigationBarItem(icon: Icon(Icons.qr_code), label: 'Scan'),
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.map),
+            label: context.l10n.bottom_nav_bar_item_map,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.qr_code),
+            label: context.l10n.bottom_nav_bar_item_scanner,
+          ),
         ],
       ),
     );

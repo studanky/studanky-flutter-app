@@ -94,11 +94,17 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('cs')];
 
-  /// The conventional newborn programmer greeting
+  /// No description provided for @bottom_nav_bar_item_map.
   ///
   /// In cs, this message translates to:
-  /// **'Hello World!'**
-  String get helloWorld;
+  /// **'Mapa'**
+  String get bottom_nav_bar_item_map;
+
+  /// No description provided for @bottom_nav_bar_item_scanner.
+  ///
+  /// In cs, this message translates to:
+  /// **'QR sken'**
+  String get bottom_nav_bar_item_scanner;
 }
 
 class _AppLocalizationsDelegate

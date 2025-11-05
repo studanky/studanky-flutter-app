@@ -9,5 +9,8 @@ class AppLocalizationsCs extends AppLocalizations {
   AppLocalizationsCs([String locale = 'cs']) : super(locale);
 
   @override
-  String get helloWorld => 'Hello World!';
+  String get bottom_nav_bar_item_map => 'Mapa';
+
+  @override
+  String get bottom_nav_bar_item_scanner => 'QR sken';
 }
