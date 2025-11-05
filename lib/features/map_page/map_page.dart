@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:studanky_flutter_app/core/providers/connectivity_status_provider.dart';
 import 'package:studanky_flutter_app/features/map_page/map_content.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/connectivity_providers.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/offline_placeholder.dart';
 
 class MapPage extends ConsumerWidget {
