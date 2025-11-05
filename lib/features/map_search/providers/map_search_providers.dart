@@ -84,12 +84,12 @@ class MapSearchState {
 }
 
 final mapSearchNotifierProvider =
-    AutoDisposeNotifierProvider<MapSearchNotifier, MapSearchState>(
+    NotifierProvider.autoDispose<MapSearchNotifier, MapSearchState>(
       MapSearchNotifier.new,
     );
 
 /// Debounced notifier that coordinates search requests and exposes results.
-class MapSearchNotifier extends AutoDisposeNotifier<MapSearchState> {
+class MapSearchNotifier extends Notifier<MapSearchState> {
   static const Duration _debounceDuration = Duration(milliseconds: 250);
 
   Timer? _debounceTimer;

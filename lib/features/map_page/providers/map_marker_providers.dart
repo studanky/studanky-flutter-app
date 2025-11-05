@@ -75,12 +75,12 @@ final mapMarkerSourceProvider = Provider<MapMarkerSource>((ref) {
 
 /// Exposes the notifier that orchestrates loading and custom marker updates.
 final mapMarkerNotifierProvider =
-    AutoDisposeNotifierProvider<MapMarkerNotifier, MapMarkerState>(
+    NotifierProvider.autoDispose<MapMarkerNotifier, MapMarkerState>(
       MapMarkerNotifier.new,
     );
 
 /// Handles lazy-loading and exposes marker state to the UI.
-class MapMarkerNotifier extends AutoDisposeNotifier<MapMarkerState> {
+class MapMarkerNotifier extends Notifier<MapMarkerState> {
   static const double _boundsPaddingFraction = 0.2;
 
   MapMarkerSource get _source => ref.read(mapMarkerSourceProvider);

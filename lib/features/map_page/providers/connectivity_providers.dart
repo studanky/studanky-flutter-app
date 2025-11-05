@@ -8,16 +8,21 @@ final connectivityStatusProvider = StreamProvider.autoDispose<bool>((ref) {
   final connectivity = Connectivity();
   final controller = StreamController<bool>();
 
+  bool isOnline(List<ConnectivityResult> results) {
+    if (results.isEmpty) return false;
+    return results.any((status) => status != ConnectivityResult.none);
+  }
+
   Future<void>(() async {
     final initial = await connectivity.checkConnectivity();
     if (!controller.isClosed) {
-      controller.add(initial != ConnectivityResult.none);
+      controller.add(isOnline(initial));
     }
   });
 
   final subscription = connectivity.onConnectivityChanged.listen((result) {
     if (!controller.isClosed) {
-      controller.add(result != ConnectivityResult.none);
+      controller.add(isOnline(result));
     }
   });
 
