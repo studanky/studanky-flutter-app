@@ -9,5 +9,5 @@ class MapPageConstants {
   static const String mapTilesMapy =
       'https://api.mapy.com/v1/maptiles/basic/256/{z}/{x}/{y}?apikey=${AppConstants.mapyComApiKey}';
 
-  static const String mapSpringPoint = 'lib/core/assets/studanka_point.svg';
+  static const String mapSpringPoint = 'assets/studanka_point.svg';
 }
