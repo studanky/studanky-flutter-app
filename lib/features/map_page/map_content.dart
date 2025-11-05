@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:studanky_flutter_app/features/map_page/map_page_constants/map_page_constants.dart';
+import 'package:studanky_flutter_app/features/map_page/map_page_constants.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/map_marker_providers.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
 import 'package:studanky_flutter_app/features/map_search/models/map_search_result.dart';
