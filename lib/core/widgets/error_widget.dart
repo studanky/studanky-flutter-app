@@ -2,22 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
+// TODO: handle error, stacktrace
 class AppErrorWidget extends StatelessWidget {
   const AppErrorWidget({
     super.key,
-    this.onRefresh,
+    required this.error,
+    required this.stackTrace,
     this.title,
     this.subtitle,
-    this.showRefreshButton = true,
+    this.onRefresh,
   });
 
-  final VoidCallback? onRefresh;
+  final Object error;
+  final StackTrace stackTrace;
   final String? title;
   final String? subtitle;
-  final bool showRefreshButton;
+  final VoidCallback? onRefresh;
 
   @override
   Widget build(BuildContext context) {
+    final showRefreshButton = onRefresh != null;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
