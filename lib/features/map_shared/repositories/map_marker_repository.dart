@@ -1,5 +1,5 @@
 import 'package:flutter_map/flutter_map.dart';
-import 'package:studanky_flutter_app/features/map_page/entities/map_marker_entity.dart';
+import 'package:studanky_flutter_app/features/map_shared/entities/map_marker_entity.dart';
 import 'package:studanky_flutter_app/features/spring_getter/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/spring_getter/entities/spring_entity.dart';
 import 'package:studanky_flutter_app/features/spring_getter/repositories/spring_repository.dart';

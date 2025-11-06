@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
-import 'package:studanky_flutter_app/features/map_page/entities/map_marker_entity.dart';
+import 'package:studanky_flutter_app/features/map_shared/entities/map_marker_entity.dart';
 import 'package:studanky_flutter_app/features/map_shared/providers/map_marker_repository_provider.dart';
 import 'package:studanky_flutter_app/features/map_shared/repositories/map_marker_repository.dart';
 
