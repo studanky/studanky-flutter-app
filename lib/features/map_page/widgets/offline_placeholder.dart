@@ -3,13 +3,8 @@ import 'package:studanky_flutter_app/l10n/extension.dart';
 
 // TODO: redesign, Styles
 class OfflinePlaceholder extends StatelessWidget {
-  const OfflinePlaceholder({
-    super.key,
-    required this.message,
-    required this.onRetry,
-  });
+  const OfflinePlaceholder({super.key, required this.onRetry});
 
-  final String message;
   final VoidCallback onRetry;
 
   @override
