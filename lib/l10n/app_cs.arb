@@ -45,5 +45,11 @@
   "@auth_error_server_error": {},
   "auth_error_unknown_error": "Neočekávaná chyba",
   "@auth_error_unknown_error": {},
-  "error_network": "Problém s připojením k internetu. Zkontrolujte prosím vaše síťové připojení."
+  "error_network": "Problém s připojením k internetu. Zkontrolujte prosím vaše síťové připojení.",
+  "error_widget_default_title": "Něco se pokazilo",
+  "@error_widget_default_title": {},
+  "error_widget_default_subtitle": "Zkuste to prosím znovu",
+  "@error_widget_default_subtitle": {},
+  "error_widget_default_try_again": "Zkusit znovu",
+  "@error_widget_default_try_again": {}
 }

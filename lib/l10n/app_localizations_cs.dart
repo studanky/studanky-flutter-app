@@ -89,4 +89,13 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get error_network =>
       'Problém s připojením k internetu. Zkontrolujte prosím vaše síťové připojení.';
+
+  @override
+  String get error_widget_default_title => 'Něco se pokazilo';
+
+  @override
+  String get error_widget_default_subtitle => 'Zkuste to prosím znovu';
+
+  @override
+  String get error_widget_default_try_again => 'Zkusit znovu';
 }

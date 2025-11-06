@@ -237,6 +237,24 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Problém s připojením k internetu. Zkontrolujte prosím vaše síťové připojení.'**
   String get error_network;
+
+  /// No description provided for @error_widget_default_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Něco se pokazilo'**
+  String get error_widget_default_title;
+
+  /// No description provided for @error_widget_default_subtitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zkuste to prosím znovu'**
+  String get error_widget_default_subtitle;
+
+  /// No description provided for @error_widget_default_try_again.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zkusit znovu'**
+  String get error_widget_default_try_again;
 }
 
 class _AppLocalizationsDelegate
