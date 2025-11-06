@@ -105,6 +105,138 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'QR sken'**
   String get bottom_nav_bar_item_scanner;
+
+  /// No description provided for @auth_error_provider_disabled.
+  ///
+  /// In cs, this message translates to:
+  /// **'Tento způsob přihlášení není povolen'**
+  String get auth_error_provider_disabled;
+
+  /// No description provided for @auth_error_invalid_credentials.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neplatné přihlašovací údaje'**
+  String get auth_error_invalid_credentials;
+
+  /// No description provided for @auth_error_email_not_confirmed.
+  ///
+  /// In cs, this message translates to:
+  /// **'Váš e-mail nebyl potvrzen'**
+  String get auth_error_email_not_confirmed;
+
+  /// No description provided for @auth_error_account_blocked.
+  ///
+  /// In cs, this message translates to:
+  /// **'Váš účet byl zablokován administrátorem'**
+  String get auth_error_account_blocked;
+
+  /// No description provided for @auth_error_not_authenticated.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pro změnu hesla se musíte přihlásit'**
+  String get auth_error_not_authenticated;
+
+  /// No description provided for @auth_error_invalid_current_password.
+  ///
+  /// In cs, this message translates to:
+  /// **'Současné heslo není správné'**
+  String get auth_error_invalid_current_password;
+
+  /// No description provided for @auth_error_same_password.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nové heslo musí být odlišné od současného'**
+  String get auth_error_same_password;
+
+  /// No description provided for @auth_error_passwords_do_not_match.
+  ///
+  /// In cs, this message translates to:
+  /// **'Hesla se neshodují'**
+  String get auth_error_passwords_do_not_match;
+
+  /// No description provided for @auth_error_incorrect_code.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neplatný nebo expirovaný kód'**
+  String get auth_error_incorrect_code;
+
+  /// No description provided for @auth_error_invalid_callback.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neplatná adresa pro návrat'**
+  String get auth_error_invalid_callback;
+
+  /// No description provided for @auth_error_registration_disabled.
+  ///
+  /// In cs, this message translates to:
+  /// **'Registrace nových uživatelů není povolena'**
+  String get auth_error_registration_disabled;
+
+  /// No description provided for @auth_error_invalid_parameters.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neplatné parametry'**
+  String get auth_error_invalid_parameters;
+
+  /// No description provided for @auth_error_default_role_not_found.
+  ///
+  /// In cs, this message translates to:
+  /// **'Výchozí role nebyla nalezena'**
+  String get auth_error_default_role_not_found;
+
+  /// No description provided for @auth_error_email_or_username_in_use.
+  ///
+  /// In cs, this message translates to:
+  /// **'E-mail nebo uživatelské jméno jsou již používány'**
+  String get auth_error_email_or_username_in_use;
+
+  /// No description provided for @auth_error_email_send_error.
+  ///
+  /// In cs, this message translates to:
+  /// **'Chyba při odesílání potvrzovacího e-mailu'**
+  String get auth_error_email_send_error;
+
+  /// No description provided for @auth_error_invalid_token.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neplatný potvrzovací token'**
+  String get auth_error_invalid_token;
+
+  /// No description provided for @auth_error_already_confirmed.
+  ///
+  /// In cs, this message translates to:
+  /// **'Účet je již potvrzen'**
+  String get auth_error_already_confirmed;
+
+  /// No description provided for @auth_error_user_blocked.
+  ///
+  /// In cs, this message translates to:
+  /// **'Uživatel je zablokován'**
+  String get auth_error_user_blocked;
+
+  /// No description provided for @auth_error_network_error.
+  ///
+  /// In cs, this message translates to:
+  /// **'Chyba síťového připojení'**
+  String get auth_error_network_error;
+
+  /// No description provided for @auth_error_server_error.
+  ///
+  /// In cs, this message translates to:
+  /// **'Chyba serveru'**
+  String get auth_error_server_error;
+
+  /// No description provided for @auth_error_unknown_error.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neočekávaná chyba'**
+  String get auth_error_unknown_error;
+
+  /// No description provided for @error_network.
+  ///
+  /// In cs, this message translates to:
+  /// **'Problém s připojením k internetu. Zkontrolujte prosím vaše síťové připojení.'**
+  String get error_network;
 }
 
 class _AppLocalizationsDelegate
