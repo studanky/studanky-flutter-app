@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:studanky_flutter_app/features/map_page/entities/map_search_result.dart';
-import 'package:studanky_flutter_app/features/map_page/map_page_constants.dart';
+import 'package:studanky_flutter_app/features/map_page/constants/map_page_constants.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/map_marker_provider.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/map_search_provider.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/map_search_overlay.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
 
 class MapPageContent extends ConsumerStatefulWidget {
   const MapPageContent({super.key});
@@ -26,25 +25,8 @@ class _MapPageContentState extends ConsumerState<MapPageContent> {
   static const double _defaultZoom = 14.5;
 
   final MapController _mapController = MapController();
-  late final TextEditingController _searchController;
 
-  MapMarkerNotifier get _markerNotifier =>
-      ref.read(mapMarkerNotifierProvider.notifier);
-
-  MapSearchNotifier get _searchNotifier =>
-      ref.read(mapSearchNotifierProvider.notifier);
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
+  MapMarkerNotifier get _markerNotifier => ref.read(mapMarkerProvider.notifier);
 
   void _onMapReady() {
     _refreshMarkersForBounds(_mapController.camera.visibleBounds);
@@ -55,7 +37,6 @@ class _MapPageContentState extends ConsumerState<MapPageContent> {
   }
 
   void _onSearchResultSelected(MapSearchResult result) {
-    _searchNotifier.select(result);
     if (!mounted) return;
 
     FocusScope.of(context).unfocus();
@@ -66,19 +47,10 @@ class _MapPageContentState extends ConsumerState<MapPageContent> {
 
   @override
   Widget build(BuildContext context) {
-    final markerState = ref.watch(mapMarkerNotifierProvider);
+    final markerState = ref.watch(mapMarkerProvider);
     final markers = markerState.visibleMarkers
         .map(buildMarker)
         .toList(growable: false);
-
-    final searchState = ref.watch(mapSearchNotifierProvider);
-
-    if (_searchController.text != searchState.query) {
-      _searchController.value = TextEditingValue(
-        text: searchState.query,
-        selection: TextSelection.collapsed(offset: searchState.query.length),
-      );
-    }
 
     return SizedBox.expand(
       child: Stack(
@@ -108,12 +80,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent> {
             left: 16,
             right: 16,
             top: MediaQuery.of(context).padding.top + 12,
-            child: MapSearchOverlay(
-              controller: _searchController,
-              state: searchState,
-              onQueryChanged: _searchNotifier.setQuery,
-              onClear: _searchNotifier.clear,
-              onResultTap: _onSearchResultSelected,
+            child: MapSearchWidget(
+              hintText: 'Hledejte...',
+              onResultSelected: _onSearchResultSelected,
             ),
           ),
         ],

@@ -2,45 +2,12 @@ import 'dart:math' as math;
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
-import 'package:studanky_flutter_app/features/map_page/data/map_marker_source.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_marker_entity.dart';
+import 'package:studanky_flutter_app/features/map_page/providers/map_marker_repository_provider.dart';
 import 'package:studanky_flutter_app/features/map_page/repositories/map_marker_repository.dart';
 
-final mapMarkerSourceProvider = Provider<MapMarkerSource>((ref) {
-  return InMemoryMapMarkerSource(
-    markers: const [
-      MapMarkerEntity(position: LatLng(49.5638, 15.9398), label: 'Zelená hora'),
-      MapMarkerEntity(position: LatLng(49.5613, 15.9380), label: 'Town Square'),
-      MapMarkerEntity(
-        position: LatLng(49.5695, 15.9482),
-        label: 'Pilská Reservoir',
-      ),
-      MapMarkerEntity(
-        position: LatLng(49.5554, 15.9301),
-        label: 'Sádek Forest Trail',
-      ),
-      MapMarkerEntity(
-        position: LatLng(49.5842, 15.9556),
-        label: 'Sv. Jan Well',
-      ),
-      MapMarkerEntity(
-        position: LatLng(50.0755, 14.4378),
-        label: 'Prague Old Town',
-      ),
-    ],
-  );
-});
-
-final mapMarkerRepositoryProvider = Provider.autoDispose<MapMarkerRepository>((
-  ref,
-) {
-  final source = ref.watch(mapMarkerSourceProvider);
-  return MapMarkerRepositoryImpl(source);
-});
-
-final mapMarkerNotifierProvider =
+final mapMarkerProvider =
     NotifierProvider.autoDispose<MapMarkerNotifier, MapMarkerState>(
       MapMarkerNotifier.new,
     );

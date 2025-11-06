@@ -4,20 +4,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:studanky_flutter_app/core/app_constants.dart';
-import 'package:studanky_flutter_app/features/map_page/data/map_marker_source.dart';
-import 'package:studanky_flutter_app/features/map_page/data/search/in_memory_map_search_source.dart';
-import 'package:studanky_flutter_app/features/map_page/data/search/map_marker_source_adapter.dart';
-import 'package:studanky_flutter_app/features/map_page/data/search/map_search_source.dart';
-import 'package:studanky_flutter_app/features/map_page/data/search/map_suggest_api_client.dart';
-import 'package:studanky_flutter_app/features/map_page/data/search/map_suggest_search_source.dart';
-import 'package:studanky_flutter_app/features/map_page/entities/map_search_result.dart';
-import 'package:studanky_flutter_app/features/map_page/map_page_constants.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/map_marker_provider.dart';
+import 'package:studanky_flutter_app/features/map_page/providers/map_marker_repository_provider.dart';
+import 'package:studanky_flutter_app/features/map_search/constants/map_search_constants.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_marker_repository_adapter.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_suggest_search_source.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 
 final _dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: MapPageConstants.mapSearchSuggestBaseUrl,
+      baseUrl: MapSearchConstants.suggestBaseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       sendTimeout: const Duration(seconds: 10),
@@ -39,11 +37,8 @@ final mapSearchSourceProvider = Provider<MapSearchSource>((ref) {
     return MapSuggestSearchSource(apiClient: apiClient);
   }
 
-  final markerSource = ref.read(mapMarkerSourceProvider);
-  if (markerSource is InMemoryMapMarkerSource) {
-    return InMemoryMapSearchSource(markerSource.allMarkers);
-  }
-  return MapMarkerSourceAdapter(markerSource);
+  final repository = ref.watch(mapMarkerRepositoryProvider);
+  return MapMarkerRepositoryAdapter(repository);
 });
 
 /// State consumed by the map search UI.
@@ -83,7 +78,7 @@ class MapSearchState {
   static const _sentinel = Object();
 }
 
-final mapSearchNotifierProvider =
+final mapSearchProvider =
     NotifierProvider.autoDispose<MapSearchNotifier, MapSearchState>(
       MapSearchNotifier.new,
     );

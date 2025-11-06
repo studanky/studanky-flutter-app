@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logger/logger.dart';
-import 'package:studanky_flutter_app/features/map_page/data/search/map_search_source.dart';
-import 'package:studanky_flutter_app/features/map_page/data/search/map_suggest_api_client.dart';
-import 'package:studanky_flutter_app/features/map_page/entities/map_search_result.dart';
-import 'package:studanky_flutter_app/features/map_page/models/search/map_suggest_item.dart';
-import 'package:studanky_flutter_app/features/map_page/models/search/map_suggest_query.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_search/models/search/map_suggest_item.dart';
+import 'package:studanky_flutter_app/features/map_search/models/search/map_suggest_query.dart';
 
 /// Remote autocomplete backed by the Mapy.cz suggest API.
 class MapSuggestSearchSource implements MapSearchSource {

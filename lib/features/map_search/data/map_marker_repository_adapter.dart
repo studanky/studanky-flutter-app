@@ -1,18 +1,26 @@
-import 'package:studanky_flutter_app/features/map_page/data/search/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_marker_entity.dart';
-import 'package:studanky_flutter_app/features/map_page/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_page/repositories/map_marker_repository.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 
-/// Local search used as a fallback when a remote backend is not available.
-class InMemoryMapSearchSource implements MapSearchSource {
-  InMemoryMapSearchSource(this._markers);
+class MapMarkerRepositoryAdapter implements MapSearchSource {
+  MapMarkerRepositoryAdapter(this._repository);
 
-  final List<MapMarkerEntity> _markers;
+  final MapMarkerRepository _repository;
+  List<MapMarkerEntity>? _cache;
+
+  Future<List<MapMarkerEntity>> _markers() async {
+    _cache ??= await _repository.fetchAllMarkers();
+    return _cache!;
+  }
 
   @override
   Future<List<MapSearchResult>> search(String query) async {
     final normalised = query.trim().toLowerCase();
     if (normalised.isEmpty) return const [];
-    return _markers
+
+    final markers = await _markers();
+    return markers
         .where(
           (marker) => (marker.label ?? '').toLowerCase().contains(normalised),
         )
