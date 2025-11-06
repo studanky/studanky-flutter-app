@@ -4,13 +4,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:studanky_flutter_app/core/app_constants.dart';
-import 'package:studanky_flutter_app/core/providers/map_marker_repository_provider.dart';
 import 'package:studanky_flutter_app/features/map_search/constants/map_search_constants.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_marker_repository_adapter.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_shared/providers/map_marker_repository_provider.dart';
 
 final _dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
