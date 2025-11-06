@@ -55,5 +55,9 @@
   "offline_placeholder_title": "Jste offline",
   "@offline_placeholder_title": {},
   "offline_placeholder_message_offline": "Nemáte připojení k internetu. Mapová data vyžadují online připojení.",
-  "@offline_placeholder_message_offline": {}
+  "@offline_placeholder_message_offline": {},
+  "error_connectivity_status_title": "Chyba vyhodnocení stavu připojení",
+  "@error_connectivity_status_title": {},
+  "error_connectivity_status_subtitle": "Zkuste to prosím znovu",
+  "@error_connectivity_status_subtitle": {}
 }

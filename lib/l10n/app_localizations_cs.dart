@@ -105,4 +105,11 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get offline_placeholder_message_offline =>
       'Nemáte připojení k internetu. Mapová data vyžadují online připojení.';
+
+  @override
+  String get error_connectivity_status_title =>
+      'Chyba vyhodnocení stavu připojení';
+
+  @override
+  String get error_connectivity_status_subtitle => 'Zkuste to prosím znovu';
 }

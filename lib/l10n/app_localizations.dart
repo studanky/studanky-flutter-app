@@ -267,6 +267,18 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Nemáte připojení k internetu. Mapová data vyžadují online připojení.'**
   String get offline_placeholder_message_offline;
+
+  /// No description provided for @error_connectivity_status_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Chyba vyhodnocení stavu připojení'**
+  String get error_connectivity_status_title;
+
+  /// No description provided for @error_connectivity_status_subtitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zkuste to prosím znovu'**
+  String get error_connectivity_status_subtitle;
 }
 
 class _AppLocalizationsDelegate
