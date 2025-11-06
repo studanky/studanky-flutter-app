@@ -51,5 +51,9 @@
   "error_widget_default_subtitle": "Zkuste to prosím znovu",
   "@error_widget_default_subtitle": {},
   "error_widget_default_try_again": "Zkusit znovu",
-  "@error_widget_default_try_again": {}
+  "@error_widget_default_try_again": {},
+  "offline_placeholder_title": "Jste offline",
+  "@offline_placeholder_title": {},
+  "offline_placeholder_message_offline": "Nemáte připojení k internetu. Mapová data vyžadují online připojení.",
+  "@offline_placeholder_message_offline": {}
 }

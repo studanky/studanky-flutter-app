@@ -98,4 +98,11 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get error_widget_default_try_again => 'Zkusit znovu';
+
+  @override
+  String get offline_placeholder_title => 'Jste offline';
+
+  @override
+  String get offline_placeholder_message_offline =>
+      'Nemáte připojení k internetu. Mapová data vyžadují online připojení.';
 }

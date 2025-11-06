@@ -255,6 +255,18 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Zkusit znovu'**
   String get error_widget_default_try_again;
+
+  /// No description provided for @offline_placeholder_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Jste offline'**
+  String get offline_placeholder_title;
+
+  /// No description provided for @offline_placeholder_message_offline.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nemáte připojení k internetu. Mapová data vyžadují online připojení.'**
+  String get offline_placeholder_message_offline;
 }
 
 class _AppLocalizationsDelegate
