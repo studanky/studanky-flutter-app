@@ -19,13 +19,11 @@ class AsyncValueBuilder<T> extends StatelessWidget {
   final Widget Function()? loading;
   final VoidCallback? onRefresh;
 
-  static Widget _defaultLoading() {
-    return const Center(child: AppProgressIndicator());
-  }
+  static Widget _defaultLoading() =>
+      const Center(child: AppProgressIndicator());
 
-  Widget _defaultError(Object err, StackTrace stack) {
-    return AppErrorWidget(onRefresh: onRefresh);
-  }
+  Widget _defaultError(Object err, StackTrace stack) =>
+      AppErrorWidget(error: err, stackTrace: stack, onRefresh: onRefresh);
 
   @override
   Widget build(BuildContext context) {
