@@ -1,5 +1,5 @@
+import 'package:studanky_flutter_app/core/repositories/map_marker_repository.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_marker_entity.dart';
-import 'package:studanky_flutter_app/features/map_page/repositories/map_marker_repository.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 
