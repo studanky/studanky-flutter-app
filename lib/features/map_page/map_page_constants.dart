@@ -5,4 +5,6 @@ class MapPageConstants {
 
   static const String mapTilesMapy =
       'https://api.mapy.com/v1/maptiles/basic/256/{z}/{x}/{y}?apikey=${AppConstants.mapyComApiKey}';
+  static const String mapSearchSuggestBaseUrl = 'https://api.mapy.com';
+  static const String mapSearchSuggestPath = '/v1/suggest';
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:studanky_flutter_app/features/map_search/models/map_search_result.dart';
-import 'package:studanky_flutter_app/features/map_search/providers/map_search_providers.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_result_list.dart';
+import 'package:studanky_flutter_app/features/map_page/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_page/providers/map_search_provider.dart';
+import 'package:studanky_flutter_app/features/map_page/widgets/map_search_result_list.dart';
 
 /// Search input field with drop-down suggestions rendered above the map.
 /// UI will be changed later

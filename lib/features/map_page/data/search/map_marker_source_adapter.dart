@@ -1,7 +1,7 @@
 import 'package:flutter_map/flutter_map.dart';
 import 'package:studanky_flutter_app/features/map_page/data/map_marker_source.dart';
-import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
-import 'package:studanky_flutter_app/features/map_search/models/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_page/data/search/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_page/entities/map_search_result.dart';
 
 /// Fallback adapter that queries the entire marker source if no dedicated
 /// search backend is configured.

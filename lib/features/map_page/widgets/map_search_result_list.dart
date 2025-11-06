@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:studanky_flutter_app/features/map_search/models/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_page/entities/map_search_result.dart';
 
-// Will be changed later
 class MapSearchResultList extends StatelessWidget {
   const MapSearchResultList({
     super.key,

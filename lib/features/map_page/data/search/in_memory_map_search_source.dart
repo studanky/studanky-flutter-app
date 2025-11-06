@@ -1,12 +1,12 @@
-import 'package:studanky_flutter_app/features/map_page/models/map_marker.dart';
-import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
-import 'package:studanky_flutter_app/features/map_search/models/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_page/data/search/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_page/entities/map_marker_entity.dart';
+import 'package:studanky_flutter_app/features/map_page/entities/map_search_result.dart';
 
 /// Local search used as a fallback when a remote backend is not available.
 class InMemoryMapSearchSource implements MapSearchSource {
   InMemoryMapSearchSource(this._markers);
 
-  final List<MapMarker> _markers;
+  final List<MapMarkerEntity> _markers;
 
   @override
   Future<List<MapSearchResult>> search(String query) async {
