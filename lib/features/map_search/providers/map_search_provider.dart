@@ -1,80 +1,23 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logger/logger.dart';
-import 'package:studanky_flutter_app/core/app_constants.dart';
-import 'package:studanky_flutter_app/features/map_search/constants/map_search_constants.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
-import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
-import 'package:studanky_flutter_app/features/map_search/data/map_suggest_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_search/providers/map_search_source_provider.dart';
 
-final _dioProvider = Provider<Dio>((ref) {
-  final dio = Dio(
-    BaseOptions(
-      baseUrl: MapSearchConstants.suggestBaseUrl,
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      sendTimeout: const Duration(seconds: 10),
-    ),
-  );
-  ref.onDispose(dio.close);
-  return dio;
-});
+part 'map_search_provider.freezed.dart';
 
-/// Provides the active search backend. Requires the Mapy.cz suggest API.
-final mapSearchSourceProvider = Provider<MapSearchSource>((ref) {
-  const apiKey = AppConstants.mapyComApiKey;
-  if (apiKey.isEmpty) {
-    throw StateError(
-      'Map search requires a Mapy.cz API key. '
-      'Set AppConstants.mapyComApiKey before building the app.',
-    );
-  }
-
-  final apiClient = MapSuggestApiClient(
-    dio: ref.watch(_dioProvider),
-    apiKey: apiKey,
-  );
-  return MapSuggestSearchSource(apiClient: apiClient);
-});
-
-/// State consumed by the map search UI.
-class MapSearchState {
-  const MapSearchState({
-    this.query = '',
-    this.results = const [],
-    this.isSearching = false,
-    this.error,
-    this.selected,
-  });
-
-  final String query;
-  final List<MapSearchResult> results;
-  final bool isSearching;
-  final String? error;
-  final MapSearchResult? selected;
-
-  MapSearchState copyWith({
-    String? query,
-    List<MapSearchResult>? results,
-    bool? isSearching,
-    Object? error = _sentinel,
-    Object? selected = _sentinel,
-  }) {
-    return MapSearchState(
-      query: query ?? this.query,
-      results: results ?? this.results,
-      isSearching: isSearching ?? this.isSearching,
-      error: error == _sentinel ? this.error : error as String?,
-      selected: selected == _sentinel
-          ? this.selected
-          : selected as MapSearchResult?,
-    );
-  }
-
-  static const _sentinel = Object();
+@freezed
+abstract class MapSearchState with _$MapSearchState {
+  const factory MapSearchState({
+    @Default('') String query,
+    @Default(<MapSearchResult>[]) List<MapSearchResult> results,
+    @Default(false) bool isSearching,
+    String? error,
+    MapSearchResult? selected,
+  }) = _MapSearchState;
 }
 
 final mapSearchProvider =
