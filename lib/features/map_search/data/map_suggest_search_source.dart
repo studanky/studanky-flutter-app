@@ -13,13 +13,18 @@ class MapSuggestSearchSource implements MapSearchSource {
     required this.apiClient,
     this.language = MapSuggestLanguageBO.czech,
     this.limit = 5,
-    this.types = const [MapSuggestTypeBO.regional],
   });
 
   final MapSuggestApiClient apiClient;
   final MapSuggestLanguageBO language;
   final int limit;
-  final List<MapSuggestTypeBO> types;
+
+  static const List<MapSuggestTypeBO> types = <MapSuggestTypeBO>[
+    MapSuggestTypeBO.regionalMunicipality,
+    MapSuggestTypeBO.regionalRegion,
+    MapSuggestTypeBO.regionalAddress,
+    MapSuggestTypeBO.poi,
+  ];
 
   final _logger = Logger('MapSuggestSearchSource');
   final Map<String, List<MapSearchResult>> _cache = {};

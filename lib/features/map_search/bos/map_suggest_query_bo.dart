@@ -47,10 +47,14 @@ enum MapSuggestLanguageBO {
 
 enum MapSuggestTypeBO {
   regional('regional'),
-  address('addr'),
-  city('muni'),
+  regionalCountry('regional.country'),
+  regionalRegion('regional.region'),
+  regionalMunicipality('regional.municipality'),
+  regionalMunicipalityPart('regional.municipality_part'),
+  regionalStreet('regional.street'),
+  regionalAddress('regional.address'),
   poi('poi'),
-  street('street');
+  coordinate('coordinate');
 
   const MapSuggestTypeBO(this.code);
 
