@@ -5,12 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:studanky_flutter_app/core/app_constants.dart';
 import 'package:studanky_flutter_app/features/map_search/constants/map_search_constants.dart';
-import 'package:studanky_flutter_app/features/map_search/data/map_marker_repository_adapter.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
-import 'package:studanky_flutter_app/features/map_shared/providers/map_marker_repository_provider.dart';
 
 final _dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
@@ -25,20 +23,21 @@ final _dioProvider = Provider<Dio>((ref) {
   return dio;
 });
 
-/// Provides the active search backend. Defaults to the Mapy.cz suggest API,
-/// falling back to simple in-memory search when no API key is supplied.
+/// Provides the active search backend. Requires the Mapy.cz suggest API.
 final mapSearchSourceProvider = Provider<MapSearchSource>((ref) {
   const apiKey = AppConstants.mapyComApiKey;
-  if (apiKey.isNotEmpty) {
-    final apiClient = MapSuggestApiClient(
-      dio: ref.watch(_dioProvider),
-      apiKey: apiKey,
+  if (apiKey.isEmpty) {
+    throw StateError(
+      'Map search requires a Mapy.cz API key. '
+      'Set AppConstants.mapyComApiKey before building the app.',
     );
-    return MapSuggestSearchSource(apiClient: apiClient);
   }
 
-  final repository = ref.watch(mapMarkerRepositoryProvider);
-  return MapMarkerRepositoryAdapter(repository);
+  final apiClient = MapSuggestApiClient(
+    dio: ref.watch(_dioProvider),
+    apiKey: apiKey,
+  );
+  return MapSuggestSearchSource(apiClient: apiClient);
 });
 
 /// State consumed by the map search UI.
