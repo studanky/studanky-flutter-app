@@ -12,10 +12,12 @@ MapSuggestItemBO _$MapSuggestItemBOFromJson(Map<String, dynamic> json) =>
       position: MapSuggestPositionBO.fromJson(
         json['position'] as Map<String, dynamic>,
       ),
+      description: json['description'] as String?,
     );
 
 Map<String, dynamic> _$MapSuggestItemBOToJson(MapSuggestItemBO instance) =>
     <String, dynamic>{
       'name': instance.name,
       'position': instance.position.toJson(),
+      'description': instance.description,
     };

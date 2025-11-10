@@ -5,13 +5,18 @@ part 'map_suggest_item_bo.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class MapSuggestItemBO {
-  const MapSuggestItemBO({required this.name, required this.position});
+  const MapSuggestItemBO({
+    required this.name,
+    required this.position,
+    this.description,
+  });
 
   factory MapSuggestItemBO.fromJson(Map<String, dynamic> json) =>
       _$MapSuggestItemBOFromJson(json);
 
   final String name;
   final MapSuggestPositionBO position;
+  final String? description;
 
   Map<String, dynamic> toJson() => _$MapSuggestItemBOToJson(this);
 }

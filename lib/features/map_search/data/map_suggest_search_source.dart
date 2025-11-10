@@ -55,8 +55,8 @@ class MapSuggestSearchSource implements MapSearchSource {
             }
             return MapSearchResult(
               label: name,
+              description: item.description,
               position: LatLng(lat, lon),
-              raw: item.toJson(),
             );
           })
           .whereType<MapSearchResult>()
