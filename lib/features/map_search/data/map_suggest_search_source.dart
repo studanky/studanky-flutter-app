@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
+import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_item_bo.dart';
+import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_query_bo.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
-import 'package:studanky_flutter_app/features/map_search/models/search/map_suggest_item.dart';
-import 'package:studanky_flutter_app/features/map_search/models/search/map_suggest_query.dart';
 
 /// Remote autocomplete backed by the Mapy.cz suggest API.
 class MapSuggestSearchSource implements MapSearchSource {
@@ -21,6 +21,7 @@ class MapSuggestSearchSource implements MapSearchSource {
   final int limit;
   final List<String> types;
 
+  final _logger = Logger('MapSuggestSearchSource');
   final Map<String, List<MapSearchResult>> _cache = {};
 
   @override
@@ -36,7 +37,7 @@ class MapSuggestSearchSource implements MapSearchSource {
 
     try {
       final suggest = await apiClient.fetch(
-        MapySuggestQuery(
+        MapySuggestQueryBO(
           query: trimmed,
           language: language,
           limit: limit,
@@ -45,11 +46,11 @@ class MapSuggestSearchSource implements MapSearchSource {
       );
 
       final results = suggest.items
-          .map((MapSuggestItem item) {
-            final name = item.name?.trim();
-            final lat = item.position?.lat;
-            final lon = item.position?.lon;
-            if (name == null || name.isEmpty || lat == null || lon == null) {
+          .map((MapSuggestItemBO item) {
+            final name = item.name.trim();
+            final lat = item.position.lat;
+            final lon = item.position.lon;
+            if (name.isEmpty) {
               return null;
             }
             return MapSearchResult(
@@ -64,10 +65,10 @@ class MapSuggestSearchSource implements MapSearchSource {
       _cache[cacheKey] = results;
       return results;
     } on DioException catch (error, stackTrace) {
-      Logger().e(
-        '[MapSearchSource] Mapy suggest request failed for "$trimmed"',
-        error: error,
-        stackTrace: stackTrace,
+      _logger.shout(
+        'Mapy suggest request failed for "$trimmed"',
+        error,
+        stackTrace,
       );
       return const [];
     }

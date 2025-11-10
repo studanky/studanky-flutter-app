@@ -1,5 +1,5 @@
-class MapySuggestQuery {
-  const MapySuggestQuery({
+class MapySuggestQueryBO {
+  const MapySuggestQueryBO({
     required this.query,
     required this.language,
     required this.limit,
