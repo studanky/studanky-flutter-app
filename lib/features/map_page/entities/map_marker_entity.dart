@@ -1,15 +1,9 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:latlong2/latlong.dart';
 
-class MapMarkerEntity {
-  const MapMarkerEntity({required this.position, this.label});
+part 'map_marker_entity.freezed.dart';
 
-  final LatLng position;
-  final String? label;
-
-  MapMarkerEntity copyWith({LatLng? position, String? label}) {
-    return MapMarkerEntity(
-      position: position ?? this.position,
-      label: label ?? this.label,
-    );
-  }
+@freezed
+abstract class MapMarkerEntity with _$MapMarkerEntity {
+  const factory MapMarkerEntity({required LatLng position}) = _MapMarkerEntity;
 }

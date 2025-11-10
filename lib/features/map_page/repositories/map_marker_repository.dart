@@ -36,10 +36,7 @@ class MapMarkerRepositoryImpl implements MapMarkerRepository {
 
   List<MapMarkerEntity> _convert(List<SpringEntity> springs) {
     return springs
-        .map(
-          (spring) =>
-              MapMarkerEntity(position: spring.position, label: spring.label),
-        )
+        .map((spring) => MapMarkerEntity(position: spring.position))
         .toList(growable: false);
   }
 }
