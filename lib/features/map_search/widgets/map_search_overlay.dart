@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
@@ -24,6 +25,12 @@ class MapSearchOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final searchResults = state.searchResults;
+    final results = searchResults.value ?? const <MapSearchResult>[];
+    final errorMessage = searchResults.hasError
+        ? 'Unable to search at the moment.'
+        : null;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -52,23 +59,20 @@ class MapSearchOverlay extends StatelessWidget {
             ),
           ),
         ),
-        if (state.isSearching)
+        if (searchResults.isLoading)
           const Padding(
             padding: EdgeInsets.only(top: 8),
             child: LinearProgressIndicator(minHeight: 2),
           ),
-        if (state.error != null)
+        if (errorMessage != null)
           Padding(
             padding: const EdgeInsets.only(top: 8),
-            child: Text(state.error!, style: Styles.textStyles.body1),
+            child: Text(errorMessage, style: Styles.textStyles.body1),
           ),
-        if (state.results.isNotEmpty)
+        if (results.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 8),
-            child: MapSearchResultList(
-              results: state.results,
-              onTap: onResultTap,
-            ),
+            child: MapSearchResultList(results: results, onTap: onResultTap),
           ),
       ],
     );

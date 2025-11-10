@@ -13,9 +13,8 @@ part 'map_search_provider.freezed.dart';
 abstract class MapSearchState with _$MapSearchState {
   const factory MapSearchState({
     @Default('') String query,
-    @Default(<MapSearchResult>[]) List<MapSearchResult> results,
-    @Default(false) bool isSearching,
-    String? error,
+    @Default(AsyncValue.data(<MapSearchResult>[]))
+    AsyncValue<List<MapSearchResult>> searchResults,
     MapSearchResult? selected,
   }) = _MapSearchState;
 }
@@ -27,7 +26,7 @@ final mapSearchProvider =
 
 /// Debounced notifier that coordinates search requests and exposes results.
 class MapSearchNotifier extends Notifier<MapSearchState> {
-  static const Duration _debounceDuration = Duration(milliseconds: 250);
+  static const Duration _kDebounceDuration = Duration(milliseconds: 250);
 
   Timer? _debounceTimer;
   int _lastToken = 0;
@@ -56,12 +55,11 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
     final token = ++_lastToken;
     state = state.copyWith(
       query: query,
-      isSearching: true,
-      error: null,
+      searchResults: const AsyncValue<List<MapSearchResult>>.loading(),
       selected: null,
     );
 
-    _debounceTimer = Timer(_debounceDuration, () {
+    _debounceTimer = Timer(_kDebounceDuration, () {
       _performSearch(query, token);
     });
   }
@@ -77,9 +75,7 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
     _debounceTimer?.cancel();
     state = state.copyWith(
       query: result.label,
-      results: const [],
-      isSearching: false,
-      error: null,
+      searchResults: const AsyncValue<List<MapSearchResult>>.data([]),
       selected: result,
     );
   }
@@ -91,9 +87,7 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
 
       state = state.copyWith(
         query: query,
-        results: results,
-        isSearching: false,
-        error: null,
+        searchResults: AsyncValue<List<MapSearchResult>>.data(results),
         selected: null,
       );
     } catch (error, stackTrace) {
@@ -104,8 +98,10 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
       );
       if (token != _lastToken) return;
       state = state.copyWith(
-        isSearching: false,
-        error: 'Unable to search at the moment.',
+        searchResults: AsyncValue<List<MapSearchResult>>.error(
+          error,
+          stackTrace,
+        ),
         selected: null,
       );
     }
