@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_source_provider.dart';
@@ -27,6 +27,8 @@ final mapSearchProvider =
 /// Debounced notifier that coordinates search requests and exposes results.
 class MapSearchNotifier extends Notifier<MapSearchState> {
   static const Duration _kDebounceDuration = Duration(milliseconds: 250);
+
+  final _logger = Logger('MapSearchNotifier');
 
   Timer? _debounceTimer;
   int _lastToken = 0;
@@ -91,11 +93,7 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
         selected: null,
       );
     } catch (error, stackTrace) {
-      Logger().e(
-        '[MapSearchNotifier] Search failed for "$query"',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      _logger.shout('Search failed for "$query"', error, stackTrace);
       if (token != _lastToken) return;
       state = state.copyWith(
         searchResults: AsyncValue<List<MapSearchResult>>.error(
