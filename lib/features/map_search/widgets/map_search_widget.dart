@@ -21,8 +21,6 @@ class MapSearchWidget extends ConsumerStatefulWidget {
 class _MapSearchWidgetState extends ConsumerState<MapSearchWidget> {
   late final TextEditingController _controller;
 
-  MapSearchNotifier get _notifier => ref.read(mapSearchProvider.notifier);
-
   @override
   void initState() {
     super.initState();
@@ -35,15 +33,22 @@ class _MapSearchWidgetState extends ConsumerState<MapSearchWidget> {
     super.dispose();
   }
 
-  void _handleResult(BuildContext context, MapSearchResult result) {
-    _notifier.select(result);
+  void _handleResult(
+    BuildContext context,
+    MapSearchNotifier notifier,
+    MapSearchResult result,
+  ) {
+    notifier.select(result);
     widget.onResultSelected?.call(result);
     FocusScope.of(context).unfocus();
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(mapSearchProvider);
+    final locale = Localizations.localeOf(context);
+    final provider = mapSearchProvider(locale.languageCode);
+    final state = ref.watch(provider);
+    final notifier = ref.read(provider.notifier);
 
     if (_controller.text != state.query) {
       _controller.value = TextEditingValue(
@@ -56,12 +61,12 @@ class _MapSearchWidgetState extends ConsumerState<MapSearchWidget> {
       controller: _controller,
       state: state,
       hintText: widget.hintText,
-      onQueryChanged: _notifier.setQuery,
+      onQueryChanged: notifier.setQuery,
       onClear: () {
-        _notifier.clear();
+        notifier.clear();
         FocusScope.of(context).unfocus();
       },
-      onResultTap: (result) => _handleResult(context, result),
+      onResultTap: (result) => _handleResult(context, notifier, result),
     );
   }
 }

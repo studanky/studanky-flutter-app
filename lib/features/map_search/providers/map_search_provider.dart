@@ -18,13 +18,13 @@ abstract class MapSearchState with _$MapSearchState {
   }) = _MapSearchState;
 }
 
-final mapSearchProvider =
-    NotifierProvider.autoDispose<MapSearchNotifier, MapSearchState>(
-      MapSearchNotifier.new,
-    );
+final mapSearchProvider = NotifierProvider.autoDispose
+    .family<MapSearchNotifier, MapSearchState, String>(MapSearchNotifier.new);
 
 /// Debounced notifier that coordinates search requests and exposes results.
 class MapSearchNotifier extends Notifier<MapSearchState> {
+  MapSearchNotifier(this._languageCode);
+
   static const Duration _kDebounceDuration = Duration(milliseconds: 250);
 
   final _logger = Logger('MapSearchNotifier');
@@ -32,7 +32,10 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
   Timer? _debounceTimer;
   int _lastToken = 0;
 
-  MapSearchSource get _searchSource => ref.read(mapSearchSourceProvider);
+  final String _languageCode;
+
+  MapSearchSource get _searchSource =>
+      ref.read(mapSearchSourceProvider(_languageCode));
 
   @override
   MapSearchState build() {

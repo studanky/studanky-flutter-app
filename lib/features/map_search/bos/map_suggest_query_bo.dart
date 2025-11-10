@@ -42,6 +42,13 @@ enum MapSuggestLanguageBO {
 
   const MapSuggestLanguageBO(this.code);
 
+  factory MapSuggestLanguageBO.fromCode(String code) {
+    return MapSuggestLanguageBO.values.firstWhere(
+      (lang) => lang.code == code,
+      orElse: () => MapSuggestLanguageBO.czech,
+    );
+  }
+
   final String code;
 }
 

@@ -11,12 +11,14 @@ import 'package:studanky_flutter_app/features/map_search/entities/map_search_res
 class MapSuggestSearchSource implements MapSearchSource {
   MapSuggestSearchSource({
     required this.apiClient,
-    this.language = MapSuggestLanguageBO.czech,
+    required this.languageCode,
     this.limit = 5,
-  });
+  }) {
+    _language = MapSuggestLanguageBO.fromCode(languageCode);
+  }
 
   final MapSuggestApiClient apiClient;
-  final MapSuggestLanguageBO language;
+  final String languageCode;
   final int limit;
 
   static const List<MapSuggestTypeBO> types = <MapSuggestTypeBO>[
@@ -28,6 +30,7 @@ class MapSuggestSearchSource implements MapSearchSource {
 
   final _logger = Logger('MapSuggestSearchSource');
   final Map<String, List<MapSearchResult>> _cache = {};
+  late MapSuggestLanguageBO _language;
 
   @override
   Future<List<MapSearchResult>> search(String query) async {
@@ -44,7 +47,7 @@ class MapSuggestSearchSource implements MapSearchSource {
       final suggest = await apiClient.fetch(
         MapySuggestQueryBO(
           query: trimmed,
-          language: language,
+          language: _language,
           limit: limit,
           types: types,
         ),

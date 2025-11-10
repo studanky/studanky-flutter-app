@@ -20,7 +20,10 @@ final _dioProvider = Provider<Dio>((ref) {
 });
 
 /// Provides the active search backend. Requires the Mapy.cz suggest API.
-final mapSearchSourceProvider = Provider<MapSearchSource>((ref) {
+final mapSearchSourceProvider = Provider.family<MapSearchSource, String>((
+  ref,
+  languageCode,
+) {
   const apiKey = AppConstants.mapyComApiKey;
   if (apiKey.isEmpty) {
     throw StateError(
@@ -33,5 +36,9 @@ final mapSearchSourceProvider = Provider<MapSearchSource>((ref) {
     dio: ref.watch(_dioProvider),
     apiKey: apiKey,
   );
-  return MapSuggestSearchSource(apiClient: apiClient);
+
+  return MapSuggestSearchSource(
+    apiClient: apiClient,
+    languageCode: languageCode,
+  );
 });
