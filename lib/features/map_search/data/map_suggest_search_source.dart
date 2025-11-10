@@ -11,15 +11,15 @@ import 'package:studanky_flutter_app/features/map_search/entities/map_search_res
 class MapSuggestSearchSource implements MapSearchSource {
   MapSuggestSearchSource({
     required this.apiClient,
-    this.language = 'cs',
+    this.language = MapSuggestLanguageBO.czech,
     this.limit = 5,
-    this.types = const ['regional'], // For Adressess, Cities, Regions etc.
+    this.types = const [MapSuggestTypeBO.regional],
   });
 
   final MapSuggestApiClient apiClient;
-  final String language;
+  final MapSuggestLanguageBO language;
   final int limit;
-  final List<String> types;
+  final List<MapSuggestTypeBO> types;
 
   final _logger = Logger('MapSuggestSearchSource');
   final Map<String, List<MapSearchResult>> _cache = {};

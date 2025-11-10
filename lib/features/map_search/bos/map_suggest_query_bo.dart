@@ -15,15 +15,15 @@ class MapySuggestQueryBO {
   final String query;
 
   /// Expected localization returned by the API.
-  @JsonKey(name: 'lang')
-  final String language;
+  @JsonKey(name: 'lang', toJson: _languageToCode)
+  final MapSuggestLanguageBO language;
 
   /// Number of suggestions requested.
   final int limit;
 
   /// Mapy.cz expects `type=a,b,c` instead of an array.
   @JsonKey(name: 'type', toJson: _typesToCsv)
-  final List<String> types;
+  final List<MapSuggestTypeBO> types;
 
   Map<String, dynamic> toJson() => _$MapySuggestQueryBOToJson(this);
 
@@ -31,5 +31,28 @@ class MapySuggestQueryBO {
     return <String, dynamic>{...toJson(), 'apikey': apiKey};
   }
 
-  static String _typesToCsv(List<String> values) => values.join(',');
+  static String _languageToCode(MapSuggestLanguageBO language) => language.code;
+  static String _typesToCsv(List<MapSuggestTypeBO> values) =>
+      values.map((type) => type.code).join(',');
+}
+
+enum MapSuggestLanguageBO {
+  czech('cs'),
+  english('en');
+
+  const MapSuggestLanguageBO(this.code);
+
+  final String code;
+}
+
+enum MapSuggestTypeBO {
+  regional('regional'),
+  address('addr'),
+  city('muni'),
+  poi('poi'),
+  street('street');
+
+  const MapSuggestTypeBO(this.code);
+
+  final String code;
 }
