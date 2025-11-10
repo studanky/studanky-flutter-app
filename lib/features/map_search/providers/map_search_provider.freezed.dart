@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MapSearchState {
 
- String get query; AsyncValue<List<MapSearchResult>> get searchResults; MapSearchResult? get selected;
+ String get query; AsyncValue<List<MapSearchResult>> get searchResults;
 /// Create a copy of MapSearchState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $MapSearchStateCopyWith<MapSearchState> get copyWith => _$MapSearchStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchState&&(identical(other.query, query) || other.query == query)&&(identical(other.searchResults, searchResults) || other.searchResults == searchResults)&&(identical(other.selected, selected) || other.selected == selected));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchState&&(identical(other.query, query) || other.query == query)&&(identical(other.searchResults, searchResults) || other.searchResults == searchResults));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,query,searchResults,selected);
+int get hashCode => Object.hash(runtimeType,query,searchResults);
 
 @override
 String toString() {
-  return 'MapSearchState(query: $query, searchResults: $searchResults, selected: $selected)';
+  return 'MapSearchState(query: $query, searchResults: $searchResults)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $MapSearchStateCopyWith<$Res>  {
   factory $MapSearchStateCopyWith(MapSearchState value, $Res Function(MapSearchState) _then) = _$MapSearchStateCopyWithImpl;
 @useResult
 $Res call({
- String query, AsyncValue<List<MapSearchResult>> searchResults, MapSearchResult? selected
+ String query, AsyncValue<List<MapSearchResult>> searchResults
 });
 
 
@@ -62,12 +62,11 @@ class _$MapSearchStateCopyWithImpl<$Res>
 
 /// Create a copy of MapSearchState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? query = null,Object? searchResults = null,Object? selected = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? query = null,Object? searchResults = null,}) {
   return _then(_self.copyWith(
 query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
 as String,searchResults: null == searchResults ? _self.searchResults : searchResults // ignore: cast_nullable_to_non_nullable
-as AsyncValue<List<MapSearchResult>>,selected: freezed == selected ? _self.selected : selected // ignore: cast_nullable_to_non_nullable
-as MapSearchResult?,
+as AsyncValue<List<MapSearchResult>>,
   ));
 }
 
@@ -152,10 +151,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String query,  AsyncValue<List<MapSearchResult>> searchResults,  MapSearchResult? selected)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String query,  AsyncValue<List<MapSearchResult>> searchResults)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MapSearchState() when $default != null:
-return $default(_that.query,_that.searchResults,_that.selected);case _:
+return $default(_that.query,_that.searchResults);case _:
   return orElse();
 
 }
@@ -173,10 +172,10 @@ return $default(_that.query,_that.searchResults,_that.selected);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String query,  AsyncValue<List<MapSearchResult>> searchResults,  MapSearchResult? selected)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String query,  AsyncValue<List<MapSearchResult>> searchResults)  $default,) {final _that = this;
 switch (_that) {
 case _MapSearchState():
-return $default(_that.query,_that.searchResults,_that.selected);case _:
+return $default(_that.query,_that.searchResults);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +192,10 @@ return $default(_that.query,_that.searchResults,_that.selected);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String query,  AsyncValue<List<MapSearchResult>> searchResults,  MapSearchResult? selected)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String query,  AsyncValue<List<MapSearchResult>> searchResults)?  $default,) {final _that = this;
 switch (_that) {
 case _MapSearchState() when $default != null:
-return $default(_that.query,_that.searchResults,_that.selected);case _:
+return $default(_that.query,_that.searchResults);case _:
   return null;
 
 }
@@ -208,12 +207,11 @@ return $default(_that.query,_that.searchResults,_that.selected);case _:
 
 
 class _MapSearchState implements MapSearchState {
-  const _MapSearchState({this.query = '', this.searchResults = const AsyncValue.data(<MapSearchResult>[]), this.selected});
+  const _MapSearchState({this.query = '', this.searchResults = const AsyncValue.data(<MapSearchResult>[])});
   
 
 @override@JsonKey() final  String query;
 @override@JsonKey() final  AsyncValue<List<MapSearchResult>> searchResults;
-@override final  MapSearchResult? selected;
 
 /// Create a copy of MapSearchState
 /// with the given fields replaced by the non-null parameter values.
@@ -225,16 +223,16 @@ _$MapSearchStateCopyWith<_MapSearchState> get copyWith => __$MapSearchStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchState&&(identical(other.query, query) || other.query == query)&&(identical(other.searchResults, searchResults) || other.searchResults == searchResults)&&(identical(other.selected, selected) || other.selected == selected));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchState&&(identical(other.query, query) || other.query == query)&&(identical(other.searchResults, searchResults) || other.searchResults == searchResults));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,query,searchResults,selected);
+int get hashCode => Object.hash(runtimeType,query,searchResults);
 
 @override
 String toString() {
-  return 'MapSearchState(query: $query, searchResults: $searchResults, selected: $selected)';
+  return 'MapSearchState(query: $query, searchResults: $searchResults)';
 }
 
 
@@ -245,7 +243,7 @@ abstract mixin class _$MapSearchStateCopyWith<$Res> implements $MapSearchStateCo
   factory _$MapSearchStateCopyWith(_MapSearchState value, $Res Function(_MapSearchState) _then) = __$MapSearchStateCopyWithImpl;
 @override @useResult
 $Res call({
- String query, AsyncValue<List<MapSearchResult>> searchResults, MapSearchResult? selected
+ String query, AsyncValue<List<MapSearchResult>> searchResults
 });
 
 
@@ -262,12 +260,11 @@ class __$MapSearchStateCopyWithImpl<$Res>
 
 /// Create a copy of MapSearchState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? query = null,Object? searchResults = null,Object? selected = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? query = null,Object? searchResults = null,}) {
   return _then(_MapSearchState(
 query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
 as String,searchResults: null == searchResults ? _self.searchResults : searchResults // ignore: cast_nullable_to_non_nullable
-as AsyncValue<List<MapSearchResult>>,selected: freezed == selected ? _self.selected : selected // ignore: cast_nullable_to_non_nullable
-as MapSearchResult?,
+as AsyncValue<List<MapSearchResult>>,
   ));
 }
 

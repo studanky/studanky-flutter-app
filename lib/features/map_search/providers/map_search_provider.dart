@@ -15,7 +15,6 @@ abstract class MapSearchState with _$MapSearchState {
     @Default('') String query,
     @Default(AsyncValue.data(<MapSearchResult>[]))
     AsyncValue<List<MapSearchResult>> searchResults,
-    MapSearchResult? selected,
   }) = _MapSearchState;
 }
 
@@ -54,11 +53,10 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
       return;
     }
 
-    final token = ++_lastToken;
+    final token = ++_lastToken; // TODO: k cemu token?
     state = state.copyWith(
       query: query,
       searchResults: const AsyncValue<List<MapSearchResult>>.loading(),
-      selected: null,
     );
 
     _debounceTimer = Timer(_kDebounceDuration, () {
@@ -72,13 +70,12 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
     state = const MapSearchState();
   }
 
-  /// Stores the selection and collapses the suggestions list.
+  /// Sets the selection and collapses the suggestions list.
   void select(MapSearchResult result) {
     _debounceTimer?.cancel();
     state = state.copyWith(
       query: result.label,
       searchResults: const AsyncValue<List<MapSearchResult>>.data([]),
-      selected: result,
     );
   }
 
@@ -90,7 +87,6 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
       state = state.copyWith(
         query: query,
         searchResults: AsyncValue<List<MapSearchResult>>.data(results),
-        selected: null,
       );
     } catch (error, stackTrace) {
       _logger.shout('Search failed for "$query"', error, stackTrace);
@@ -100,7 +96,6 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
           error,
           stackTrace,
         ),
-        selected: null,
       );
     }
   }
