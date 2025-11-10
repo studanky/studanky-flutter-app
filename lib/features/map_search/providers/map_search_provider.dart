@@ -53,7 +53,7 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
       return;
     }
 
-    final token = ++_lastToken; // TODO: k cemu token?
+    final token = ++_lastToken;
     state = state.copyWith(
       query: query,
       searchResults: const AsyncValue<List<MapSearchResult>>.loading(),
