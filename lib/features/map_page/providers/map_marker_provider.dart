@@ -2,53 +2,36 @@ import 'dart:math' as math;
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_marker_entity.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/map_marker_repository_provider.dart';
 import 'package:studanky_flutter_app/features/map_page/repositories/map_marker_repository.dart';
+
+part 'map_marker_provider.freezed.dart';
 
 final mapMarkerProvider =
     NotifierProvider.autoDispose<MapMarkerNotifier, MapMarkerState>(
       MapMarkerNotifier.new,
     );
 
-class MapMarkerState {
-  const MapMarkerState({
-    this.loadedMarkers = const <MapMarkerEntity>[],
-    this.customMarkers = const <MapMarkerEntity>[],
-    this.isLoading = false,
-    this.cachedBounds,
-    this.pendingBounds,
-  });
+@freezed
+abstract class MapMarkerState with _$MapMarkerState {
+  const factory MapMarkerState({
+    @Default(AsyncValue<List<MapMarkerEntity>>.data(<MapMarkerEntity>[]))
+    AsyncValue<List<MapMarkerEntity>> markerResults,
+    @Default(<MapMarkerEntity>[]) List<MapMarkerEntity> customMarkers,
+    @Default(null) LatLngBounds? cachedBounds,
+    @Default(null) LatLngBounds? pendingBounds,
+  }) = _MapMarkerState;
 
-  final List<MapMarkerEntity> loadedMarkers;
-  final List<MapMarkerEntity> customMarkers;
-  final bool isLoading;
-  final LatLngBounds? cachedBounds;
-  final LatLngBounds? pendingBounds;
+  const MapMarkerState._();
+
+  List<MapMarkerEntity> get loadedMarkers =>
+      markerResults.value ?? const <MapMarkerEntity>[];
 
   List<MapMarkerEntity> get visibleMarkers =>
       List.unmodifiable(<MapMarkerEntity>[...loadedMarkers, ...customMarkers]);
-
-  MapMarkerState copyWith({
-    List<MapMarkerEntity>? loadedMarkers,
-    List<MapMarkerEntity>? customMarkers,
-    bool? isLoading,
-    LatLngBounds? cachedBounds,
-    Object? pendingBounds = _sentinel,
-  }) {
-    return MapMarkerState(
-      loadedMarkers: loadedMarkers ?? this.loadedMarkers,
-      customMarkers: customMarkers ?? this.customMarkers,
-      isLoading: isLoading ?? this.isLoading,
-      cachedBounds: cachedBounds ?? this.cachedBounds,
-      pendingBounds: pendingBounds == _sentinel
-          ? this.pendingBounds
-          : pendingBounds as LatLngBounds?,
-    );
-  }
-
-  static const Object _sentinel = Object();
 }
 
 class MapMarkerNotifier extends Notifier<MapMarkerState> {
@@ -69,7 +52,7 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
 
     state = state.copyWith(pendingBounds: requestBounds);
 
-    if (state.isLoading) {
+    if (state.markerResults.isLoading) {
       return;
     }
 
@@ -96,18 +79,27 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
         break;
       }
 
-      state = state.copyWith(pendingBounds: null, isLoading: true);
+      state = state.copyWith(
+        pendingBounds: null,
+        markerResults: const AsyncValue<List<MapMarkerEntity>>.loading(),
+      );
 
       try {
         final fetched = await _repository.fetchMarkers(pending);
         state = state.copyWith(
-          loadedMarkers: List.unmodifiable(fetched),
+          markerResults: AsyncValue<List<MapMarkerEntity>>.data(
+            List.unmodifiable(fetched),
+          ),
           cachedBounds: pending,
-          isLoading: false,
         );
       } catch (error, stackTrace) {
         _logger.severe('Failed to load markers', error, stackTrace);
-        state = state.copyWith(isLoading: false);
+        state = state.copyWith(
+          markerResults: AsyncValue<List<MapMarkerEntity>>.error(
+            error,
+            stackTrace,
+          ),
+        );
       }
     }
   }
