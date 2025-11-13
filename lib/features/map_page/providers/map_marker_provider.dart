@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_marker_entity.dart';
+import 'package:studanky_flutter_app/features/spring_getter/data/spring_source.dart';
 import 'package:studanky_flutter_app/features/spring_getter/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/spring_getter/entities/spring_entity.dart';
-import 'package:studanky_flutter_app/features/spring_getter/providers/spring_repository_provider.dart';
-import 'package:studanky_flutter_app/features/spring_getter/repositories/spring_repository.dart';
+import 'package:studanky_flutter_app/features/spring_getter/providers/spring_getter_provider.dart';
 
 part 'map_marker_provider.freezed.dart';
 
@@ -37,7 +37,7 @@ abstract class MapMarkerState with _$MapMarkerState {
 }
 
 class MapMarkerNotifier extends Notifier<MapMarkerState> {
-  SpringRepository get _springRepository => ref.read(springRepositoryProvider);
+  SpringSource get _springSource => ref.read(springGetterProvider);
 
   static const double _boundsPaddingFraction = 0.2;
   final Logger _logger = Logger('MapMarkerNotifier');
@@ -107,7 +107,7 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
   }
 
   Future<List<MapMarkerEntity>> _fetchMarkers(LatLngBounds bounds) async {
-    final springs = await _springRepository.fetchSprings(
+    final springs = await _springSource.loadSprings(
       SpringBounds(
         north: bounds.north,
         south: bounds.south,
