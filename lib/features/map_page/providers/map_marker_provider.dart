@@ -5,8 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_marker_entity.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/map_marker_repository_provider.dart';
-import 'package:studanky_flutter_app/features/map_page/repositories/map_marker_repository.dart';
+import 'package:studanky_flutter_app/features/spring_getter/entities/spring_bounds.dart';
+import 'package:studanky_flutter_app/features/spring_getter/entities/spring_entity.dart';
+import 'package:studanky_flutter_app/features/spring_getter/providers/spring_repository_provider.dart';
+import 'package:studanky_flutter_app/features/spring_getter/repositories/spring_repository.dart';
 
 part 'map_marker_provider.freezed.dart';
 
@@ -35,7 +37,7 @@ abstract class MapMarkerState with _$MapMarkerState {
 }
 
 class MapMarkerNotifier extends Notifier<MapMarkerState> {
-  MapMarkerRepository get _repository => ref.read(mapMarkerRepositoryProvider);
+  SpringRepository get _springRepository => ref.read(springRepositoryProvider);
 
   static const double _boundsPaddingFraction = 0.2;
   final Logger _logger = Logger('MapMarkerNotifier');
@@ -85,7 +87,7 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
       );
 
       try {
-        final fetched = await _repository.fetchMarkers(pending);
+        final fetched = await _fetchMarkers(pending);
         state = state.copyWith(
           markerResults: AsyncValue<List<MapMarkerEntity>>.data(
             List.unmodifiable(fetched),
@@ -102,6 +104,24 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
         );
       }
     }
+  }
+
+  Future<List<MapMarkerEntity>> _fetchMarkers(LatLngBounds bounds) async {
+    final springs = await _springRepository.fetchSprings(
+      SpringBounds(
+        north: bounds.north,
+        south: bounds.south,
+        east: bounds.east,
+        west: bounds.west,
+      ),
+    );
+    return _convertSprings(springs);
+  }
+
+  List<MapMarkerEntity> _convertSprings(List<SpringEntity> springs) {
+    return springs
+        .map((spring) => MapMarkerEntity(position: spring.position))
+        .toList(growable: false);
   }
 
   LatLngBounds _expandBounds(LatLngBounds bounds) {
