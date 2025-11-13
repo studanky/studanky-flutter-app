@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:studanky_flutter_app/l10n/extension.dart';
 
-// Will be changed
+// TODO: redesign, Styles
 class OfflinePlaceholder extends StatelessWidget {
-  const OfflinePlaceholder({
-    super.key,
-    required this.message,
-    required this.onRetry,
-  });
+  const OfflinePlaceholder({super.key, required this.onRetry});
 
-  final String message;
   final VoidCallback onRetry;
 
   @override
@@ -28,7 +24,7 @@ class OfflinePlaceholder extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'You\'re offline',
+                context.l10n.offline_placeholder_title,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -36,7 +32,7 @@ class OfflinePlaceholder extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                message,
+                context.l10n.offline_placeholder_message_offline,
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -44,7 +40,7 @@ class OfflinePlaceholder extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Try again'),
+                label: Text(context.l10n.error_widget_default_try_again),
               ),
             ],
           ),

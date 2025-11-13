@@ -1,0 +1,271 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'map_marker_entity.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// dart format off
+T _$identity<T>(T value) => value;
+/// @nodoc
+mixin _$MapMarkerEntity {
+
+ LatLng get position;
+/// Create a copy of MapMarkerEntity
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MapMarkerEntityCopyWith<MapMarkerEntity> get copyWith => _$MapMarkerEntityCopyWithImpl<MapMarkerEntity>(this as MapMarkerEntity, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapMarkerEntity&&(identical(other.position, position) || other.position == position));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,position);
+
+@override
+String toString() {
+  return 'MapMarkerEntity(position: $position)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MapMarkerEntityCopyWith<$Res>  {
+  factory $MapMarkerEntityCopyWith(MapMarkerEntity value, $Res Function(MapMarkerEntity) _then) = _$MapMarkerEntityCopyWithImpl;
+@useResult
+$Res call({
+ LatLng position
+});
+
+
+
+
+}
+/// @nodoc
+class _$MapMarkerEntityCopyWithImpl<$Res>
+    implements $MapMarkerEntityCopyWith<$Res> {
+  _$MapMarkerEntityCopyWithImpl(this._self, this._then);
+
+  final MapMarkerEntity _self;
+  final $Res Function(MapMarkerEntity) _then;
+
+/// Create a copy of MapMarkerEntity
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? position = null,}) {
+  return _then(_self.copyWith(
+position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
+as LatLng,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [MapMarkerEntity].
+extension MapMarkerEntityPatterns on MapMarkerEntity {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _MapMarkerEntity value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _MapMarkerEntity() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _MapMarkerEntity value)  $default,){
+final _that = this;
+switch (_that) {
+case _MapMarkerEntity():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _MapMarkerEntity value)?  $default,){
+final _that = this;
+switch (_that) {
+case _MapMarkerEntity() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( LatLng position)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _MapMarkerEntity() when $default != null:
+return $default(_that.position);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LatLng position)  $default,) {final _that = this;
+switch (_that) {
+case _MapMarkerEntity():
+return $default(_that.position);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( LatLng position)?  $default,) {final _that = this;
+switch (_that) {
+case _MapMarkerEntity() when $default != null:
+return $default(_that.position);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _MapMarkerEntity implements MapMarkerEntity {
+  const _MapMarkerEntity({required this.position});
+  
+
+@override final  LatLng position;
+
+/// Create a copy of MapMarkerEntity
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MapMarkerEntityCopyWith<_MapMarkerEntity> get copyWith => __$MapMarkerEntityCopyWithImpl<_MapMarkerEntity>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapMarkerEntity&&(identical(other.position, position) || other.position == position));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,position);
+
+@override
+String toString() {
+  return 'MapMarkerEntity(position: $position)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$MapMarkerEntityCopyWith<$Res> implements $MapMarkerEntityCopyWith<$Res> {
+  factory _$MapMarkerEntityCopyWith(_MapMarkerEntity value, $Res Function(_MapMarkerEntity) _then) = __$MapMarkerEntityCopyWithImpl;
+@override @useResult
+$Res call({
+ LatLng position
+});
+
+
+
+
+}
+/// @nodoc
+class __$MapMarkerEntityCopyWithImpl<$Res>
+    implements _$MapMarkerEntityCopyWith<$Res> {
+  __$MapMarkerEntityCopyWithImpl(this._self, this._then);
+
+  final _MapMarkerEntity _self;
+  final $Res Function(_MapMarkerEntity) _then;
+
+/// Create a copy of MapMarkerEntity
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? position = null,}) {
+  return _then(_MapMarkerEntity(
+position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
+as LatLng,
+  ));
+}
+
+
+}
+
+// dart format on

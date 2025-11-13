@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:studanky_flutter_app/features/map_page/map_page_constants/map_page_constants.dart';
+import 'package:studanky_flutter_app/core/app_constants.dart';
+import 'package:studanky_flutter_app/features/map_page/entities/map_marker_entity.dart';
 
-import 'package:studanky_flutter_app/features/map_page/models/map_marker.dart';
-
-// Will be adjusted with design system
-Marker buildMarker(MapMarker marker) {
+// TODO: redesign marker widget
+Marker buildMarker(MapMarkerEntity marker) {
   return Marker(
     point: marker.position,
     width: 150,
@@ -21,7 +20,7 @@ Marker buildMarker(MapMarker marker) {
             color: Colors.grey[100],
             shape: BoxShape.circle,
           ),
-          child: SvgPicture.asset(MapPageConstants.mapSpringPoint),
+          child: SvgPicture.asset(AppConstants.iconSpring),
         ),
       ],
     ),

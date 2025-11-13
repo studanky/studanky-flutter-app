@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:studanky_flutter_app/features/map_page/map_content.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/connectivity_providers.dart';
+import 'package:studanky_flutter_app/core/providers/connectivity_status_provider.dart';
+import 'package:studanky_flutter_app/core/widgets/async_value_builder.dart';
+import 'package:studanky_flutter_app/core/widgets/error_widget.dart';
+import 'package:studanky_flutter_app/features/map_page/map_page_content.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/offline_placeholder.dart';
+import 'package:studanky_flutter_app/l10n/extension.dart';
 
 class MapPage extends ConsumerWidget {
   const MapPage({super.key});
@@ -11,21 +14,23 @@ class MapPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final connectivity = ref.watch(connectivityStatusProvider);
 
-    return connectivity.when(
-      data: (online) {
-        if (online) {
-          return const MapContent();
-        }
-        return OfflinePlaceholder(
-          message:
-              'No internet connection. Map data requires an online connection.',
-          onRetry: () => ref.invalidate(connectivityStatusProvider),
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => OfflinePlaceholder(
-        message: 'Unable to determine internet connection.',
-        onRetry: () => ref.invalidate(connectivityStatusProvider),
+    void invalidateConnectivity() {
+      ref.invalidate(connectivityStatusProvider);
+    }
+
+    return Scaffold(
+      body: AsyncValueBuilder<bool>(
+        asyncValue: connectivity,
+        error: (error, stackTrace) => AppErrorWidget(
+          error: error,
+          stackTrace: stackTrace,
+          title: context.l10n.error_connectivity_status_title,
+          subtitle: context.l10n.error_connectivity_status_subtitle,
+          onRefresh: invalidateConnectivity,
+        ),
+        data: (online) => online
+            ? const MapPageContent()
+            : OfflinePlaceholder(onRetry: invalidateConnectivity),
       ),
     );
   }

@@ -1,27 +1,36 @@
 import 'package:dio/dio.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
+import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_item_bo.dart';
+import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_query_bo.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
-import 'package:studanky_flutter_app/features/map_search/models/map_search_result.dart';
-import 'package:studanky_flutter_app/features/map_search/models/map_suggest_item.dart';
-import 'package:studanky_flutter_app/features/map_search/models/map_suggest_query.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 
 /// Remote autocomplete backed by the Mapy.cz suggest API.
 class MapSuggestSearchSource implements MapSearchSource {
   MapSuggestSearchSource({
     required this.apiClient,
-    this.language = 'cs',
+    required this.languageCode,
     this.limit = 5,
-    this.types = const ['regional'], // For Adressess, Cities, Regions etc.
-  });
+  }) {
+    _language = MapSuggestLanguageBO.fromCode(languageCode);
+  }
 
   final MapSuggestApiClient apiClient;
-  final String language;
+  final String languageCode;
   final int limit;
-  final List<String> types;
 
+  static const List<MapSuggestTypeBO> types = <MapSuggestTypeBO>[
+    MapSuggestTypeBO.regionalMunicipality,
+    MapSuggestTypeBO.regionalRegion,
+    MapSuggestTypeBO.regionalAddress,
+    MapSuggestTypeBO.poi,
+  ];
+
+  final _logger = Logger('MapSuggestSearchSource');
   final Map<String, List<MapSearchResult>> _cache = {};
+  late MapSuggestLanguageBO _language;
 
   @override
   Future<List<MapSearchResult>> search(String query) async {
@@ -36,26 +45,26 @@ class MapSuggestSearchSource implements MapSearchSource {
 
     try {
       final suggest = await apiClient.fetch(
-        MapySuggestQuery(
+        MapySuggestQueryBO(
           query: trimmed,
-          language: language,
+          language: _language,
           limit: limit,
           types: types,
         ),
       );
 
       final results = suggest.items
-          .map((MapSuggestItem item) {
-            final name = item.name?.trim();
-            final lat = item.position?.lat;
-            final lon = item.position?.lon;
-            if (name == null || name.isEmpty || lat == null || lon == null) {
+          .map((MapSuggestItemBO item) {
+            final name = item.name.trim();
+            final lat = item.position.lat;
+            final lon = item.position.lon;
+            if (name.isEmpty) {
               return null;
             }
             return MapSearchResult(
               label: name,
+              description: item.description,
               position: LatLng(lat, lon),
-              raw: item.toJson(),
             );
           })
           .whereType<MapSearchResult>()
@@ -64,10 +73,10 @@ class MapSuggestSearchSource implements MapSearchSource {
       _cache[cacheKey] = results;
       return results;
     } on DioException catch (error, stackTrace) {
-      Logger().e(
-        '[MapSearchSource] Mapy suggest request failed for "$trimmed"',
-        error: error,
-        stackTrace: stackTrace,
+      _logger.shout(
+        'Mapy suggest request failed for "$trimmed"',
+        error,
+        stackTrace,
       );
       return const [];
     }

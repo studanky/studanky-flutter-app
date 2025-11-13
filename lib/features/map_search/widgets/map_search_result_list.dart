@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:studanky_flutter_app/features/map_search/models/map_search_result.dart';
+import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 
-// Will be changed later
 class MapSearchResultList extends StatelessWidget {
   const MapSearchResultList({
     super.key,
@@ -14,13 +14,12 @@ class MapSearchResultList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final height = (results.length * 56.0).clamp(0, 240).toDouble();
 
     return Material(
       elevation: 6,
       borderRadius: BorderRadius.circular(16),
-      color: theme.colorScheme.surface,
+      color: Styles.appColors.neutral200,
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: height,
@@ -33,7 +32,7 @@ class MapSearchResultList extends StatelessWidget {
           separatorBuilder: (_, _) => const Divider(height: 1),
           itemBuilder: (context, index) {
             final result = results[index];
-            final subtitle = result.raw?['description'] as String?;
+            final subtitle = result.description;
             return ListTile(
               title: Text(result.label),
               subtitle: (subtitle != null && subtitle.isNotEmpty)
