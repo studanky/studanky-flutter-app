@@ -1,23 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/entities/qr_scan_result.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/providers/qr_scan_controller_provider.dart';
 
-class QrScanState {
-  const QrScanState({
-    this.capture = const AsyncValue<QrScanResult?>.data(null),
-    this.isPaused = false,
-  });
+part 'qr_scan_provider.freezed.dart';
 
-  final AsyncValue<QrScanResult?> capture;
-  final bool isPaused;
+@freezed
+abstract class QrScanState with _$QrScanState {
+  const factory QrScanState({
+    @Default(AsyncValue<QrScanResult?>.data(null))
+    AsyncValue<QrScanResult?> capture,
+  }) = _QrScanState;
 
-  QrScanState copyWith({AsyncValue<QrScanResult?>? capture, bool? isPaused}) {
-    return QrScanState(
-      capture: capture ?? this.capture,
-      isPaused: isPaused ?? this.isPaused,
-    );
-  }
+  const QrScanState._();
+
+  bool get isAwaitingDetection =>
+      capture.maybeWhen(data: (result) => result == null, orElse: () => false);
 }
 
 final qrScanProvider =
@@ -33,7 +32,7 @@ class QrScanNotifier extends Notifier<QrScanState> {
 
   /// Handles camera detections by transforming the payload into domain state.
   Future<void> handleDetection(BarcodeCapture capture) async {
-    if (state.isPaused) {
+    if (!state.isAwaitingDetection) {
       return;
     }
 
@@ -49,21 +48,17 @@ class QrScanNotifier extends Notifier<QrScanState> {
           const FormatException('QR kód neobsahuje platná data'),
           StackTrace.current,
         ),
-        isPaused: true,
       );
       return;
     }
 
-    state = state.copyWith(capture: AsyncValue.data(result), isPaused: true);
+    state = state.copyWith(capture: AsyncValue.data(result));
   }
 
   /// Resumes the live camera feed and clears the previously scanned payload.
   Future<void> resumeScanning() async {
     await _controller.start();
-    state = state.copyWith(
-      capture: const AsyncValue<QrScanResult?>.data(null),
-      isPaused: false,
-    );
+    state = state.copyWith(capture: const AsyncValue<QrScanResult?>.data(null));
   }
 
   QrScanResult? _mapCapture(BarcodeCapture capture) {
