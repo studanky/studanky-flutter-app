@@ -21,6 +21,8 @@
         "build",
         "ipa",
         "--verbose",
+        "--obfuscate",
+        "--split-debug-info=build/symbols",
         "--dart-define-from-file=env_vars.json"
       ]
     },
@@ -34,6 +36,8 @@
         "build",
         "apk",
         "--verbose",
+        "--obfuscate",
+        "--split-debug-info=build/symbols",
         "--dart-define-from-file=env_vars.json"
       ]
     }
