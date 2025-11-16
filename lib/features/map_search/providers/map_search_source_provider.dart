@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:studanky_flutter_app/core/app_constants.dart';
+import 'package:studanky_flutter_app/core/env.dart';
 import 'package:studanky_flutter_app/features/map_search/constants/map_search_constants.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
@@ -24,7 +24,7 @@ final mapSearchSourceProvider = Provider.family<MapSearchSource, String>((
   ref,
   languageCode,
 ) {
-  const apiKey = AppConstants.mapyComApiKey;
+  final apiKey = Env.mapyComApiKey;
   if (apiKey.isEmpty) {
     throw StateError(
       'Map search requires a Mapy.cz API key. '
