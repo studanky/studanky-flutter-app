@@ -10,36 +10,6 @@
         "--verbose",
         "--dart-define-from-file=env_vars.json"
       ]
-    },
-    {
-      "name": "Build IPA (verbose)",
-      "request": "launch",
-      "type": "dart",
-      "customTool": "flutter",
-      "customToolReplacesArgs": 1,
-      "toolArgs": [
-        "build",
-        "ipa",
-        "--verbose",
-        "--obfuscate",
-        "--split-debug-info=build/symbols",
-        "--dart-define-from-file=env_vars.json"
-      ]
-    },
-    {
-      "name": "Build APK (verbose)",
-      "request": "launch",
-      "type": "dart",
-      "customTool": "flutter",
-      "customToolReplacesArgs": 1,
-      "toolArgs": [
-        "build",
-        "apk",
-        "--verbose",
-        "--obfuscate",
-        "--split-debug-info=build/symbols",
-        "--dart-define-from-file=env_vars.json"
-      ]
     }
   ]
 }

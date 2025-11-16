@@ -10,6 +10,13 @@ Create `env_vars.json` from the provided template before running builds:
 
 When running or building manually, include `--dart-define-from-file=env_vars.json`, e.g. `flutter run --dart-define-from-file=env_vars.json`.
 
+## Build (manual)
+
+Use the provided env file and include obfuscation with split debug info:
+
+- Android APK: `flutter build apk --verbose --obfuscate --split-debug-info=build/symbols --dart-define-from-file=env_vars.json`
+- iOS IPA: `flutter build ipa --verbose --obfuscate --split-debug-info=build/symbols --dart-define-from-file=env_vars.json`
+
 ## build runner
 
 `dart run build_runner build --verbose --delete-conflicting-outputs`
