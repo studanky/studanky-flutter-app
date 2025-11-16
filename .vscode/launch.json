@@ -2,39 +2,40 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Flutter Run (verbose)",
+      "name": "Run (verbose)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "toolArgs": ["--verbose"]
+      "toolArgs": [
+        "--verbose",
+        "--dart-define-from-file=env_vars.json"
+      ]
+    },
+    {
+      "name": "Build IPA (verbose)",
+      "request": "launch",
+      "type": "dart",
+      "customTool": "flutter",
+      "customToolReplacesArgs": 1,
+      "toolArgs": [
+        "build",
+        "ipa",
+        "--verbose",
+        "--dart-define-from-file=env_vars.json"
+      ]
+    },
+    {
+      "name": "Build APK (verbose)",
+      "request": "launch",
+      "type": "dart",
+      "customTool": "flutter",
+      "customToolReplacesArgs": 1,
+      "toolArgs": [
+        "build",
+        "apk",
+        "--verbose",
+        "--dart-define-from-file=env_vars.json"
+      ]
     }
   ]
 }
-
-// {
-//   "version": "0.2.0",
-//   "configurations": [
-//     {
-//       "name": "dev",
-//       "request": "launch",
-//       "type": "dart",
-//       "program": "lib/main_dev.dart",
-//       "args": [
-//         "--flavor",
-//         "dev",
-//         "--verbose"
-//       ]
-//     },
-//     {
-//       "name": "prod",
-//       "request": "launch",
-//       "type": "dart",
-//       "program": "lib/main_prod.dart",
-//       "args": [
-//         "--flavor",
-//         "prod",
-//         "--verbose"
-//       ]
-//     }
-//   ]
-// }
