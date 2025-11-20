@@ -12,12 +12,24 @@ MapSuggestItemBO _$MapSuggestItemBOFromJson(Map<String, dynamic> json) =>
       position: MapSuggestPositionBO.fromJson(
         json['position'] as Map<String, dynamic>,
       ),
-      description: json['description'] as String?,
+      type: $enumDecode(_$MapSuggestItemTypeBoEnumMap, json['type']),
     );
 
 Map<String, dynamic> _$MapSuggestItemBOToJson(MapSuggestItemBO instance) =>
     <String, dynamic>{
       'name': instance.name,
       'position': instance.position.toJson(),
-      'description': instance.description,
+      'type': _$MapSuggestItemTypeBoEnumMap[instance.type]!,
     };
+
+const _$MapSuggestItemTypeBoEnumMap = {
+  MapSuggestItemTypeBo.regional: 'regional',
+  MapSuggestItemTypeBo.regionalCountry: 'regional.country',
+  MapSuggestItemTypeBo.regionalRegion: 'regional.region',
+  MapSuggestItemTypeBo.regionalMunicipality: 'regional.municipality',
+  MapSuggestItemTypeBo.regionalMunicipalityPart: 'regional.municipality_part',
+  MapSuggestItemTypeBo.regionalStreet: 'regional.street',
+  MapSuggestItemTypeBo.regionalAddress: 'regional.address',
+  MapSuggestItemTypeBo.poi: 'poi',
+  MapSuggestItemTypeBo.coordinate: 'coordinate',
+};

@@ -2,10 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_item_bo.dart';
+import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_item_type_bo.dart';
 import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_query_bo.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
 
 /// Remote autocomplete backed by the Mapy.cz suggest API.
 class MapSuggestSearchSource implements MapSearchSource {
@@ -63,8 +65,8 @@ class MapSuggestSearchSource implements MapSearchSource {
             }
             return MapSearchResult(
               label: name,
-              description: item.description,
               position: LatLng(lat, lon),
+              type: _mapType(item.type),
             );
           })
           .whereType<MapSearchResult>()
@@ -79,6 +81,29 @@ class MapSuggestSearchSource implements MapSearchSource {
         stackTrace,
       );
       return const [];
+    }
+  }
+
+  static MapSearchResultType _mapType(MapSuggestItemTypeBo typeBo) {
+    switch (typeBo) {
+      case MapSuggestItemTypeBo.regional:
+        return MapSearchResultType.regional;
+      case MapSuggestItemTypeBo.regionalCountry:
+        return MapSearchResultType.regionalCountry;
+      case MapSuggestItemTypeBo.regionalRegion:
+        return MapSearchResultType.regionalRegion;
+      case MapSuggestItemTypeBo.regionalMunicipality:
+        return MapSearchResultType.regionalMunicipality;
+      case MapSuggestItemTypeBo.regionalMunicipalityPart:
+        return MapSearchResultType.regionalMunicipalityPart;
+      case MapSuggestItemTypeBo.regionalStreet:
+        return MapSearchResultType.regionalStreet;
+      case MapSuggestItemTypeBo.regionalAddress:
+        return MapSearchResultType.regionalAddress;
+      case MapSuggestItemTypeBo.poi:
+        return MapSearchResultType.poi;
+      case MapSuggestItemTypeBo.coordinate:
+        return MapSearchResultType.coordinate;
     }
   }
 }

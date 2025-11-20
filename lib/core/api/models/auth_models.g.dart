@@ -7,9 +7,9 @@ part of 'auth_models.dart';
 // **************************************************************************
 
 LoginRequest _$LoginRequestFromJson(Map<String, dynamic> json) => LoginRequest(
-      identifier: json['identifier'] as String,
-      password: json['password'] as String,
-    );
+  identifier: json['identifier'] as String,
+  password: json['password'] as String,
+);
 
 Map<String, dynamic> _$LoginRequestToJson(LoginRequest instance) =>
     <String, dynamic>{
@@ -32,64 +32,49 @@ Map<String, dynamic> _$RegisterRequestToJson(RegisterRequest instance) =>
     };
 
 AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(
-      jwt: json['jwt'] as String?,
-      user: UserBO.fromJson(json['user'] as Map<String, dynamic>),
-    );
+  jwt: json['jwt'] as String?,
+  user: UserBO.fromJson(json['user'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>
-    <String, dynamic>{
-      'jwt': instance.jwt,
-      'user': instance.user.toJson(),
-    };
+    <String, dynamic>{'jwt': instance.jwt, 'user': instance.user.toJson()};
 
 ForgotPasswordRequest _$ForgotPasswordRequestFromJson(
-        Map<String, dynamic> json) =>
-    ForgotPasswordRequest(
-      email: json['email'] as String,
-    );
+  Map<String, dynamic> json,
+) => ForgotPasswordRequest(email: json['email'] as String);
 
 Map<String, dynamic> _$ForgotPasswordRequestToJson(
-        ForgotPasswordRequest instance) =>
-    <String, dynamic>{
-      'email': instance.email,
-    };
+  ForgotPasswordRequest instance,
+) => <String, dynamic>{'email': instance.email};
 
 ResetPasswordRequest _$ResetPasswordRequestFromJson(
-        Map<String, dynamic> json) =>
-    ResetPasswordRequest(
-      code: json['code'] as String,
-      password: json['password'] as String,
-      passwordConfirmation: json['passwordConfirmation'] as String,
-    );
+  Map<String, dynamic> json,
+) => ResetPasswordRequest(
+  code: json['code'] as String,
+  password: json['password'] as String,
+  passwordConfirmation: json['passwordConfirmation'] as String,
+);
 
 Map<String, dynamic> _$ResetPasswordRequestToJson(
-        ResetPasswordRequest instance) =>
-    <String, dynamic>{
-      'code': instance.code,
-      'password': instance.password,
-      'passwordConfirmation': instance.passwordConfirmation,
-    };
+  ResetPasswordRequest instance,
+) => <String, dynamic>{
+  'code': instance.code,
+  'password': instance.password,
+  'passwordConfirmation': instance.passwordConfirmation,
+};
 
 SendEmailConfirmationRequest _$SendEmailConfirmationRequestFromJson(
-        Map<String, dynamic> json) =>
-    SendEmailConfirmationRequest(
-      email: json['email'] as String,
-    );
+  Map<String, dynamic> json,
+) => SendEmailConfirmationRequest(email: json['email'] as String);
 
 Map<String, dynamic> _$SendEmailConfirmationRequestToJson(
-        SendEmailConfirmationRequest instance) =>
-    <String, dynamic>{
-      'email': instance.email,
-    };
+  SendEmailConfirmationRequest instance,
+) => <String, dynamic>{'email': instance.email};
 
 GeneratePasswordRequest _$GeneratePasswordRequestFromJson(
-        Map<String, dynamic> json) =>
-    GeneratePasswordRequest(
-      email: json['email'] as String,
-    );
+  Map<String, dynamic> json,
+) => GeneratePasswordRequest(email: json['email'] as String);
 
 Map<String, dynamic> _$GeneratePasswordRequestToJson(
-        GeneratePasswordRequest instance) =>
-    <String, dynamic>{
-      'email': instance.email,
-    };
+  GeneratePasswordRequest instance,
+) => <String, dynamic>{'email': instance.email};
