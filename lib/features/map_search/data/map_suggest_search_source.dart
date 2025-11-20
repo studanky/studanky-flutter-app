@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_item_bo.dart';
+import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_language_bo.dart';
 import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_query_bo.dart';
 import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_type_bo.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
@@ -15,9 +16,7 @@ class MapSuggestSearchSource implements MapSearchSource {
     required this.apiClient,
     required this.languageCode,
     this.limit = 5,
-  }) {
-    _language = MapSuggestLanguageBO.fromCode(languageCode);
-  }
+  });
 
   final MapSuggestApiClient apiClient;
   final String languageCode;
@@ -32,7 +31,6 @@ class MapSuggestSearchSource implements MapSearchSource {
 
   final _logger = Logger('MapSuggestSearchSource');
   final Map<String, List<MapSearchResult>> _cache = {};
-  late MapSuggestLanguageBO _language;
 
   @override
   Future<List<MapSearchResult>> search(String query) async {
@@ -49,7 +47,7 @@ class MapSuggestSearchSource implements MapSearchSource {
       final suggest = await apiClient.fetch(
         MapySuggestQueryBO(
           query: trimmed,
-          language: _language,
+          language: MapSuggestLanguageBO.fromCode(languageCode),
           limit: limit,
           types: types,
         ),

@@ -19,7 +19,7 @@ Map<String, dynamic> _$MapSuggestItemBOToJson(MapSuggestItemBO instance) =>
     <String, dynamic>{
       'name': instance.name,
       'position': instance.position.toJson(),
-      'type': _$MapSuggestTypeBOEnumMap[instance.type]!,
+      'type': instance.type.toJson(),
     };
 
 const _$MapSuggestTypeBOEnumMap = {

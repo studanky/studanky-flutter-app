@@ -21,8 +21,7 @@ enum MapSuggestTypeBO {
   @JsonValue('poi')
   poi,
   @JsonValue('coordinate')
-  coordinate,
-}
+  coordinate;
 
-String mapSuggestTypeBOToJson(MapSuggestTypeBO type) =>
-    _$MapSuggestTypeBOEnumMap[type]!;
+  String toJson() => _$MapSuggestTypeBOEnumMap[this]!;
+}
