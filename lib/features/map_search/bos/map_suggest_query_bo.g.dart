@@ -9,7 +9,7 @@ part of 'map_suggest_query_bo.dart';
 Map<String, dynamic> _$MapySuggestQueryBOToJson(MapySuggestQueryBO instance) =>
     <String, dynamic>{
       'query': instance.query,
-      'lang': MapySuggestQueryBO._languageToCode(instance.language),
+      'lang': instance.language.toJson(),
       'limit': instance.limit,
       'type': MapySuggestQueryBO._typesToCsv(instance.types),
     };

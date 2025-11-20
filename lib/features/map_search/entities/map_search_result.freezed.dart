@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MapSearchResult {
 
- String get label; LatLng get position; String? get description;
+ String get label; LatLng get position; MapSearchResultType get type;
 /// Create a copy of MapSearchResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $MapSearchResultCopyWith<MapSearchResult> get copyWith => _$MapSearchResultCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.description, description) || other.description == description));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,label,position,description);
+int get hashCode => Object.hash(runtimeType,label,position,type);
 
 @override
 String toString() {
-  return 'MapSearchResult(label: $label, position: $position, description: $description)';
+  return 'MapSearchResult(label: $label, position: $position, type: $type)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $MapSearchResultCopyWith<$Res>  {
   factory $MapSearchResultCopyWith(MapSearchResult value, $Res Function(MapSearchResult) _then) = _$MapSearchResultCopyWithImpl;
 @useResult
 $Res call({
- String label, LatLng position, String? description
+ String label, LatLng position, MapSearchResultType type
 });
 
 
@@ -62,12 +62,12 @@ class _$MapSearchResultCopyWithImpl<$Res>
 
 /// Create a copy of MapSearchResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? position = null,Object? description = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? position = null,Object? type = null,}) {
   return _then(_self.copyWith(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
-as LatLng,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String?,
+as LatLng,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as MapSearchResultType,
   ));
 }
 
@@ -152,10 +152,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  LatLng position,  String? description)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  LatLng position,  MapSearchResultType type)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MapSearchResult() when $default != null:
-return $default(_that.label,_that.position,_that.description);case _:
+return $default(_that.label,_that.position,_that.type);case _:
   return orElse();
 
 }
@@ -173,10 +173,10 @@ return $default(_that.label,_that.position,_that.description);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  LatLng position,  String? description)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  LatLng position,  MapSearchResultType type)  $default,) {final _that = this;
 switch (_that) {
 case _MapSearchResult():
-return $default(_that.label,_that.position,_that.description);case _:
+return $default(_that.label,_that.position,_that.type);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +193,10 @@ return $default(_that.label,_that.position,_that.description);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  LatLng position,  String? description)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  LatLng position,  MapSearchResultType type)?  $default,) {final _that = this;
 switch (_that) {
 case _MapSearchResult() when $default != null:
-return $default(_that.label,_that.position,_that.description);case _:
+return $default(_that.label,_that.position,_that.type);case _:
   return null;
 
 }
@@ -208,12 +208,12 @@ return $default(_that.label,_that.position,_that.description);case _:
 
 
 class _MapSearchResult implements MapSearchResult {
-  const _MapSearchResult({required this.label, required this.position, this.description});
+  const _MapSearchResult({required this.label, required this.position, required this.type});
   
 
 @override final  String label;
 @override final  LatLng position;
-@override final  String? description;
+@override final  MapSearchResultType type;
 
 /// Create a copy of MapSearchResult
 /// with the given fields replaced by the non-null parameter values.
@@ -225,16 +225,16 @@ _$MapSearchResultCopyWith<_MapSearchResult> get copyWith => __$MapSearchResultCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.description, description) || other.description == description));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,label,position,description);
+int get hashCode => Object.hash(runtimeType,label,position,type);
 
 @override
 String toString() {
-  return 'MapSearchResult(label: $label, position: $position, description: $description)';
+  return 'MapSearchResult(label: $label, position: $position, type: $type)';
 }
 
 
@@ -245,7 +245,7 @@ abstract mixin class _$MapSearchResultCopyWith<$Res> implements $MapSearchResult
   factory _$MapSearchResultCopyWith(_MapSearchResult value, $Res Function(_MapSearchResult) _then) = __$MapSearchResultCopyWithImpl;
 @override @useResult
 $Res call({
- String label, LatLng position, String? description
+ String label, LatLng position, MapSearchResultType type
 });
 
 
@@ -262,12 +262,12 @@ class __$MapSearchResultCopyWithImpl<$Res>
 
 /// Create a copy of MapSearchResult
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? position = null,Object? description = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? position = null,Object? type = null,}) {
   return _then(_MapSearchResult(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
-as LatLng,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String?,
+as LatLng,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as MapSearchResultType,
   ));
 }
 

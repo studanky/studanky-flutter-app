@@ -2,10 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_item_bo.dart';
+import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_language_bo.dart';
 import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_query_bo.dart';
+import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_type_bo.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
 
 /// Remote autocomplete backed by the Mapy.cz suggest API.
 class MapSuggestSearchSource implements MapSearchSource {
@@ -13,9 +16,7 @@ class MapSuggestSearchSource implements MapSearchSource {
     required this.apiClient,
     required this.languageCode,
     this.limit = 5,
-  }) {
-    _language = MapSuggestLanguageBO.fromCode(languageCode);
-  }
+  });
 
   final MapSuggestApiClient apiClient;
   final String languageCode;
@@ -30,7 +31,6 @@ class MapSuggestSearchSource implements MapSearchSource {
 
   final _logger = Logger('MapSuggestSearchSource');
   final Map<String, List<MapSearchResult>> _cache = {};
-  late MapSuggestLanguageBO _language;
 
   @override
   Future<List<MapSearchResult>> search(String query) async {
@@ -47,7 +47,7 @@ class MapSuggestSearchSource implements MapSearchSource {
       final suggest = await apiClient.fetch(
         MapySuggestQueryBO(
           query: trimmed,
-          language: _language,
+          language: MapSuggestLanguageBO.fromCode(languageCode),
           limit: limit,
           types: types,
         ),
@@ -63,8 +63,8 @@ class MapSuggestSearchSource implements MapSearchSource {
             }
             return MapSearchResult(
               label: name,
-              description: item.description,
               position: LatLng(lat, lon),
+              type: _mapType(item.type),
             );
           })
           .whereType<MapSearchResult>()
@@ -79,6 +79,29 @@ class MapSuggestSearchSource implements MapSearchSource {
         stackTrace,
       );
       return const [];
+    }
+  }
+
+  static MapSearchResultType _mapType(MapSuggestTypeBO typeBo) {
+    switch (typeBo) {
+      case MapSuggestTypeBO.regional:
+        return MapSearchResultType.regional;
+      case MapSuggestTypeBO.regionalCountry:
+        return MapSearchResultType.regionalCountry;
+      case MapSuggestTypeBO.regionalRegion:
+        return MapSearchResultType.regionalRegion;
+      case MapSuggestTypeBO.regionalMunicipality:
+        return MapSearchResultType.regionalMunicipality;
+      case MapSuggestTypeBO.regionalMunicipalityPart:
+        return MapSearchResultType.regionalMunicipalityPart;
+      case MapSuggestTypeBO.regionalStreet:
+        return MapSearchResultType.regionalStreet;
+      case MapSuggestTypeBO.regionalAddress:
+        return MapSearchResultType.regionalAddress;
+      case MapSuggestTypeBO.poi:
+        return MapSearchResultType.poi;
+      case MapSuggestTypeBO.coordinate:
+        return MapSearchResultType.coordinate;
     }
   }
 }

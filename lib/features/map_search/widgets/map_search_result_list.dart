@@ -32,12 +32,10 @@ class MapSearchResultList extends StatelessWidget {
           separatorBuilder: (_, _) => const Divider(height: 1),
           itemBuilder: (context, index) {
             final result = results[index];
-            final subtitle = result.description;
+            // TODO: Use type
+            // final type = result.type;
             return ListTile(
               title: Text(result.label),
-              subtitle: (subtitle != null && subtitle.isNotEmpty)
-                  ? Text(subtitle)
-                  : null,
               onTap: () => onTap(result),
             );
           },
