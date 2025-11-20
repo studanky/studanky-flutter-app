@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_item_type_bo.dart';
 import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_position_bo.dart';
+import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_type_bo.dart';
 
 part 'map_suggest_item_bo.g.dart';
 
@@ -17,7 +17,7 @@ class MapSuggestItemBO {
 
   final String name;
   final MapSuggestPositionBO position;
-  final MapSuggestItemTypeBo type;
+  final MapSuggestTypeBO type;
 
   Map<String, dynamic> toJson() => _$MapSuggestItemBOToJson(this);
 }

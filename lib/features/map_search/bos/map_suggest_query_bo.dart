@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_type_bo.dart';
 
 part 'map_suggest_query_bo.g.dart';
 
@@ -33,7 +34,7 @@ class MapySuggestQueryBO {
 
   static String _languageToCode(MapSuggestLanguageBO language) => language.code;
   static String _typesToCsv(List<MapSuggestTypeBO> values) =>
-      values.map((type) => type.code).join(',');
+      values.map(mapSuggestTypeBOToJson).join(',');
 }
 
 enum MapSuggestLanguageBO {
@@ -48,22 +49,6 @@ enum MapSuggestLanguageBO {
       orElse: () => MapSuggestLanguageBO.czech,
     );
   }
-
-  final String code;
-}
-
-enum MapSuggestTypeBO {
-  regional('regional'),
-  regionalCountry('regional.country'),
-  regionalRegion('regional.region'),
-  regionalMunicipality('regional.municipality'),
-  regionalMunicipalityPart('regional.municipality_part'),
-  regionalStreet('regional.street'),
-  regionalAddress('regional.address'),
-  poi('poi'),
-  coordinate('coordinate');
-
-  const MapSuggestTypeBO(this.code);
 
   final String code;
 }
