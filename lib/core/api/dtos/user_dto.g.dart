@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_bo.dart';
+part of 'user_dto.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserBO _$UserBOFromJson(Map<String, dynamic> json) => UserBO(
+UserDto _$UserDtoFromJson(Map<String, dynamic> json) => UserDto(
   id: (json['id'] as num).toInt(),
   username: json['username'] as String,
   email: json['email'] as String,
@@ -14,7 +14,7 @@ UserBO _$UserBOFromJson(Map<String, dynamic> json) => UserBO(
   blocked: json['blocked'] as bool,
 );
 
-Map<String, dynamic> _$UserBOToJson(UserBO instance) => <String, dynamic>{
+Map<String, dynamic> _$UserDtoToJson(UserDto instance) => <String, dynamic>{
   'id': instance.id,
   'username': instance.username,
   'email': instance.email,

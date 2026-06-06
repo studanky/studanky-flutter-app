@@ -17,10 +17,10 @@ class ExampleFeatureRepositoryImpl implements ExampleFeatureRepository {
         ? null
         : <String, dynamic>{'q': query};
 
-    final bosList = await _apiService.fetchItems(
+    final dtosList = await _apiService.fetchItems(
       queryParameters: queryParameters,
     );
 
-    return bosList.map(ExampleItemMapper.fromBO).toList(growable: false);
+    return dtosList.map(ExampleItemMapper.fromDto).toList(growable: false);
   }
 }

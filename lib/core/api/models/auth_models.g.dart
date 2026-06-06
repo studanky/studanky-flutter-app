@@ -33,7 +33,7 @@ Map<String, dynamic> _$RegisterRequestToJson(RegisterRequest instance) =>
 
 AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(
   jwt: json['jwt'] as String?,
-  user: UserBO.fromJson(json['user'] as Map<String, dynamic>),
+  user: UserDto.fromJson(json['user'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>

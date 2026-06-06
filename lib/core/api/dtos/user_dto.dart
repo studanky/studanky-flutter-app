@@ -1,10 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'user_bo.g.dart';
+part 'user_dto.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class UserBO {
-  UserBO({
+class UserDto {
+  UserDto({
     required this.id,
     required this.username,
     required this.email,
@@ -12,7 +12,8 @@ class UserBO {
     required this.blocked,
   });
 
-  factory UserBO.fromJson(Map<String, dynamic> json) => _$UserBOFromJson(json);
+  factory UserDto.fromJson(Map<String, dynamic> json) =>
+      _$UserDtoFromJson(json);
 
   final int id;
   final String username;
@@ -20,5 +21,5 @@ class UserBO {
   final bool confirmed;
   final bool blocked;
 
-  Map<String, dynamic> toJson() => _$UserBOToJson(this);
+  Map<String, dynamic> toJson() => _$UserDtoToJson(this);
 }

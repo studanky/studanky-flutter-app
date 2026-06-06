@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'map_suggest_type_bo.g.dart';
+part 'map_suggest_type_dto.g.dart';
 
 @JsonEnum(alwaysCreate: true)
-enum MapSuggestTypeBO {
+enum MapSuggestTypeDto {
   @JsonValue('regional')
   regional,
   @JsonValue('regional.country')
@@ -23,5 +23,5 @@ enum MapSuggestTypeBO {
   @JsonValue('coordinate')
   coordinate;
 
-  String toJson() => _$MapSuggestTypeBOEnumMap[this]!;
+  String toJson() => _$MapSuggestTypeDtoEnumMap[this]!;
 }

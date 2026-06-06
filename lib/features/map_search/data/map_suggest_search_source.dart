@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
-import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_item_bo.dart';
-import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_language_bo.dart';
-import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_query_bo.dart';
-import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_type_bo.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
+import 'package:studanky_flutter_app/features/map_search/dtos/map_suggest_item_dto.dart';
+import 'package:studanky_flutter_app/features/map_search/dtos/map_suggest_language_dto.dart';
+import 'package:studanky_flutter_app/features/map_search/dtos/map_suggest_query_dto.dart';
+import 'package:studanky_flutter_app/features/map_search/dtos/map_suggest_type_dto.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
 
@@ -22,11 +22,11 @@ class MapSuggestSearchSource implements MapSearchSource {
   final String languageCode;
   final int limit;
 
-  static const List<MapSuggestTypeBO> types = <MapSuggestTypeBO>[
-    MapSuggestTypeBO.regionalMunicipality,
-    MapSuggestTypeBO.regionalRegion,
-    MapSuggestTypeBO.regionalAddress,
-    MapSuggestTypeBO.poi,
+  static const List<MapSuggestTypeDto> types = <MapSuggestTypeDto>[
+    MapSuggestTypeDto.regionalMunicipality,
+    MapSuggestTypeDto.regionalRegion,
+    MapSuggestTypeDto.regionalAddress,
+    MapSuggestTypeDto.poi,
   ];
 
   final _logger = Logger('MapSuggestSearchSource');
@@ -45,16 +45,16 @@ class MapSuggestSearchSource implements MapSearchSource {
 
     try {
       final suggest = await apiClient.fetch(
-        MapySuggestQueryBO(
+        MapySuggestQueryDto(
           query: trimmed,
-          language: MapSuggestLanguageBO.fromCode(languageCode),
+          language: MapSuggestLanguageDto.fromCode(languageCode),
           limit: limit,
           types: types,
         ),
       );
 
       final results = suggest.items
-          .map((MapSuggestItemBO item) {
+          .map((MapSuggestItemDto item) {
             final name = item.name.trim();
             final lat = item.position.lat;
             final lon = item.position.lon;
@@ -82,25 +82,25 @@ class MapSuggestSearchSource implements MapSearchSource {
     }
   }
 
-  static MapSearchResultType _mapType(MapSuggestTypeBO typeBo) {
-    switch (typeBo) {
-      case MapSuggestTypeBO.regional:
+  static MapSearchResultType _mapType(MapSuggestTypeDto typeDto) {
+    switch (typeDto) {
+      case MapSuggestTypeDto.regional:
         return MapSearchResultType.regional;
-      case MapSuggestTypeBO.regionalCountry:
+      case MapSuggestTypeDto.regionalCountry:
         return MapSearchResultType.regionalCountry;
-      case MapSuggestTypeBO.regionalRegion:
+      case MapSuggestTypeDto.regionalRegion:
         return MapSearchResultType.regionalRegion;
-      case MapSuggestTypeBO.regionalMunicipality:
+      case MapSuggestTypeDto.regionalMunicipality:
         return MapSearchResultType.regionalMunicipality;
-      case MapSuggestTypeBO.regionalMunicipalityPart:
+      case MapSuggestTypeDto.regionalMunicipalityPart:
         return MapSearchResultType.regionalMunicipalityPart;
-      case MapSuggestTypeBO.regionalStreet:
+      case MapSuggestTypeDto.regionalStreet:
         return MapSearchResultType.regionalStreet;
-      case MapSuggestTypeBO.regionalAddress:
+      case MapSuggestTypeDto.regionalAddress:
         return MapSearchResultType.regionalAddress;
-      case MapSuggestTypeBO.poi:
+      case MapSuggestTypeDto.poi:
         return MapSearchResultType.poi;
-      case MapSuggestTypeBO.coordinate:
+      case MapSuggestTypeDto.coordinate:
         return MapSearchResultType.coordinate;
     }
   }

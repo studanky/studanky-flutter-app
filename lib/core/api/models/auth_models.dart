@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:studanky_flutter_app/core/api/bos/user_bo.dart';
+import 'package:studanky_flutter_app/core/api/dtos/user_dto.dart';
 
 part 'auth_models.g.dart';
 
@@ -42,7 +42,7 @@ class AuthResponse {
       _$AuthResponseFromJson(json);
 
   final String? jwt; // JWT is optional for registration with email verification
-  final UserBO user;
+  final UserDto user;
 
   Map<String, dynamic> toJson() => _$AuthResponseToJson(this);
 }

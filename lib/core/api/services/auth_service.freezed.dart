@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthenticationState {
 
- bool get isLoading; bool get isUserAuthenticated; bool get isEmailVerified; bool get isInitialized; UserBO? get user; String? get error;
+ bool get isLoading; bool get isUserAuthenticated; bool get isEmailVerified; bool get isInitialized; UserDto? get user; String? get error;
 /// Create a copy of AuthenticationState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $AuthenticationStateCopyWith<$Res>  {
   factory $AuthenticationStateCopyWith(AuthenticationState value, $Res Function(AuthenticationState) _then) = _$AuthenticationStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, bool isUserAuthenticated, bool isEmailVerified, bool isInitialized, UserBO? user, String? error
+ bool isLoading, bool isUserAuthenticated, bool isEmailVerified, bool isInitialized, UserDto? user, String? error
 });
 
 
@@ -69,7 +69,7 @@ as bool,isUserAuthenticated: null == isUserAuthenticated ? _self.isUserAuthentic
 as bool,isEmailVerified: null == isEmailVerified ? _self.isEmailVerified : isEmailVerified // ignore: cast_nullable_to_non_nullable
 as bool,isInitialized: null == isInitialized ? _self.isInitialized : isInitialized // ignore: cast_nullable_to_non_nullable
 as bool,user: freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
-as UserBO?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as UserDto?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -155,7 +155,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  bool isUserAuthenticated,  bool isEmailVerified,  bool isInitialized,  UserBO? user,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  bool isUserAuthenticated,  bool isEmailVerified,  bool isInitialized,  UserDto? user,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthenticationState() when $default != null:
 return $default(_that.isLoading,_that.isUserAuthenticated,_that.isEmailVerified,_that.isInitialized,_that.user,_that.error);case _:
@@ -176,7 +176,7 @@ return $default(_that.isLoading,_that.isUserAuthenticated,_that.isEmailVerified,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  bool isUserAuthenticated,  bool isEmailVerified,  bool isInitialized,  UserBO? user,  String? error)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  bool isUserAuthenticated,  bool isEmailVerified,  bool isInitialized,  UserDto? user,  String? error)  $default,) {final _that = this;
 switch (_that) {
 case _AuthenticationState():
 return $default(_that.isLoading,_that.isUserAuthenticated,_that.isEmailVerified,_that.isInitialized,_that.user,_that.error);case _:
@@ -196,7 +196,7 @@ return $default(_that.isLoading,_that.isUserAuthenticated,_that.isEmailVerified,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  bool isUserAuthenticated,  bool isEmailVerified,  bool isInitialized,  UserBO? user,  String? error)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  bool isUserAuthenticated,  bool isEmailVerified,  bool isInitialized,  UserDto? user,  String? error)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthenticationState() when $default != null:
 return $default(_that.isLoading,_that.isUserAuthenticated,_that.isEmailVerified,_that.isInitialized,_that.user,_that.error);case _:
@@ -218,7 +218,7 @@ class _AuthenticationState extends AuthenticationState {
 @override@JsonKey() final  bool isUserAuthenticated;
 @override@JsonKey() final  bool isEmailVerified;
 @override@JsonKey() final  bool isInitialized;
-@override final  UserBO? user;
+@override final  UserDto? user;
 @override final  String? error;
 
 /// Create a copy of AuthenticationState
@@ -251,7 +251,7 @@ abstract mixin class _$AuthenticationStateCopyWith<$Res> implements $Authenticat
   factory _$AuthenticationStateCopyWith(_AuthenticationState value, $Res Function(_AuthenticationState) _then) = __$AuthenticationStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, bool isUserAuthenticated, bool isEmailVerified, bool isInitialized, UserBO? user, String? error
+ bool isLoading, bool isUserAuthenticated, bool isEmailVerified, bool isInitialized, UserDto? user, String? error
 });
 
 
@@ -275,7 +275,7 @@ as bool,isUserAuthenticated: null == isUserAuthenticated ? _self.isUserAuthentic
 as bool,isEmailVerified: null == isEmailVerified ? _self.isEmailVerified : isEmailVerified // ignore: cast_nullable_to_non_nullable
 as bool,isInitialized: null == isInitialized ? _self.isInitialized : isInitialized // ignore: cast_nullable_to_non_nullable
 as bool,user: freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
-as UserBO?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as UserDto?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

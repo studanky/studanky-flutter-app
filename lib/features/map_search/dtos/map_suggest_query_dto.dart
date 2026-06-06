@@ -1,12 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_language_bo.dart';
-import 'package:studanky_flutter_app/features/map_search/bos/map_suggest_type_bo.dart';
+import 'package:studanky_flutter_app/features/map_search/dtos/map_suggest_language_dto.dart';
+import 'package:studanky_flutter_app/features/map_search/dtos/map_suggest_type_dto.dart';
 
-part 'map_suggest_query_bo.g.dart';
+part 'map_suggest_query_dto.g.dart';
 
 @JsonSerializable(createFactory: false, explicitToJson: true)
-class MapySuggestQueryBO {
-  const MapySuggestQueryBO({
+class MapySuggestQueryDto {
+  const MapySuggestQueryDto({
     required this.query,
     required this.language,
     required this.limit,
@@ -18,21 +18,21 @@ class MapySuggestQueryBO {
 
   /// Language of the suggestions.
   @JsonKey(name: 'lang')
-  final MapSuggestLanguageBO language;
+  final MapSuggestLanguageDto language;
 
   /// Number of suggestions requested.
   final int limit;
 
   /// Mapy.cz expects `type=a,b,c` instead of an array.
   @JsonKey(name: 'type', toJson: _typesToCsv)
-  final List<MapSuggestTypeBO> types;
+  final List<MapSuggestTypeDto> types;
 
-  Map<String, dynamic> toJson() => _$MapySuggestQueryBOToJson(this);
+  Map<String, dynamic> toJson() => _$MapySuggestQueryDtoToJson(this);
 
   Map<String, dynamic> toQueryParameters(String apiKey) {
     return <String, dynamic>{...toJson(), 'apikey': apiKey};
   }
 
-  static String _typesToCsv(List<MapSuggestTypeBO> values) =>
+  static String _typesToCsv(List<MapSuggestTypeDto> values) =>
       values.map((value) => value.toJson()).join(',');
 }

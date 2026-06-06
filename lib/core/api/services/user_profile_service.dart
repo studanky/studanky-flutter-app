@@ -6,11 +6,11 @@
 // class UserProfileService extends BaseApiService {
 //   UserProfileService(super.apiClient);
 
-//   Future<UserProfileBO> getUserProfile(int userId) async {
-//     final userProfile = await getById<UserProfileBO>(
+//   Future<UserProfileDto> getUserProfile(int userId) async {
+//     final userProfile = await getById<UserProfileDto>(
 //       ApiConfig.userProfileByUserEndpoint,
 //       userId,
-//       fromJson: UserProfileBO.fromJson,
+//       fromJson: UserProfileDto.fromJson,
 //     );
 
 //     return userProfile;

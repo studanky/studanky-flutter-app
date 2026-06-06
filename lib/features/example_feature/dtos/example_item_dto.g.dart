@@ -1,20 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'example_item_bo.dart';
+part of 'example_item_dto.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ExampleItemBO _$ExampleItemBOFromJson(Map<String, dynamic> json) =>
-    ExampleItemBO(
+ExampleItemDto _$ExampleItemDtoFromJson(Map<String, dynamic> json) =>
+    ExampleItemDto(
       id: json['id'] as String,
       title: json['title'] as String,
       body: json['body'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
 
-Map<String, dynamic> _$ExampleItemBOToJson(ExampleItemBO instance) =>
+Map<String, dynamic> _$ExampleItemDtoToJson(ExampleItemDto instance) =>
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,

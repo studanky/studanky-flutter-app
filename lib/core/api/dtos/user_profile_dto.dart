@@ -1,10 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'user_profile_bo.g.dart';
+part 'user_profile_dto.g.dart';
 
 @JsonSerializable()
-class UserProfileBO {
-  UserProfileBO({
+class UserProfileDto {
+  UserProfileDto({
     required this.id,
     required this.documentId,
     required this.createdAt,
@@ -13,8 +13,8 @@ class UserProfileBO {
     required this.cowshedDocumentIds,
   });
 
-  factory UserProfileBO.fromJson(Map<String, dynamic> json) =>
-      _$UserProfileBOFromJson(json);
+  factory UserProfileDto.fromJson(Map<String, dynamic> json) =>
+      _$UserProfileDtoFromJson(json);
 
   final int id;
   final String documentId;
@@ -23,5 +23,5 @@ class UserProfileBO {
   final DateTime? publishedAt;
   final List<String> cowshedDocumentIds;
 
-  Map<String, dynamic> toJson() => _$UserProfileBOToJson(this);
+  Map<String, dynamic> toJson() => _$UserProfileDtoToJson(this);
 }

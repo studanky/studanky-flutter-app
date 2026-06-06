@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:studanky_flutter_app/core/api/bos/user_bo.dart';
 import 'package:studanky_flutter_app/core/api/clients/api_client.dart';
 import 'package:studanky_flutter_app/core/api/config/api_config.dart';
+import 'package:studanky_flutter_app/core/api/dtos/user_dto.dart';
 import 'package:studanky_flutter_app/core/api/exceptions/api_exceptions.dart';
 import 'package:studanky_flutter_app/core/api/models/auth_models.dart';
 
@@ -18,7 +18,7 @@ abstract class AuthenticationState with _$AuthenticationState {
     @Default(false) bool isUserAuthenticated,
     @Default(false) bool isEmailVerified,
     @Default(false) bool isInitialized,
-    UserBO? user,
+    UserDto? user,
     String? error,
   }) = _AuthenticationState;
 
@@ -148,9 +148,9 @@ class AuthService extends Notifier<AuthenticationState> {
     return authResponse;
   }
 
-  Future<UserBO> getCurrentUser() async {
+  Future<UserDto> getCurrentUser() async {
     final response = await _apiClient.get(ApiConfig.meEndpoint);
-    final user = UserBO.fromJson(response.data);
+    final user = UserDto.fromJson(response.data);
 
     // Update local state with fresh server data
     state = state.copyWith(user: user);
@@ -207,7 +207,7 @@ class AuthService extends Notifier<AuthenticationState> {
         // Load user data from storage first (needed for state logic)
         if (userJson != null) {
           try {
-            final user = UserBO.fromJson(jsonDecode(userJson));
+            final user = UserDto.fromJson(jsonDecode(userJson));
             state = state.copyWith(user: user);
           } catch (e) {
             // If user data is corrupted, clear everything
@@ -262,7 +262,7 @@ class AuthService extends Notifier<AuthenticationState> {
   }
 
   Future<void> _saveRegistrationData(
-    UserBO user,
+    UserDto user,
     String email,
     String password,
   ) async {

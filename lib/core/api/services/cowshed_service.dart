@@ -6,11 +6,11 @@
 // class CowshedService extends BaseApiService {
 //   CowshedService(super.apiClient);
 
-//   Future<List<CowshedBO>> getBulk(List<String> documentIds) async {
+//   Future<List<CowshedDto>> getBulk(List<String> documentIds) async {
 //     final documentIdsString = documentIds.join(',');
-//     return getList<CowshedBO>(
+//     return getList<CowshedDto>(
 //       ApiConfig.cowshedsBulkEndpoint(documentIdsString),
-//       fromJson: CowshedBO.fromJson,
+//       fromJson: CowshedDto.fromJson,
 //     );
 //   }
 // }

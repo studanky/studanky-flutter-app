@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_profile_bo.dart';
+part of 'user_profile_dto.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserProfileBO _$UserProfileBOFromJson(Map<String, dynamic> json) =>
-    UserProfileBO(
+UserProfileDto _$UserProfileDtoFromJson(Map<String, dynamic> json) =>
+    UserProfileDto(
       id: (json['id'] as num).toInt(),
       documentId: json['documentId'] as String,
       createdAt: json['createdAt'] == null
@@ -24,7 +24,7 @@ UserProfileBO _$UserProfileBOFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$UserProfileBOToJson(UserProfileBO instance) =>
+Map<String, dynamic> _$UserProfileDtoToJson(UserProfileDto instance) =>
     <String, dynamic>{
       'id': instance.id,
       'documentId': instance.documentId,
