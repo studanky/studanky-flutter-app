@@ -3,12 +3,14 @@ import 'dart:math' as math;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
-import 'package:studanky_flutter_app/features/map_page/entities/map_marker_entity.dart';
-import 'package:studanky_flutter_app/features/spring_getter/data/spring_source.dart';
-import 'package:studanky_flutter_app/features/spring_getter/entities/spring_bounds.dart';
-import 'package:studanky_flutter_app/features/spring_getter/entities/spring_entity.dart';
-import 'package:studanky_flutter_app/features/spring_getter/providers/spring_getter_provider.dart';
+import 'package:studanky_flutter_app/core/api/utils/api_result.dart';
+import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
+import 'package:studanky_flutter_app/features/springs/data/spring_repository.dart';
+import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
+import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
+import 'package:supercluster/supercluster.dart';
 
 part 'map_marker_provider.freezed.dart';
 
@@ -20,114 +22,165 @@ final mapMarkerProvider =
 @freezed
 abstract class MapMarkerState with _$MapMarkerState {
   const factory MapMarkerState({
-    @Default(AsyncValue<List<MapMarkerEntity>>.data(<MapMarkerEntity>[]))
-    AsyncValue<List<MapMarkerEntity>> markerResults,
-    @Default(<MapMarkerEntity>[]) List<MapMarkerEntity> customMarkers,
-    @Default(null) LatLngBounds? cachedBounds,
-    @Default(null) LatLngBounds? pendingBounds,
+    /// Loading/error of the background fetch. Items stay visible while a new
+    /// fetch runs, so this is a thin status channel, not the source of markers.
+    @Default(AsyncValue<void>.data(null)) AsyncValue<void> status,
+
+    /// Clustered, drawable items for the most recent camera.
+    @Default(<MapClusterItem>[]) List<MapClusterItem> items,
   }) = _MapMarkerState;
-
-  const MapMarkerState._();
-
-  List<MapMarkerEntity> get loadedMarkers =>
-      markerResults.value ?? const <MapMarkerEntity>[];
-
-  List<MapMarkerEntity> get visibleMarkers =>
-      List.unmodifiable(<MapMarkerEntity>[...loadedMarkers, ...customMarkers]);
 }
 
+/// Owns viewport fetching, an in-session marker cache and the supercluster
+/// index. Reclustering is synchronous and cheap (run on every camera change);
+/// network fetches are short-circuited by a cached-bounds check and coalesced
+/// by the caller debouncing camera events.
 class MapMarkerNotifier extends Notifier<MapMarkerState> {
-  SpringSource get _springSource => ref.read(springGetterProvider);
+  SpringRepository get _repository => ref.read(springRepositoryProvider);
 
-  static const double _boundsPaddingFraction = 0.2;
   final Logger _logger = Logger('MapMarkerNotifier');
+
+  /// Prefetch margin so small pans don't trigger a refetch.
+  static const double _boundsPaddingFraction = 0.2;
+
+  /// Pixel radius within which points merge, and the max zoom the index builds
+  /// to. Keep [_clusterMaxZoom] aligned with the map's max zoom.
+  static const int _clusterRadius = 80;
+  static const int _clusterMaxZoom = 18;
+
+  /// Session cache of every spring fetched so far, deduped by documentId.
+  final Map<String, SpringMarkerEntity> _springsById = {};
+  Supercluster<SpringMarkerEntity>? _index;
+
+  LatLngBounds? _cachedBounds;
+  LatLngBounds? _lastVisibleBounds;
+  double _lastZoom = 0;
+
+  bool _isFetching = false;
+  LatLngBounds? _pendingFetchBounds;
 
   @override
   MapMarkerState build() => const MapMarkerState();
 
-  Future<void> refreshVisibleBounds(LatLngBounds bounds) async {
-    final requestBounds = _expandBounds(bounds);
-    final cached = state.cachedBounds;
+  /// Call on map ready and after each (debounced) camera change. Reclusters
+  /// immediately from the cache, then fetches the area if it isn't covered yet.
+  Future<void> onCameraChanged(LatLngBounds visibleBounds, double zoom) async {
+    _lastVisibleBounds = visibleBounds;
+    _lastZoom = zoom;
+    _recomputeItems();
+    await _maybeFetch(visibleBounds);
+  }
+
+  void _recomputeItems() {
+    final index = _index;
+    final bounds = _lastVisibleBounds;
+    if (index == null || bounds == null) return;
+
+    final elements = index.search(
+      bounds.west,
+      bounds.south,
+      bounds.east,
+      bounds.north,
+      _lastZoom.round().clamp(0, _clusterMaxZoom),
+    );
+
+    state = state.copyWith(
+      items: elements
+          .map((element) => _toItem(index, element))
+          .toList(growable: false),
+    );
+  }
+
+  MapClusterItem _toItem(
+    Supercluster<SpringMarkerEntity> index,
+    LayerElement<SpringMarkerEntity> element,
+  ) {
+    return element.handle(
+      cluster: (cluster) => MapClusterItem.cluster(
+        position: LatLng(cluster.latitude, cluster.longitude),
+        count: cluster.childPointCount,
+        expansionZoom: _expansionZoomOf(index, cluster).toDouble(),
+      ),
+      point: (point) => MapClusterItem.spring(point.originalPoint),
+    );
+  }
+
+  int _expansionZoomOf(
+    Supercluster<SpringMarkerEntity> index,
+    LayerCluster<SpringMarkerEntity> cluster,
+  ) {
+    if (index is SuperclusterImmutable<SpringMarkerEntity> &&
+        cluster is ImmutableLayerCluster<SpringMarkerEntity>) {
+      return index.expansionZoomOf(cluster.id);
+    }
+    return (cluster.highestZoom + 1).clamp(0, _clusterMaxZoom);
+  }
+
+  Future<void> _maybeFetch(LatLngBounds visibleBounds) async {
+    final requestBounds = _expandBounds(visibleBounds);
+    final cached = _cachedBounds;
     if (cached != null && cached.containsBounds(requestBounds)) {
       return;
     }
 
-    state = state.copyWith(pendingBounds: requestBounds);
-
-    if (state.markerResults.isLoading) {
-      return;
-    }
-
+    _pendingFetchBounds = requestBounds;
+    if (_isFetching) return;
     await _drainPendingLoads();
   }
 
-  void addCustomMarker(MapMarkerEntity marker) {
-    state = state.copyWith(
-      customMarkers: <MapMarkerEntity>[...state.customMarkers, marker],
-    );
-  }
-
-  void clearCustomMarkers() {
-    if (state.customMarkers.isEmpty) {
-      return;
-    }
-    state = state.copyWith(customMarkers: const <MapMarkerEntity>[]);
-  }
-
   Future<void> _drainPendingLoads() async {
-    while (true) {
-      final pending = state.pendingBounds;
-      if (pending == null) {
-        break;
-      }
+    _isFetching = true;
+    try {
+      while (_pendingFetchBounds != null) {
+        final bounds = _pendingFetchBounds!;
+        _pendingFetchBounds = null;
 
-      state = state.copyWith(
-        pendingBounds: null,
-        markerResults: const AsyncValue<List<MapMarkerEntity>>.loading(),
-      );
+        state = state.copyWith(status: const AsyncValue<void>.loading());
 
-      try {
-        final fetched = await _fetchMarkers(pending);
-        state = state.copyWith(
-          markerResults: AsyncValue<List<MapMarkerEntity>>.data(
-            List.unmodifiable(fetched),
-          ),
-          cachedBounds: pending,
+        final result = await _repository.fetchMapMarkers(
+          _toSpringBounds(bounds),
         );
-      } catch (error, stackTrace) {
-        _logger.severe('Failed to load markers', error, stackTrace);
-        state = state.copyWith(
-          markerResults: AsyncValue<List<MapMarkerEntity>>.error(
-            error,
-            stackTrace,
-          ),
-        );
+
+        switch (result) {
+          case Success(:final data):
+            for (final spring in data) {
+              _springsById[spring.documentId] = spring;
+            }
+            _rebuildIndex();
+            _cachedBounds = bounds;
+            _recomputeItems();
+            state = state.copyWith(status: const AsyncValue<void>.data(null));
+          case Failure(:final exception):
+            _logger.severe('Failed to load springs', exception);
+            state = state.copyWith(
+              status: AsyncValue<void>.error(exception, StackTrace.current),
+            );
+        }
       }
+    } finally {
+      _isFetching = false;
     }
   }
 
-  Future<List<MapMarkerEntity>> _fetchMarkers(LatLngBounds bounds) async {
-    final springs = await _springSource.loadSprings(
-      SpringBounds(
-        north: bounds.north,
-        south: bounds.south,
-        east: bounds.east,
-        west: bounds.west,
-      ),
-    );
-    return _convertSprings(springs);
+  void _rebuildIndex() {
+    final index = SuperclusterImmutable<SpringMarkerEntity>(
+      getX: (spring) => spring.position.longitude,
+      getY: (spring) => spring.position.latitude,
+      maxZoom: _clusterMaxZoom,
+      radius: _clusterRadius,
+    )..load(_springsById.values.toList(growable: false));
+    _index = index;
   }
 
-  List<MapMarkerEntity> _convertSprings(List<SpringEntity> springs) {
-    return springs
-        .map((spring) => MapMarkerEntity(position: spring.position))
-        .toList(growable: false);
-  }
+  SpringBounds _toSpringBounds(LatLngBounds bounds) => SpringBounds(
+    north: bounds.north,
+    south: bounds.south,
+    east: bounds.east,
+    west: bounds.west,
+  );
 
   LatLngBounds _expandBounds(LatLngBounds bounds) {
-    if (_boundsPaddingFraction == 0) {
-      return bounds;
-    }
+    if (_boundsPaddingFraction == 0) return bounds;
 
     final latExtent = bounds.north - bounds.south;
     final lonExtent = bounds.longitudeWidth;

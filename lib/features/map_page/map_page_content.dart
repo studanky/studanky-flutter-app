@@ -6,12 +6,18 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:logging/logging.dart';
+import 'package:studanky_flutter_app/core/widgets/app_progress_indicator.dart';
 import 'package:studanky_flutter_app/features/map_page/constants/map_page_constants.dart';
+import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/map_marker_provider.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
+import 'package:studanky_flutter_app/features/map_page/widgets/cluster_marker.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
+import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
+import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 class MapPageContent extends ConsumerStatefulWidget {
@@ -27,13 +33,39 @@ class _MapPageContentState extends ConsumerState<MapPageContent> {
   static const LatLng _initialCenter = LatLng(49.5630, 15.9398);
   static const double _defaultZoom = 14.5;
 
+  /// Coalesce rapid pan/zoom events into one fetch once the map goes idle
+  /// (api-reference.md §3.1). Reclustering itself runs inside the notifier.
+  static const Duration _cameraDebounce = Duration(milliseconds: 300);
+
   final MapController _mapController = MapController();
+  final Logger _logger = Logger('MapPageContent');
+  Timer? _cameraDebounceTimer;
 
   MapMarkerNotifier get _markerNotifier => ref.read(mapMarkerProvider.notifier);
 
+  @override
+  void dispose() {
+    _cameraDebounceTimer?.cancel();
+    super.dispose();
+  }
+
   void _onMapReady() {
-    _refreshMarkersForBounds(_mapController.camera.visibleBounds);
+    // First load is immediate; subsequent camera changes are debounced.
+    _emitCamera();
     unawaited(_centerOnUserLocation());
+  }
+
+  void _onMapEvent(MapEvent event) {
+    _cameraDebounceTimer?.cancel();
+    _cameraDebounceTimer = Timer(_cameraDebounce, _emitCamera);
+  }
+
+  void _emitCamera() {
+    if (!mounted) return;
+    final camera = _mapController.camera;
+    unawaited(
+      _markerNotifier.onCameraChanged(camera.visibleBounds, camera.zoom),
+    );
   }
 
   /// Requests permission and centers the map on the user's first fix. On
@@ -81,8 +113,16 @@ class _MapPageContentState extends ConsumerState<MapPageContent> {
     );
   }
 
-  void _refreshMarkersForBounds(LatLngBounds bounds) {
-    unawaited(_markerNotifier.refreshVisibleBounds(bounds));
+  void _onClusterTap(Cluster cluster) {
+    // Zoom to the level at which the cluster breaks apart, centred on it. The
+    // resulting map event re-triggers clustering for the new viewport.
+    _mapController.move(cluster.position, cluster.expansionZoom);
+  }
+
+  void _onSpringTap(SpringMarkerEntity spring) {
+    // Out of scope for this feature: the spring detail screen is a separate
+    // feature. Hook kept so wiring navigation later is a one-line change.
+    _logger.fine('Spring tapped: ${spring.documentId} (${spring.name})');
   }
 
   void _onSearchResultSelected(MapSearchResult result) {
@@ -97,9 +137,23 @@ class _MapPageContentState extends ConsumerState<MapPageContent> {
   @override
   Widget build(BuildContext context) {
     final markerState = ref.watch(mapMarkerProvider);
-    final markers = markerState.visibleMarkers
-        .map(buildMarker)
-        .toList(growable: false);
+    final config = ref.watch(platformConfigControllerProvider);
+
+    final markers = <Marker>[
+      for (final item in markerState.items)
+        switch (item) {
+          Cluster() => buildClusterMarker(
+            item,
+            onTap: () => _onClusterTap(item),
+          ),
+          SpringPoint(:final spring) => buildSpringMarker(
+            spring,
+            config.iconFor(spring.status.wireValue, spring.statusUpdatedAt),
+            onTap: () => _onSpringTap(spring),
+          ),
+        },
+    ];
+
     // Shared position and heading streams. With our own position stream only
     // the provider requests permission (not the layer itself), and our own
     // heading stream avoids the sensor error on devices without a compass.
@@ -117,6 +171,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent> {
                 initialCenter: _initialCenter,
                 initialZoom: _defaultZoom,
                 onMapReady: _onMapReady,
+                onMapEvent: _onMapEvent,
                 interactionOptions: const InteractionOptions(
                   flags:
                       InteractiveFlag.pinchZoom |
@@ -135,6 +190,13 @@ class _MapPageContentState extends ConsumerState<MapPageContent> {
               ],
             ),
           ),
+          if (markerState.status.isLoading)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 72,
+              left: 0,
+              right: 0,
+              child: const Center(child: AppProgressIndicator()),
+            ),
           Positioned(
             left: 16,
             right: 16,

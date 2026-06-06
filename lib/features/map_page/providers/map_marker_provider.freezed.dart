@@ -14,7 +14,10 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MapMarkerState {
 
- AsyncValue<List<MapMarkerEntity>> get markerResults; List<MapMarkerEntity> get customMarkers; LatLngBounds? get cachedBounds; LatLngBounds? get pendingBounds;
+/// Loading/error of the background fetch. Items stay visible while a new
+/// fetch runs, so this is a thin status channel, not the source of markers.
+ AsyncValue<void> get status;/// Clustered, drawable items for the most recent camera.
+ List<MapClusterItem> get items;
 /// Create a copy of MapMarkerState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +28,16 @@ $MapMarkerStateCopyWith<MapMarkerState> get copyWith => _$MapMarkerStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapMarkerState&&(identical(other.markerResults, markerResults) || other.markerResults == markerResults)&&const DeepCollectionEquality().equals(other.customMarkers, customMarkers)&&(identical(other.cachedBounds, cachedBounds) || other.cachedBounds == cachedBounds)&&(identical(other.pendingBounds, pendingBounds) || other.pendingBounds == pendingBounds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapMarkerState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.items, items));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,markerResults,const DeepCollectionEquality().hash(customMarkers),cachedBounds,pendingBounds);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(items));
 
 @override
 String toString() {
-  return 'MapMarkerState(markerResults: $markerResults, customMarkers: $customMarkers, cachedBounds: $cachedBounds, pendingBounds: $pendingBounds)';
+  return 'MapMarkerState(status: $status, items: $items)';
 }
 
 
@@ -45,7 +48,7 @@ abstract mixin class $MapMarkerStateCopyWith<$Res>  {
   factory $MapMarkerStateCopyWith(MapMarkerState value, $Res Function(MapMarkerState) _then) = _$MapMarkerStateCopyWithImpl;
 @useResult
 $Res call({
- AsyncValue<List<MapMarkerEntity>> markerResults, List<MapMarkerEntity> customMarkers, LatLngBounds? cachedBounds, LatLngBounds? pendingBounds
+ AsyncValue<void> status, List<MapClusterItem> items
 });
 
 
@@ -62,13 +65,11 @@ class _$MapMarkerStateCopyWithImpl<$Res>
 
 /// Create a copy of MapMarkerState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? markerResults = null,Object? customMarkers = null,Object? cachedBounds = freezed,Object? pendingBounds = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? items = null,}) {
   return _then(_self.copyWith(
-markerResults: null == markerResults ? _self.markerResults : markerResults // ignore: cast_nullable_to_non_nullable
-as AsyncValue<List<MapMarkerEntity>>,customMarkers: null == customMarkers ? _self.customMarkers : customMarkers // ignore: cast_nullable_to_non_nullable
-as List<MapMarkerEntity>,cachedBounds: freezed == cachedBounds ? _self.cachedBounds : cachedBounds // ignore: cast_nullable_to_non_nullable
-as LatLngBounds?,pendingBounds: freezed == pendingBounds ? _self.pendingBounds : pendingBounds // ignore: cast_nullable_to_non_nullable
-as LatLngBounds?,
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as AsyncValue<void>,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as List<MapClusterItem>,
   ));
 }
 
@@ -153,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncValue<List<MapMarkerEntity>> markerResults,  List<MapMarkerEntity> customMarkers,  LatLngBounds? cachedBounds,  LatLngBounds? pendingBounds)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<MapClusterItem> items)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MapMarkerState() when $default != null:
-return $default(_that.markerResults,_that.customMarkers,_that.cachedBounds,_that.pendingBounds);case _:
+return $default(_that.status,_that.items);case _:
   return orElse();
 
 }
@@ -174,10 +175,10 @@ return $default(_that.markerResults,_that.customMarkers,_that.cachedBounds,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncValue<List<MapMarkerEntity>> markerResults,  List<MapMarkerEntity> customMarkers,  LatLngBounds? cachedBounds,  LatLngBounds? pendingBounds)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<MapClusterItem> items)  $default,) {final _that = this;
 switch (_that) {
 case _MapMarkerState():
-return $default(_that.markerResults,_that.customMarkers,_that.cachedBounds,_that.pendingBounds);case _:
+return $default(_that.status,_that.items);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +195,10 @@ return $default(_that.markerResults,_that.customMarkers,_that.cachedBounds,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncValue<List<MapMarkerEntity>> markerResults,  List<MapMarkerEntity> customMarkers,  LatLngBounds? cachedBounds,  LatLngBounds? pendingBounds)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncValue<void> status,  List<MapClusterItem> items)?  $default,) {final _that = this;
 switch (_that) {
 case _MapMarkerState() when $default != null:
-return $default(_that.markerResults,_that.customMarkers,_that.cachedBounds,_that.pendingBounds);case _:
+return $default(_that.status,_that.items);case _:
   return null;
 
 }
@@ -208,20 +209,22 @@ return $default(_that.markerResults,_that.customMarkers,_that.cachedBounds,_that
 /// @nodoc
 
 
-class _MapMarkerState extends MapMarkerState {
-  const _MapMarkerState({this.markerResults = const AsyncValue<List<MapMarkerEntity>>.data(<MapMarkerEntity>[]), final  List<MapMarkerEntity> customMarkers = const <MapMarkerEntity>[], this.cachedBounds = null, this.pendingBounds = null}): _customMarkers = customMarkers,super._();
+class _MapMarkerState implements MapMarkerState {
+  const _MapMarkerState({this.status = const AsyncValue<void>.data(null), final  List<MapClusterItem> items = const <MapClusterItem>[]}): _items = items;
   
 
-@override@JsonKey() final  AsyncValue<List<MapMarkerEntity>> markerResults;
- final  List<MapMarkerEntity> _customMarkers;
-@override@JsonKey() List<MapMarkerEntity> get customMarkers {
-  if (_customMarkers is EqualUnmodifiableListView) return _customMarkers;
+/// Loading/error of the background fetch. Items stay visible while a new
+/// fetch runs, so this is a thin status channel, not the source of markers.
+@override@JsonKey() final  AsyncValue<void> status;
+/// Clustered, drawable items for the most recent camera.
+ final  List<MapClusterItem> _items;
+/// Clustered, drawable items for the most recent camera.
+@override@JsonKey() List<MapClusterItem> get items {
+  if (_items is EqualUnmodifiableListView) return _items;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_customMarkers);
+  return EqualUnmodifiableListView(_items);
 }
 
-@override@JsonKey() final  LatLngBounds? cachedBounds;
-@override@JsonKey() final  LatLngBounds? pendingBounds;
 
 /// Create a copy of MapMarkerState
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +236,16 @@ _$MapMarkerStateCopyWith<_MapMarkerState> get copyWith => __$MapMarkerStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapMarkerState&&(identical(other.markerResults, markerResults) || other.markerResults == markerResults)&&const DeepCollectionEquality().equals(other._customMarkers, _customMarkers)&&(identical(other.cachedBounds, cachedBounds) || other.cachedBounds == cachedBounds)&&(identical(other.pendingBounds, pendingBounds) || other.pendingBounds == pendingBounds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapMarkerState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._items, _items));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,markerResults,const DeepCollectionEquality().hash(_customMarkers),cachedBounds,pendingBounds);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_items));
 
 @override
 String toString() {
-  return 'MapMarkerState(markerResults: $markerResults, customMarkers: $customMarkers, cachedBounds: $cachedBounds, pendingBounds: $pendingBounds)';
+  return 'MapMarkerState(status: $status, items: $items)';
 }
 
 
@@ -253,7 +256,7 @@ abstract mixin class _$MapMarkerStateCopyWith<$Res> implements $MapMarkerStateCo
   factory _$MapMarkerStateCopyWith(_MapMarkerState value, $Res Function(_MapMarkerState) _then) = __$MapMarkerStateCopyWithImpl;
 @override @useResult
 $Res call({
- AsyncValue<List<MapMarkerEntity>> markerResults, List<MapMarkerEntity> customMarkers, LatLngBounds? cachedBounds, LatLngBounds? pendingBounds
+ AsyncValue<void> status, List<MapClusterItem> items
 });
 
 
@@ -270,13 +273,11 @@ class __$MapMarkerStateCopyWithImpl<$Res>
 
 /// Create a copy of MapMarkerState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? markerResults = null,Object? customMarkers = null,Object? cachedBounds = freezed,Object? pendingBounds = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? items = null,}) {
   return _then(_MapMarkerState(
-markerResults: null == markerResults ? _self.markerResults : markerResults // ignore: cast_nullable_to_non_nullable
-as AsyncValue<List<MapMarkerEntity>>,customMarkers: null == customMarkers ? _self._customMarkers : customMarkers // ignore: cast_nullable_to_non_nullable
-as List<MapMarkerEntity>,cachedBounds: freezed == cachedBounds ? _self.cachedBounds : cachedBounds // ignore: cast_nullable_to_non_nullable
-as LatLngBounds?,pendingBounds: freezed == pendingBounds ? _self.pendingBounds : pendingBounds // ignore: cast_nullable_to_non_nullable
-as LatLngBounds?,
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as AsyncValue<void>,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as List<MapClusterItem>,
   ));
 }
 

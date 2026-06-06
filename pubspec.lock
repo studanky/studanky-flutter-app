@@ -613,6 +613,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.14.0"
+  kdbush:
+    dependency: transitive
+    description:
+      name: kdbush
+      sha256: "7dcc5376b1e579804f48428c309d0c9dd0c4c98a9f68db18e17ca1a04561e652"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   latlong2:
     dependency: "direct main"
     description:
@@ -909,6 +917,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+  rbush:
+    dependency: transitive
+    description:
+      name: rbush
+      sha256: "48b683421b4afb43a642f82c6aa31911e54f3069143d31c7d33cbe329df13403"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   record_use:
     dependency: transitive
     description:
@@ -1146,6 +1162,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
+  supercluster:
+    dependency: "direct main"
+    description:
+      name: supercluster
+      sha256: c8cc88d27b43c045b5673e4ffc65b183615c6364bac3dcc42c2d75e1deed9a52
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.0"
   term_glyph:
     dependency: transitive
     description:

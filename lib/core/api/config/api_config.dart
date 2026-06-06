@@ -23,6 +23,9 @@ class ApiConfig {
   /// Platform config single type (dynamic freshness threshold + flow scale).
   static const String platformConfigEndpoint = '/platform-config';
 
+  /// Minimal spring marker payload for the map, filtered by `bbox`.
+  static const String springsMapEndpoint = '/springs/map';
+
   // Timeouts optimized for mobile
   static const Duration connectTimeout = Duration(seconds: 10);
   static const Duration receiveTimeout = Duration(seconds: 15);

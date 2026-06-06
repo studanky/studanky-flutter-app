@@ -11,7 +11,7 @@ part of 'auth_token_provider.dart';
 /// In-memory holder for the current bearer token.
 ///
 /// Deliberately depends on **nothing** so both the auth-stack Dio and the main
-/// Dio can read the token without creating a provider cycle. [AuthService] is
+/// Dio can read the token without creating a provider cycle. `AuthService` is
 /// the sole writer; the Dio interceptors are readers. This is what breaks the
 /// former `dioProvider → authServiceProvider → authApiProvider → dioProvider`
 /// circular dependency.
@@ -22,7 +22,7 @@ final authTokenProvider = AuthTokenProvider._();
 /// In-memory holder for the current bearer token.
 ///
 /// Deliberately depends on **nothing** so both the auth-stack Dio and the main
-/// Dio can read the token without creating a provider cycle. [AuthService] is
+/// Dio can read the token without creating a provider cycle. `AuthService` is
 /// the sole writer; the Dio interceptors are readers. This is what breaks the
 /// former `dioProvider → authServiceProvider → authApiProvider → dioProvider`
 /// circular dependency.
@@ -30,7 +30,7 @@ final class AuthTokenProvider extends $NotifierProvider<AuthToken, String?> {
   /// In-memory holder for the current bearer token.
   ///
   /// Deliberately depends on **nothing** so both the auth-stack Dio and the main
-  /// Dio can read the token without creating a provider cycle. [AuthService] is
+  /// Dio can read the token without creating a provider cycle. `AuthService` is
   /// the sole writer; the Dio interceptors are readers. This is what breaks the
   /// former `dioProvider → authServiceProvider → authApiProvider → dioProvider`
   /// circular dependency.
@@ -66,7 +66,7 @@ String _$authTokenHash() => r'4e5d627361b728be8a0849a496c00faadf18be71';
 /// In-memory holder for the current bearer token.
 ///
 /// Deliberately depends on **nothing** so both the auth-stack Dio and the main
-/// Dio can read the token without creating a provider cycle. [AuthService] is
+/// Dio can read the token without creating a provider cycle. `AuthService` is
 /// the sole writer; the Dio interceptors are readers. This is what breaks the
 /// former `dioProvider → authServiceProvider → authApiProvider → dioProvider`
 /// circular dependency.
