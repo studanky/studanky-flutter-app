@@ -112,4 +112,18 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get error_connectivity_status_subtitle => 'Zkuste to prosím znovu';
+
+  @override
+  String get location_permission_denied =>
+      'Bez přístupu k poloze nelze zobrazit vaši pozici na mapě.';
+
+  @override
+  String get location_permission_denied_forever =>
+      'Přístup k poloze je trvale zamítnut. Povolte jej v nastavení.';
+
+  @override
+  String get location_service_off => 'Služby určování polohy jsou vypnuté.';
+
+  @override
+  String get location_action_settings => 'Nastavení';
 }

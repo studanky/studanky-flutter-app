@@ -59,5 +59,12 @@
   "error_connectivity_status_title": "Chyba vyhodnocení stavu připojení",
   "@error_connectivity_status_title": {},
   "error_connectivity_status_subtitle": "Zkuste to prosím znovu",
-  "@error_connectivity_status_subtitle": {}
+  "@error_connectivity_status_subtitle": {},
+  "location_permission_denied": "Bez přístupu k poloze nelze zobrazit vaši pozici na mapě.",
+  "@location_permission_denied": {},
+  "location_permission_denied_forever": "Přístup k poloze je trvale zamítnut. Povolte jej v nastavení.",
+  "@location_permission_denied_forever": {},
+  "location_service_off": "Služby určování polohy jsou vypnuté.",
+  "@location_service_off": {},
+  "location_action_settings": "Nastavení"
 }

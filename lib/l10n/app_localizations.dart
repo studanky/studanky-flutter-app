@@ -279,6 +279,30 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Zkuste to prosím znovu'**
   String get error_connectivity_status_subtitle;
+
+  /// No description provided for @location_permission_denied.
+  ///
+  /// In cs, this message translates to:
+  /// **'Bez přístupu k poloze nelze zobrazit vaši pozici na mapě.'**
+  String get location_permission_denied;
+
+  /// No description provided for @location_permission_denied_forever.
+  ///
+  /// In cs, this message translates to:
+  /// **'Přístup k poloze je trvale zamítnut. Povolte jej v nastavení.'**
+  String get location_permission_denied_forever;
+
+  /// No description provided for @location_service_off.
+  ///
+  /// In cs, this message translates to:
+  /// **'Služby určování polohy jsou vypnuté.'**
+  String get location_service_off;
+
+  /// No description provided for @location_action_settings.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nastavení'**
+  String get location_action_settings;
 }
 
 class _AppLocalizationsDelegate

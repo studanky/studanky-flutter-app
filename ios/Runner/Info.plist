@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow camera access to scan spring QR codes.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Aplikace potřebuje přístup k poloze, aby ji mohla zobrazit na mapě studánek.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
