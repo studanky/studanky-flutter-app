@@ -63,7 +63,7 @@ class ApiConfig {
   }) => {
     'pagination[page]': page,
     'pagination[pageSize]': pageSize,
-    if (sort != null) 'sort': sort,
-    if (filters != null) ...filters,
+    'sort': ?sort,
+    ...?filters,
   };
 }

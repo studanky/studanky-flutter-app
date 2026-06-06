@@ -46,7 +46,7 @@ class ApiClient {
   }) async {
     final params = <String, dynamic>{
       if (populate) ...ApiConfig.defaultPopulateParams,
-      if (queryParameters != null) ...queryParameters,
+      ...?queryParameters,
     };
 
     return get<T>(
@@ -67,7 +67,7 @@ class ApiClient {
   }) async {
     final params = <String, dynamic>{
       if (populate) ...ApiConfig.defaultPopulateParams,
-      if (queryParameters != null) ...queryParameters,
+      ...?queryParameters,
     };
 
     return get<T>(

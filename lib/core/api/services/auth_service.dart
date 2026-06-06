@@ -300,11 +300,10 @@ class AuthService extends Notifier<AuthenticationState> {
   }
 }
 
-// Secure Storage instance with platform-specific options aligned with v9 API
+// Secure Storage instance with platform-specific options aligned with v10 API
 const _secureStorage = FlutterSecureStorage(
   aOptions: AndroidOptions(
-    encryptedSharedPreferences: true,
-    sharedPreferencesName: ApiConfig.secureStorageAndroidSharedPreferencesName,
+    storageNamespace: ApiConfig.secureStorageAndroidSharedPreferencesName,
     preferencesKeyPrefix: ApiConfig.secureStorageAndroidPreferencesKeyPrefix,
   ),
   iOptions: IOSOptions(

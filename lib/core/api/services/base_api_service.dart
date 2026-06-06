@@ -16,7 +16,7 @@ abstract class BaseApiService {
   }) async {
     final params = <String, dynamic>{
       if (populate) ...ApiConfig.defaultPopulateParams,
-      if (queryParameters != null) ...queryParameters,
+      ...?queryParameters,
     };
 
     final response = await apiClient.getCollection(
@@ -60,7 +60,7 @@ abstract class BaseApiService {
   }) async {
     final params = <String, dynamic>{
       if (populate) ...ApiConfig.defaultPopulateParams,
-      if (queryParameters != null) ...queryParameters,
+      ...?queryParameters,
     };
 
     final response = await apiClient.get(
@@ -148,7 +148,7 @@ abstract class BaseApiService {
     final params = <String, dynamic>{
       if (populate) ...ApiConfig.defaultPopulateParams,
       ...ApiConfig.paginationParams(page: page, pageSize: pageSize, sort: sort),
-      if (queryParameters != null) ...queryParameters,
+      ...?queryParameters,
     };
 
     final response = await apiClient.getCollection(
