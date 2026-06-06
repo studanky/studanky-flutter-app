@@ -29,37 +29,21 @@ class ErrorMapper {
       return messageMapping;
     }
 
-    // Then fall back to type-based mapping
-    switch (exception.runtimeType) {
-      case const (NetworkException):
-        return l10n.auth_error_network_error;
-
-      case const (TimeoutException):
-        return l10n.auth_error_network_error; // Treat timeout as network error
-
-      case const (AuthenticationException):
-        return l10n.auth_error_invalid_credentials;
-
-      case const (UnauthorizedException):
-        return l10n.auth_error_not_authenticated;
-
-      case const (NotFoundException):
-        return l10n.auth_error_unknown_error;
-
-      case const (ValidationException):
-        final validationException = exception as ValidationException;
-        if (validationException.errors != null &&
-            validationException.errors!.isNotEmpty) {
-          return _formatValidationErrors(validationException.errors!);
-        }
-        return l10n.auth_error_invalid_parameters;
-
-      case const (ServerException):
-        return l10n.auth_error_server_error;
-
-      default:
-        return l10n.auth_error_unknown_error;
-    }
+    // Then fall back to exhaustive type-based mapping over the sealed hierarchy.
+    return switch (exception) {
+      NetworkException() => l10n.auth_error_network_error,
+      // Treat timeout as a network error.
+      TimeoutException() => l10n.auth_error_network_error,
+      AuthenticationException() => l10n.auth_error_invalid_credentials,
+      UnauthorizedException() => l10n.auth_error_not_authenticated,
+      NotFoundException() => l10n.auth_error_unknown_error,
+      ValidationException(:final errors)
+          when errors != null && errors.isNotEmpty =>
+        _formatValidationErrors(errors),
+      ValidationException() => l10n.auth_error_invalid_parameters,
+      ServerException() => l10n.auth_error_server_error,
+      UnknownApiException() => l10n.auth_error_unknown_error,
+    };
   }
 
   static String? _mapByMessage(String message, AppLocalizations l10n) {

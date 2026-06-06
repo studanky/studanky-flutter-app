@@ -1,10 +1,12 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logging/logging.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:studanky_flutter_app/core/api/utils/api_result.dart';
 import 'package:studanky_flutter_app/features/example_feature/entities/example_item_entity.dart';
-import 'package:studanky_flutter_app/features/example_feature/providers/example_feature_repository_provider.dart';
+import 'package:studanky_flutter_app/features/example_feature/repositories/example_feature_repository.dart';
 
 part 'example_feature_provider.freezed.dart';
+part 'example_feature_provider.g.dart';
 
 @freezed
 abstract class ExampleFeatureState with _$ExampleFeatureState {
@@ -15,12 +17,8 @@ abstract class ExampleFeatureState with _$ExampleFeatureState {
   }) = _ExampleFeatureState;
 }
 
-final exampleFeatureProvider =
-    NotifierProvider.autoDispose<ExampleFeatureNotifier, ExampleFeatureState>(
-      ExampleFeatureNotifier.new,
-    );
-
-class ExampleFeatureNotifier extends Notifier<ExampleFeatureState> {
+@riverpod
+class ExampleFeature extends _$ExampleFeature {
   final _logger = Logger('ExampleFeatureNotifier');
 
   @override
@@ -29,7 +27,6 @@ class ExampleFeatureNotifier extends Notifier<ExampleFeatureState> {
       if (state.searchQuery.isNotEmpty || !state.items.isLoading) {
         return;
       }
-
       loadItems();
     });
     return const ExampleFeatureState();
@@ -43,21 +40,23 @@ class ExampleFeatureNotifier extends Notifier<ExampleFeatureState> {
       items: const AsyncValue.loading(),
     );
 
-    try {
-      final repository = ref.read(exampleFeatureRepositoryProvider);
-      final items = await repository.fetchItems(
-        query: query.isEmpty ? null : query,
-      );
+    final result = await ref
+        .read(exampleFeatureRepositoryProvider)
+        .fetchItems(query: query.isEmpty ? null : query);
 
-      state = state.copyWith(items: AsyncValue.data(items));
-      _logger.fine('Loaded ${items.length} items');
-    } catch (error, stackTrace) {
-      _logger.severe('loadItems error', error, stackTrace);
-      state = state.copyWith(items: AsyncValue.error(error, stackTrace));
+    state = switch (result) {
+      Success(:final data) => state.copyWith(items: AsyncValue.data(data)),
+      Failure(:final exception) => state.copyWith(
+        items: AsyncValue.error(exception, StackTrace.current),
+      ),
+    };
+
+    if (result case Failure(:final exception)) {
+      _logger.severe('loadItems error', exception);
+    } else {
+      _logger.fine('Loaded ${result.dataOrNull?.length ?? 0} items');
     }
   }
 
-  Future<void> refresh() {
-    return loadItems(query: state.searchQuery);
-  }
+  Future<void> refresh() => loadItems(query: state.searchQuery);
 }

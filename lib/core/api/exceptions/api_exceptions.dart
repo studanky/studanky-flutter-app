@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:studanky_flutter_app/core/api/models/api_response.dart';
+import 'package:studanky_flutter_app/core/api/models/strapi_response.dart';
 
 enum StrapiErrorType {
   applicationError('ApplicationError'),
@@ -26,7 +26,7 @@ enum StrapiErrorType {
   }
 }
 
-abstract class ApiException implements Exception {
+sealed class ApiException implements Exception {
   const ApiException({
     required this.message,
     this.statusCode,

@@ -1,48 +1,65 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'api_response.dart';
+part of 'strapi_response.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ApiResponse<T> _$ApiResponseFromJson<T>(
+StrapiListResponse<T> _$StrapiListResponseFromJson<T>(
   Map<String, dynamic> json,
   T Function(Object? json) fromJsonT,
-) => ApiResponse<T>(
+) => StrapiListResponse<T>(
+  data: (json['data'] as List<dynamic>?)?.map(fromJsonT).toList() ?? const [],
+  meta: json['meta'] == null
+      ? null
+      : StrapiMeta.fromJson(json['meta'] as Map<String, dynamic>),
+);
+
+Map<String, dynamic> _$StrapiListResponseToJson<T>(
+  StrapiListResponse<T> instance,
+  Object? Function(T value) toJsonT,
+) => <String, dynamic>{
+  'data': instance.data.map(toJsonT).toList(),
+  'meta': instance.meta?.toJson(),
+};
+
+StrapiSingleResponse<T> _$StrapiSingleResponseFromJson<T>(
+  Map<String, dynamic> json,
+  T Function(Object? json) fromJsonT,
+) => StrapiSingleResponse<T>(
   data: fromJsonT(json['data']),
   meta: json['meta'] == null
       ? null
-      : ApiMeta.fromJson(json['meta'] as Map<String, dynamic>),
+      : StrapiMeta.fromJson(json['meta'] as Map<String, dynamic>),
 );
 
-Map<String, dynamic> _$ApiResponseToJson<T>(
-  ApiResponse<T> instance,
+Map<String, dynamic> _$StrapiSingleResponseToJson<T>(
+  StrapiSingleResponse<T> instance,
   Object? Function(T value) toJsonT,
 ) => <String, dynamic>{
   'data': toJsonT(instance.data),
   'meta': instance.meta?.toJson(),
 };
 
-ApiMeta _$ApiMetaFromJson(Map<String, dynamic> json) => ApiMeta(
+StrapiMeta _$StrapiMetaFromJson(Map<String, dynamic> json) => StrapiMeta(
   pagination: json['pagination'] == null
       ? null
-      : ApiPagination.fromJson(json['pagination'] as Map<String, dynamic>),
+      : StrapiPagination.fromJson(json['pagination'] as Map<String, dynamic>),
 );
 
-Map<String, dynamic> _$ApiMetaToJson(ApiMeta instance) => <String, dynamic>{
-  'pagination': instance.pagination?.toJson(),
-};
+Map<String, dynamic> _$StrapiMetaToJson(StrapiMeta instance) =>
+    <String, dynamic>{'pagination': instance.pagination?.toJson()};
 
-ApiPagination _$ApiPaginationFromJson(Map<String, dynamic> json) =>
-    ApiPagination(
+StrapiPagination _$StrapiPaginationFromJson(Map<String, dynamic> json) =>
+    StrapiPagination(
       page: (json['page'] as num).toInt(),
       pageSize: (json['pageSize'] as num).toInt(),
       pageCount: (json['pageCount'] as num).toInt(),
       total: (json['total'] as num).toInt(),
     );
 
-Map<String, dynamic> _$ApiPaginationToJson(ApiPagination instance) =>
+Map<String, dynamic> _$StrapiPaginationToJson(StrapiPagination instance) =>
     <String, dynamic>{
       'page': instance.page,
       'pageSize': instance.pageSize,

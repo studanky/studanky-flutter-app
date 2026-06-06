@@ -1,12 +1,20 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:studanky_flutter_app/core/api/interceptors/logging_interceptor.dart';
 import 'package:studanky_flutter_app/core/env.dart';
 import 'package:studanky_flutter_app/features/map_search/constants/map_search_constants.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
-import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_search_source.dart';
 
-final _dioProvider = Provider<Dio>((ref) {
+part 'map_search_source_provider.g.dart';
+
+/// Dedicated Dio for the third-party Mapy.com API.
+///
+/// Intentionally separate from the Strapi client so the backend bearer token
+/// is never attached to cross-origin requests.
+@Riverpod(keepAlive: true)
+Dio mapSuggestDio(Ref ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: MapSearchConstants.suggestBaseUrl,
@@ -14,31 +22,30 @@ final _dioProvider = Provider<Dio>((ref) {
       receiveTimeout: const Duration(seconds: 10),
       sendTimeout: const Duration(seconds: 10),
     ),
-  );
+  )..interceptors.add(LoggingInterceptor());
+
   ref.onDispose(dio.close);
   return dio;
-});
+}
 
-/// Provides the active search backend. Requires the Mapy.cz suggest API.
-final mapSearchSourceProvider = Provider.family<MapSearchSource, String>((
-  ref,
-  languageCode,
-) {
-  final apiKey = Env.mapyComApiKey;
+@Riverpod(keepAlive: true)
+MapSuggestApi mapSuggestApi(Ref ref) =>
+    MapSuggestApi(ref.watch(mapSuggestDioProvider));
+
+/// Provides the active search backend. Requires the Mapy.com suggest API.
+@riverpod
+MapSearchSource mapSearchSource(Ref ref, String languageCode) {
+  const apiKey = Env.mapyComApiKey;
   if (apiKey.isEmpty) {
     throw StateError(
-      'Map search requires a Mapy.cz API key. '
-      'Set AppConstants.mapyComApiKey before building the app.',
+      'Map search requires a Mapy.com API key. '
+      'Provide MAPY_COM_API_KEY via --dart-define before building the app.',
     );
   }
 
-  final apiClient = MapSuggestApiClient(
-    dio: ref.watch(_dioProvider),
-    apiKey: apiKey,
-  );
-
   return MapSuggestSearchSource(
-    apiClient: apiClient,
+    api: ref.watch(mapSuggestApiProvider),
+    apiKey: apiKey,
     languageCode: languageCode,
   );
-});
+}

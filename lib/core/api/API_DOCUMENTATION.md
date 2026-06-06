@@ -2,11 +2,19 @@
 
 Comprehensive and secure API communication layer for Flutter applications with **Strapi CMS v5.17.0**. This library provides a complete authentication and data management solution with modern Flutter patterns including Riverpod state management, Freezed data classes, and secure credential storage.
 
+> ℹ️ **Migration note.** The layer was refactored to `retrofit` data sources +
+> `riverpod_generator` providers + `ApiResult`. The authoritative usage pattern
+> is **section 4 ("Data Operations")** and `features/example_feature/`. The
+> later **File Upload** and **Testing** sections still show the legacy
+> `ApiClient`/`BaseApiService` helpers (now removed) and are kept only as
+> historical reference until those capabilities are re-added in the new style.
+
 ## ✨ Key Features
 
 - **🔐 Secure Credential Storage** - User credentials stored securely using `flutter_secure_storage` with platform-specific encryption (iOS Keychain, Android Keystore)
 - **🏗️ Type-Safe Models** - All data models use `@JsonSerializable` and `@freezed` for compile-time safety and immutable data structures
-- **🌐 HTTP Client** - Dio-based HTTP client with automatic authentication interceptors and comprehensive logging
+- **🌐 HTTP Client** - Dio-based HTTP client with automatic authentication interceptors, transient-error retries and redacted logging
+- **🧬 Code Generation** - Typed `retrofit` data sources and `riverpod_generator` providers; no hand-written HTTP plumbing
 - **⚡ Asynchronous Operations** - Fully async API with proper error handling and cancellation support
 - **🔄 Automatic Re-authentication** - Seamless token refresh and credential-based re-authentication on session expiry
 - **🛡️ Comprehensive Error Handling** - Typed exceptions with detailed Strapi v5 error mapping and localization support
@@ -22,46 +30,50 @@ Comprehensive and secure API communication layer for Flutter applications with *
 The API library follows a layered architecture pattern with clear separation of concerns:
 
 ```text
-lib/src/core/api/
-├── clients/
-│   └── api_client.dart          # Core HTTP client with Dio + Strapi v5 optimized methods
+lib/core/api/
+├── dio/
+│   └── dio_provider.dart        # Shared @riverpod Dio with auth + retry + logging interceptors
 ├── config/
-│   └── api_config.dart          # Centralized API configuration & environment settings
+│   └── api_config.dart          # Centralized API configuration (baseUrl from Env)
 ├── exceptions/
-│   └── api_exceptions.dart      # Comprehensive typed exceptions with Strapi v5 error handling
+│   └── api_exceptions.dart      # Sealed ApiException hierarchy with Strapi v5 error mapping
 ├── interceptors/
-│   ├── auth_interceptor.dart    # JWT token injection & automatic refresh handling
-│   └── logging_interceptor.dart # Development & debugging request/response logging
+│   ├── auth_interceptor.dart    # JWT injection & de-duplicated re-auth on 401
+│   └── logging_interceptor.dart # Request/response logging with redacted sensitive headers
 ├── models/
-│   ├── auth_models.dart         # Authentication models (Login, Register, User, etc.)
-│   └── api_response.dart        # Generic API response wrapper with metadata & pagination
+│   ├── auth_models.dart         # Authentication request/response models
+│   └── strapi_response.dart     # StrapiListResponse<T> / StrapiSingleResponse<T> envelopes
 ├── services/
-│   ├── auth_service.dart        # Authentication service with Freezed state management
-│   └── base_api_service.dart    # Base CRUD operations + search functionality for Strapi v5
+│   ├── auth_api.dart            # Retrofit @RestApi for the auth endpoints
+│   └── auth_service.dart        # @riverpod Notifier: auth state + secure storage
 └── utils/
-    ├── api_result.dart          # Functional result wrapper for safe error handling
-    └── error_mapper.dart        # Comprehensive error message localization & mapping
+    ├── api_result.dart          # Sealed Success/Failure result (Dart 3 pattern matching)
+    ├── api_guard.dart           # guardApiCall: wraps calls into ApiResult, maps errors
+    └── error_mapper.dart        # Exhaustive error → localized message mapping
 ```
+
+Feature data layers follow the same shape (see `features/example_feature/`):
+`DTO → Mapper → Entity`, a retrofit `@RestApi` data source, a repository that
+returns `ApiResult<T>` via `guardApiCall`, and `@riverpod` providers.
 
 ### Core Components
 
-1. **ApiClient** (`clients/api_client.dart`)
-   - Primary HTTP client built on Dio
-   - Strapi v5 optimized methods for collections and single types
-   - Built-in population and query parameter handling
-   - Automatic error handling and exception conversion
+1. **Dio provider** (`dio/dio_provider.dart`)
+   - Single app-wide Dio pointed at `Env.baseUrl`
+   - Wires `AuthInterceptor`, `dio_smart_retry` and the redacting logger
+   - Third-party APIs (e.g. Mapy.com) use their own Dio so the backend bearer
+     token is never sent cross-origin
 
 2. **AuthService** (`services/auth_service.dart`)
-   - Freezed-based state management for authentication
-   - Secure credential storage and automatic re-authentication
+   - `@riverpod` Notifier with Freezed state
+   - Calls the retrofit `AuthApi`; secure credential storage and automatic re-authentication
    - Email verification workflow support
-   - JWT token management in memory only
+   - JWT token kept in memory only
 
-3. **BaseApiService** (`services/base_api_service.dart`)
-   - Generic CRUD operations for any Strapi collection
-   - Advanced search and filtering capabilities
-   - Pagination and metadata handling
-   - Type-safe data transformation
+3. **Retrofit data sources** (`*_api.dart`)
+   - Declarative typed endpoints; deserialization (incl. generic Strapi
+     envelopes) is generated, not hand-written
+   - Repositories convert results to `ApiResult<T>` via `guardApiCall`
 
 4. **Exception Hierarchy** (`exceptions/api_exceptions.dart`)
    - Comprehensive typed exceptions for different error scenarios
@@ -76,13 +88,13 @@ The API client supports multiple environments through compile-time configuration
 
 ```dart
 // Development (default)
-flutter run --dart-define=API_BASE_URL=http://localhost:1337/api
+flutter run --dart-define=BASE_URL=http://localhost:1337/api
 
 // Staging
-flutter run --dart-define=API_BASE_URL=https://staging-api.yourapp.com/api
+flutter run --dart-define=BASE_URL=https://staging-api.yourapp.com/api
 
 // Production
-flutter build apk --dart-define=API_BASE_URL=https://api.yourapp.com/api
+flutter build apk --dart-define=BASE_URL=https://api.yourapp.com/api
 ```
 
 ### 2. Setup & Initialization
@@ -108,13 +120,13 @@ class MyWidget extends ConsumerWidget {
     // Access authentication state
     final authState = ref.watch(authServiceProvider);
     final authService = ref.read(authServiceProvider.notifier);
-    
-    // Access API client
-    final apiClient = ref.read(apiClientProvider);
-    
-    // Access generic API service
-    final baseService = ref.read(genericApiServiceProvider);
-    
+
+    // The shared Dio (rarely needed directly — prefer a feature API/repository)
+    final dio = ref.read(dioProvider);
+
+    // Feature data is reached through its repository, which returns ApiResult
+    final repository = ref.read(exampleFeatureRepositoryProvider);
+
     return YourWidget();
   }
 }
@@ -219,136 +231,63 @@ await authService.logout();
 print('User logged out successfully');
 ```
 
-### 4. Strapi v5 Data Operations
+### 4. Data Operations (retrofit + repository + ApiResult)
 
-#### Collections and Single Types
-
-```dart
-final apiClient = ref.read(apiClientProvider);
-
-// Get collection with automatic population
-final articlesResponse = await apiClient.getCollection<Map<String, dynamic>>(
-  'articles',
-  populate: true, // Automatically populates all relations
-  queryParameters: ApiConfig.paginationParams(
-    page: 1, 
-    pageSize: 10,
-    sort: 'publishedAt:desc',
-  ),
-);
-
-// Get single type (e.g., global content)
-final homePageData = await apiClient.getSingleType<Map<String, dynamic>>(
-  'home-page',
-  populate: true,
-  queryParameters: {
-    'populate[hero][populate]': '*', // Deep population
-    'populate[sections][populate]': '*',
-  },
-);
-
-// Get single item from collection
-final singleArticle = await apiClient.get<Map<String, dynamic>>(
-  '/articles/123',
-  queryParameters: {
-    'populate': '*',
-  },
-);
-```
-
-### 5. Advanced CRUD Operations with Type Safety
+Data access no longer goes through a generic `ApiClient`/`BaseApiService`.
+Each feature declares a typed retrofit data source and a repository that
+returns `ApiResult<T>`. The canonical example lives in
+`features/example_feature/`.
 
 ```dart
-final baseService = ref.read(genericApiServiceProvider);
+// 1. Typed data source — retrofit generates the HTTP + (de)serialization.
+@RestApi()
+abstract class ArticleApi {
+  factory ArticleApi(Dio dio, {String? baseUrl}) = _ArticleApi;
 
-// Define your data model
-class Article {
-  final int id;
-  final String title;
-  final String content;
-  final DateTime? publishedAt;
-  final List<String> tags;
-  final Author? author; // Populated relation
-  
-  Article({required this.id, required this.title, required this.content, 
-          this.publishedAt, this.tags = const [], this.author});
-  
-  factory Article.fromJson(Map<String, dynamic> json) => Article(
-    id: json['id'],
-    title: json['title'],
-    content: json['content'],
-    publishedAt: json['publishedAt'] != null 
-        ? DateTime.parse(json['publishedAt']) : null,
-    tags: List<String>.from(json['tags'] ?? []),
-    author: json['author'] != null ? Author.fromJson(json['author']) : null,
+  @GET('/articles')
+  Future<StrapiListResponse<ArticleDto>> fetchArticles(
+    @Queries() Map<String, dynamic> queries,
   );
 }
 
-// Get paginated list with metadata
-final articlesWithMeta = await baseService.getListWithMeta<Article>(
-  'articles',
-  page: 1,
-  pageSize: 10,
-  sort: 'publishedAt:desc',
-  populate: true,
-  fromJson: Article.fromJson,
-);
+@riverpod
+ArticleApi articleApi(Ref ref) => ArticleApi(ref.watch(dioProvider));
 
-print('Total articles: ${articlesWithMeta.meta?.pagination?.total}');
-print('Current page: ${articlesWithMeta.meta?.pagination?.page}');
-print('Page count: ${articlesWithMeta.meta?.pagination?.pageCount}');
+// 2. Repository — maps DTO -> entity and normalizes errors into ApiResult.
+@riverpod
+ArticleRepository articleRepository(Ref ref) =>
+    ArticleRepositoryImpl(ref.watch(articleApiProvider));
 
-// Advanced search with multiple fields
-final searchResults = await baseService.search<Article>(
-  'articles',
-  query: 'flutter development',
-  searchFields: ['title', 'content', 'tags'], // Search across multiple fields
-  additionalFilters: {
-    'publishedAt': {'\$notNull': true}, // Only published articles
-    'author': {'\$in': [1, 2, 3]}, // Specific authors
-  },
-  populate: true,
-  page: 1,
-  pageSize: 20,
-  sort: 'publishedAt:desc',
-  fromJson: Article.fromJson,
-);
+class ArticleRepositoryImpl implements ArticleRepository {
+  ArticleRepositoryImpl(this._api);
+  final ArticleApi _api;
 
-// Create new article (Strapi v5 data wrapper format)
-final newArticle = await baseService.create<Article>(
-  'articles',
-  {
-    'title': 'Getting Started with Flutter',
-    'content': 'Flutter is a powerful framework...',
-    'tags': ['flutter', 'mobile', 'development'],
-    'publishedAt': DateTime.now().toIso8601String(),
-    'author': 1, // Reference to author ID
-  },
-  fromJson: Article.fromJson,
-);
+  @override
+  Future<ApiResult<List<ArticleEntity>>> fetchArticles({String? query}) {
+    final queries = <String, dynamic>{
+      'sort': 'publishedAt:desc',
+      if (query != null && query.isNotEmpty) 'q': query,
+    };
+    return guardApiCall(() async {
+      final response = await _api.fetchArticles(queries);
+      return response.data.map(ArticleMapper.fromDto).toList();
+    });
+  }
+}
 
-// Update existing article
-final updatedArticle = await baseService.update<Article>(
-  'articles',
-  '123',
-  {
-    'title': 'Updated: Getting Started with Flutter',
-    'content': 'Updated content here...',
-  },
-  fromJson: Article.fromJson,
-);
-
-// Get single article by ID
-final singleArticle = await baseService.getById<Article>(
-  'articles',
-  '123',
-  populate: true,
-  fromJson: Article.fromJson,
-);
-
-// Delete article
-await baseService.delete('articles', '123');
+// 3. Consumption — exhaustive switch over the sealed result.
+final result = await ref.read(articleRepositoryProvider).fetchArticles();
+switch (result) {
+  case Success(:final data):
+    print('Loaded ${data.length} articles');
+  case Failure(:final exception):
+    print('Failed: ${exception.message}');
+}
 ```
+
+Pagination metadata is available on `StrapiListResponse.meta?.pagination`
+(`page`, `pageSize`, `pageCount`, `total`). Single-entity endpoints return
+`StrapiSingleResponse<T>`.
 
 ### 6. File Upload & Media Management
 
@@ -408,7 +347,7 @@ The `ApiConfig` class provides centralized configuration for all API operations:
 class ApiConfig {
   // Environment-aware base URL (supports compile-time configuration)
   static const String baseUrl = String.fromEnvironment(
-    'API_BASE_URL',
+    'BASE_URL',
     defaultValue: 'http://localhost:1337/api',
   );
   
@@ -468,13 +407,13 @@ class ApiConfig {
 
 ```bash
 # Development
-flutter run --dart-define=API_BASE_URL=http://localhost:1337/api
+flutter run --dart-define=BASE_URL=http://localhost:1337/api
 
 # Staging
-flutter run --dart-define=API_BASE_URL=https://staging-api.example.com/api
+flutter run --dart-define=BASE_URL=https://staging-api.example.com/api
 
 # Production
-flutter build apk --release --dart-define=API_BASE_URL=https://api.example.com/api
+flutter build apk --release --dart-define=BASE_URL=https://api.example.com/api
 ```
 
 ### Secure Storage Configuration
@@ -968,24 +907,37 @@ test('Search functionality', () async {
 
 ```bash
 # Development
-flutter run --dart-define=API_BASE_URL=http://localhost:1337/api
+flutter run --dart-define=BASE_URL=http://localhost:1337/api
 
 # Staging
-flutter run --dart-define=API_BASE_URL=https://staging-api.yourapp.com/api
+flutter run --dart-define=BASE_URL=https://staging-api.yourapp.com/api
 
 # Production
-flutter build apk --dart-define=API_BASE_URL=https://api.yourapp.com/api
+flutter build apk --dart-define=BASE_URL=https://api.yourapp.com/api
 ```
 
 ### Security Checklist
 
-- ✅ HTTPS URLs for production
+- ✅ HTTPS URLs for production (`Env.baseUrl`, configurable per environment)
 - ✅ Secure token storage with FlutterSecureStorage
-- ✅ Automatic token refresh and cleanup
+- ✅ Sensitive headers (`Authorization`, cookies) redacted in logs
+- ✅ Backend bearer token never sent to third-party APIs (separate Dio)
+- ✅ Automatic re-authentication and cleanup
 - ✅ Comprehensive error handling
-- ✅ Input validation on all requests
-- ✅ No hardcoded sensitive data
+- ✅ No secrets in source control (injected via `--dart-define-from-file`)
 - ✅ Timeout configurations for mobile networks
+
+#### ⚠️ Known trade-off: password persistence
+
+Strapi's users-permissions plugin does **not** provide a refresh-token flow out
+of the box. To support silent re-authentication on a 401, the user's raw
+password is persisted in the platform secure store (iOS Keychain / Android
+Keystore) and replayed against `/auth/local`. See `_saveAuthData` in
+`services/auth_service.dart`.
+
+This is an accepted compromise for now. The recommended hardening path is to
+adopt a Strapi refresh-token plugin and store a rotating refresh token instead
+of the password, which would let us drop password persistence entirely.
 
 ## 📦 Dependencies
 
@@ -1093,8 +1045,8 @@ class ErrorMapper {
 1. **Add dependencies** to `pubspec.yaml`
 2. **Install packages**: `flutter pub get`
 3. **Generate models**: `dart run build_runner build`
-4. **Configure API base URL** in `ApiConfig.baseUrl`
-5. **Use providers**: `authServiceProvider`, `apiClientProvider` in your widgets
+4. **Configure base URL** via `--dart-define=BASE_URL=...` (read by `Env.baseUrl`)
+5. **Use providers**: `authServiceProvider`, `dioProvider`, feature repository providers
 
 ## 🆕 Key Features
 

@@ -1,17 +1,27 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studanky_flutter_app/core/api/config/api_config.dart';
 import 'package:studanky_flutter_app/core/api/services/auth_service.dart';
 
+/// Injects the bearer token on outgoing requests and, on a 401, performs a
+/// single de-duplicated re-authentication before replaying the request.
+///
+/// The [AuthService] is resolved lazily through [Ref] so that the Dio provider
+/// and the auth service can depend on each other without a construction cycle.
 class AuthInterceptor extends Interceptor {
-  AuthInterceptor(this._dio, this._authService);
+  AuthInterceptor({required Dio dio, required Ref ref})
+    : _dio = dio,
+      _ref = ref;
 
   static const _retryExtraKey = 'ersta__retried';
 
   final Dio _dio;
-  final AuthService _authService;
+  final Ref _ref;
   Completer<void>? _refreshCompleter;
+
+  AuthService get _authService => _ref.read(authServiceProvider.notifier);
 
   @override
   Future<void> onRequest(
@@ -121,10 +131,11 @@ class AuthInterceptor extends Interceptor {
     bool matchesEndpoint(String endpoint) =>
         options.path.endsWith(endpoint) || options.uri.path.endsWith(endpoint);
 
+    // NOTE: change-password is intentionally NOT skipped — Strapi requires the
+    // user to be authenticated (Authorization: Bearer <jwt>) for that endpoint.
     return matchesEndpoint(ApiConfig.authEndpoint) ||
         matchesEndpoint(ApiConfig.registerEndpoint) ||
         matchesEndpoint(ApiConfig.generatePasswordEndpoint) ||
-        matchesEndpoint(ApiConfig.changePasswordEndpoint) ||
         matchesEndpoint(ApiConfig.sendEmailConfirmationEndpoint);
   }
 }

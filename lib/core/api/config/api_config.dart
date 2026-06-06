@@ -1,8 +1,9 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:studanky_flutter_app/core/env.dart';
 
 class ApiConfig {
-  // Use environment variables for different environments
-  static const String baseUrl = 'http://localhost:1337/api';
+  /// Backend base URL, configured per environment via `--dart-define`.
+  static String get baseUrl => Env.baseUrl;
 
   // Strapi endpoints
   static const String authEndpoint = '/auth/local';

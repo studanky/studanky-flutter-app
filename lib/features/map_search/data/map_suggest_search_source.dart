@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
-import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api_client.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api.dart';
 import 'package:studanky_flutter_app/features/map_search/dtos/map_suggest_item_dto.dart';
 import 'package:studanky_flutter_app/features/map_search/dtos/map_suggest_language_dto.dart';
 import 'package:studanky_flutter_app/features/map_search/dtos/map_suggest_query_dto.dart';
@@ -13,12 +13,14 @@ import 'package:studanky_flutter_app/features/map_search/entities/map_search_res
 /// Remote autocomplete backed by the Mapy.cz suggest API.
 class MapSuggestSearchSource implements MapSearchSource {
   MapSuggestSearchSource({
-    required this.apiClient,
+    required this.api,
+    required this.apiKey,
     required this.languageCode,
     this.limit = 5,
   });
 
-  final MapSuggestApiClient apiClient;
+  final MapSuggestApi api;
+  final String apiKey;
   final String languageCode;
   final int limit;
 
@@ -44,14 +46,13 @@ class MapSuggestSearchSource implements MapSearchSource {
     }
 
     try {
-      final suggest = await apiClient.fetch(
-        MapySuggestQueryDto(
-          query: trimmed,
-          language: MapSuggestLanguageDto.fromCode(languageCode),
-          limit: limit,
-          types: types,
-        ),
+      final query = MapySuggestQueryDto(
+        query: trimmed,
+        language: MapSuggestLanguageDto.fromCode(languageCode),
+        limit: limit,
+        types: types,
       );
+      final suggest = await api.suggest(query.toQueryParameters(apiKey));
 
       final results = suggest.items
           .map((MapSuggestItemDto item) {

@@ -1,15 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:studanky_flutter_app/core/api/clients/api_client.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:studanky_flutter_app/core/api/config/api_config.dart';
+import 'package:studanky_flutter_app/core/api/dio/dio_provider.dart';
 import 'package:studanky_flutter_app/core/api/dtos/user_dto.dart';
 import 'package:studanky_flutter_app/core/api/exceptions/api_exceptions.dart';
 import 'package:studanky_flutter_app/core/api/models/auth_models.dart';
+import 'package:studanky_flutter_app/core/api/services/auth_api.dart';
 
 part 'auth_service.freezed.dart';
+part 'auth_service.g.dart';
 
 @freezed
 abstract class AuthenticationState with _$AuthenticationState {
@@ -28,10 +32,9 @@ abstract class AuthenticationState with _$AuthenticationState {
   bool get isAuthenticationCompleted => isUserAuthenticated && isEmailVerified;
 }
 
-class AuthService extends Notifier<AuthenticationState> {
-  AuthService();
-
-  late ApiClient _apiClient;
+@Riverpod(keepAlive: true)
+class AuthService extends _$AuthService {
+  late AuthApi _authApi;
   late FlutterSecureStorage _secureStorage;
   bool _hasInitialized = false;
 
@@ -40,28 +43,32 @@ class AuthService extends Notifier<AuthenticationState> {
 
   @override
   AuthenticationState build() {
-    _apiClient = ref.watch(apiClientProvider);
+    _authApi = ref.watch(authApiProvider);
     _secureStorage = ref.watch(secureStorageProvider);
 
     if (!_hasInitialized) {
       _hasInitialized = true;
-      _apiClient.setupInterceptors(this);
       unawaited(_initialize());
     }
 
     return const AuthenticationState(isLoading: true);
   }
 
+  /// Converts raw [DioException]s thrown by the retrofit client into typed
+  /// [ApiException]s so callers can branch on the failure semantics.
+  Future<T> _guard<T>(Future<T> Function() request) async {
+    try {
+      return await request();
+    } on DioException catch (exception) {
+      throw ApiExceptionHandler.handleDioException(exception);
+    }
+  }
+
   Future<AuthResponse> login(LoginRequest request) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final response = await _apiClient.post(
-        ApiConfig.authEndpoint,
-        data: request.toJson(),
-      );
-
-      final authResponse = AuthResponse.fromJson(response.data);
+      final authResponse = await _guard(() => _authApi.login(request));
 
       await _saveAuthData(authResponse, request.identifier, request.password);
       _updateState();
@@ -86,12 +93,7 @@ class AuthService extends Notifier<AuthenticationState> {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final response = await _apiClient.post(
-        ApiConfig.registerEndpoint,
-        data: request.toJson(),
-      );
-
-      final authResponse = AuthResponse.fromJson(response.data);
+      final authResponse = await _guard(() => _authApi.register(request));
 
       // Handle registration response based on email verification settings
       if (authResponse.jwt != null) {
@@ -119,26 +121,15 @@ class AuthService extends Notifier<AuthenticationState> {
   Future<void> sendEmailConfirmation(
     SendEmailConfirmationRequest request,
   ) async {
-    await _apiClient.post(
-      ApiConfig.sendEmailConfirmationEndpoint,
-      data: request.toJson(),
-    );
+    await _guard(() => _authApi.sendEmailConfirmation(request));
   }
 
   Future<void> generatePassword(GeneratePasswordRequest request) async {
-    await _apiClient.post(
-      ApiConfig.generatePasswordEndpoint,
-      data: request.toJson(),
-    );
+    await _guard(() => _authApi.generatePassword(request));
   }
 
   Future<AuthResponse> changePassword(ChangePasswordRequest request) async {
-    final response = await _apiClient.post(
-      ApiConfig.changePasswordEndpoint,
-      data: request.toJson(),
-    );
-
-    final authResponse = AuthResponse.fromJson(response.data);
+    final authResponse = await _guard(() => _authApi.changePassword(request));
     // Update stored credentials with new password
     final email = await _secureStorage.read(key: ApiConfig.credentialsEmailKey);
     if (email != null && authResponse.jwt != null) {
@@ -149,8 +140,7 @@ class AuthService extends Notifier<AuthenticationState> {
   }
 
   Future<UserDto> getCurrentUser() async {
-    final response = await _apiClient.get(ApiConfig.meEndpoint);
-    final user = UserDto.fromJson(response.data);
+    final user = await _guard(() => _authApi.getCurrentUser());
 
     // Update local state with fresh server data
     state = state.copyWith(user: user);
@@ -173,8 +163,9 @@ class AuthService extends Notifier<AuthenticationState> {
     }
   }
 
-  /// Re-authenticate using stored credentials
-  /// Returns true if successful, false if no credentials stored or auth failed
+  /// Re-authenticate using stored credentials.
+  ///
+  /// Throws if no credentials are stored or authentication fails.
   Future<void> reAuthenticate() async {
     final email = await _secureStorage.read(key: ApiConfig.credentialsEmailKey);
     final password = await _secureStorage.read(
@@ -182,14 +173,10 @@ class AuthService extends Notifier<AuthenticationState> {
     );
 
     if (email == null || password == null) {
-      throw Exception();
+      throw const UnauthorizedException(message: 'No stored credentials.');
     }
 
-    try {
-      await login(LoginRequest(identifier: email, password: password));
-    } catch (e) {
-      rethrow;
-    }
+    await login(LoginRequest(identifier: email, password: password));
   }
 
   /// Initialize auth service - check for stored credentials and attempt authentication
@@ -207,7 +194,9 @@ class AuthService extends Notifier<AuthenticationState> {
         // Load user data from storage first (needed for state logic)
         if (userJson != null) {
           try {
-            final user = UserDto.fromJson(jsonDecode(userJson));
+            final user = UserDto.fromJson(
+              jsonDecode(userJson) as Map<String, dynamic>,
+            );
             state = state.copyWith(user: user);
           } catch (e) {
             // If user data is corrupted, clear everything
@@ -218,10 +207,16 @@ class AuthService extends Notifier<AuthenticationState> {
         }
 
         // Try to re-authenticate - login method will handle JWT and state updates
-        await reAuthenticate();
+        try {
+          await reAuthenticate();
+        } catch (_) {
+          // Re-authentication may legitimately fail (e.g. unconfirmed email);
+          // keep any user data loaded above so the UI can react accordingly.
+        }
 
-        // If reAuthenticate failed but we have user data, ensure state is updated
-        // (this handles the case where email is not verified)
+        // Re-auth did not yield a token (failed, or email not yet verified):
+        // refresh the derived state so it reflects the unauthenticated session
+        // while keeping the cached user available for the UI.
         if (_currentJWT == null && state.user != null) {
           _updateState();
         }
@@ -243,7 +238,11 @@ class AuthService extends Notifier<AuthenticationState> {
     // Store JWT and user in memory
     _currentJWT = authResponse.jwt;
 
-    // Store credentials and user data in secure storage for persistence
+    // SECURITY: Strapi users-permissions has no refresh-token flow out of the
+    // box, so the raw password is persisted in the platform secure store
+    // (iOS Keychain / Android Keystore) to support silent re-authentication on
+    // 401. This is a known trade-off; migrating to a refresh-token plugin would
+    // let us drop password persistence. See API_DOCUMENTATION.md.
     await _secureStorage.write(
       key: ApiConfig.credentialsEmailKey,
       value: email,
@@ -267,6 +266,7 @@ class AuthService extends Notifier<AuthenticationState> {
     String password,
   ) async {
     // Store credentials and user data without JWT (for email verification scenario)
+    // SECURITY: see note in [_saveAuthData] regarding password persistence.
     await _secureStorage.write(
       key: ApiConfig.credentialsEmailKey,
       value: email,
@@ -288,17 +288,25 @@ class AuthService extends Notifier<AuthenticationState> {
   }
 
   void _updateState() {
-    final hasUser = state.user != null;
+    // A user is only considered authenticated when we actually hold a valid
+    // JWT. Relying on a cached user alone would let the UI treat a session as
+    // active after a failed re-auth (offline, revoked/expired token, password
+    // changed elsewhere), while every API call would then fail with 401.
+    final hasSession = state.user != null && _currentJWT != null;
     final isEmailVerified = state.user?.confirmed ?? false;
 
     state = state.copyWith(
-      isUserAuthenticated: hasUser,
+      isUserAuthenticated: hasSession,
       isEmailVerified: isEmailVerified,
       isLoading: false,
       error: null,
     );
   }
 }
+
+/// Retrofit-backed authentication API bound to the shared [Dio] client.
+@Riverpod(keepAlive: true)
+AuthApi authApi(Ref ref) => AuthApi(ref.watch(dioProvider));
 
 // Secure Storage instance with platform-specific options aligned with v10 API
 const _secureStorage = FlutterSecureStorage(
@@ -313,10 +321,5 @@ const _secureStorage = FlutterSecureStorage(
   ),
 );
 
-final secureStorageProvider = Provider<FlutterSecureStorage>((ref) {
-  return _secureStorage;
-});
-
-final authServiceProvider = NotifierProvider<AuthService, AuthenticationState>(
-  AuthService.new,
-);
+@Riverpod(keepAlive: true)
+FlutterSecureStorage secureStorage(Ref ref) => _secureStorage;

@@ -1,3 +1,4 @@
 {
+  "BASE_URL": "http://localhost:1337/api",
   "MAPY_COM_API_KEY": "replace-with-your-api-key"
 }
