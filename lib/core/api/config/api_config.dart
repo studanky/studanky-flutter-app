@@ -20,6 +20,9 @@ class ApiConfig {
   /// Example Feature
   static const String exampleItemsEndpoint = '/example-items';
 
+  /// Platform config single type (dynamic freshness threshold + flow scale).
+  static const String platformConfigEndpoint = '/platform-config';
+
   // Timeouts optimized for mobile
   static const Duration connectTimeout = Duration(seconds: 10);
   static const Duration receiveTimeout = Duration(seconds: 15);

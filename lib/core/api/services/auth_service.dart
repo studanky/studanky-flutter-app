@@ -11,6 +11,7 @@ import 'package:studanky_flutter_app/core/api/dtos/user_dto.dart';
 import 'package:studanky_flutter_app/core/api/exceptions/api_exceptions.dart';
 import 'package:studanky_flutter_app/core/api/models/auth_models.dart';
 import 'package:studanky_flutter_app/core/api/services/auth_api.dart';
+import 'package:studanky_flutter_app/core/api/services/auth_token_provider.dart';
 
 part 'auth_service.freezed.dart';
 part 'auth_service.g.dart';
@@ -40,6 +41,14 @@ class AuthService extends _$AuthService {
 
   String? _currentJWT;
   String? get currentToken => _currentJWT;
+
+  /// Updates the in-memory token, mirroring it into the dependency-free
+  /// [authTokenProvider] that the Dio interceptors read. Keeping this the sole
+  /// writer is what lets the auth stack stay decoupled from the main Dio.
+  void _setToken(String? token) {
+    _currentJWT = token;
+    ref.read(authTokenProvider.notifier).setToken(token);
+  }
 
   @override
   AuthenticationState build() {
@@ -154,7 +163,7 @@ class AuthService extends _$AuthService {
 
     try {
       await _clearAuthData();
-      _currentJWT = null;
+      _setToken(null);
 
       state = const AuthenticationState(isInitialized: true, isLoading: false);
     } catch (e) {
@@ -236,7 +245,7 @@ class AuthService extends _$AuthService {
     String password,
   ) async {
     // Store JWT and user in memory
-    _currentJWT = authResponse.jwt;
+    _setToken(authResponse.jwt);
 
     // SECURITY: Strapi users-permissions has no refresh-token flow out of the
     // box, so the raw password is persisted in the platform secure store
@@ -304,9 +313,11 @@ class AuthService extends _$AuthService {
   }
 }
 
-/// Retrofit-backed authentication API bound to the shared [Dio] client.
+/// Retrofit-backed authentication API bound to the dedicated [authDio] client
+/// (never the main [dio], to keep the auth stack out of that Dio's dependency
+/// graph — see dio_provider.dart).
 @Riverpod(keepAlive: true)
-AuthApi authApi(Ref ref) => AuthApi(ref.watch(dioProvider));
+AuthApi authApi(Ref ref) => AuthApi(ref.watch(authDioProvider));
 
 // Secure Storage instance with platform-specific options aligned with v10 API
 const _secureStorage = FlutterSecureStorage(

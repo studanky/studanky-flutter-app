@@ -41,7 +41,7 @@ final class AuthServiceProvider
   }
 }
 
-String _$authServiceHash() => r'b9af4be8b18c8c15fdaa06e7d7bc65d20268b3ba';
+String _$authServiceHash() => r'baee303cd879e459032c3d58983cbdfd9da23067';
 
 abstract class _$AuthService extends $Notifier<AuthenticationState> {
   AuthenticationState build();
@@ -61,17 +61,23 @@ abstract class _$AuthService extends $Notifier<AuthenticationState> {
   }
 }
 
-/// Retrofit-backed authentication API bound to the shared [Dio] client.
+/// Retrofit-backed authentication API bound to the dedicated [authDio] client
+/// (never the main [dio], to keep the auth stack out of that Dio's dependency
+/// graph — see dio_provider.dart).
 
 @ProviderFor(authApi)
 final authApiProvider = AuthApiProvider._();
 
-/// Retrofit-backed authentication API bound to the shared [Dio] client.
+/// Retrofit-backed authentication API bound to the dedicated [authDio] client
+/// (never the main [dio], to keep the auth stack out of that Dio's dependency
+/// graph — see dio_provider.dart).
 
 final class AuthApiProvider
     extends $FunctionalProvider<AuthApi, AuthApi, AuthApi>
     with $Provider<AuthApi> {
-  /// Retrofit-backed authentication API bound to the shared [Dio] client.
+  /// Retrofit-backed authentication API bound to the dedicated [authDio] client
+  /// (never the main [dio], to keep the auth stack out of that Dio's dependency
+  /// graph — see dio_provider.dart).
   AuthApiProvider._()
     : super(
         from: null,
@@ -105,7 +111,7 @@ final class AuthApiProvider
   }
 }
 
-String _$authApiHash() => r'7f8f3295d155d64a23d89a39198a1a3354c334e6';
+String _$authApiHash() => r'44a721470ed665b4cd51627bc432ce763a6999cb';
 
 @ProviderFor(secureStorage)
 final secureStorageProvider = SecureStorageProvider._();

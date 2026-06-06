@@ -4,12 +4,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studanky_flutter_app/core/api/config/api_config.dart';
 import 'package:studanky_flutter_app/core/api/services/auth_service.dart';
+import 'package:studanky_flutter_app/core/api/services/auth_token_provider.dart';
 
 /// Injects the bearer token on outgoing requests and, on a 401, performs a
 /// single de-duplicated re-authentication before replaying the request.
 ///
-/// The [AuthService] is resolved lazily through [Ref] so that the Dio provider
-/// and the auth service can depend on each other without a construction cycle.
+/// The token is read from the dependency-free [authTokenProvider] (not from
+/// [AuthService]) so this read adds no edge back to a Dio. [AuthService] is only
+/// touched for re-authentication on a 401; because the auth stack now runs on a
+/// separate Dio, that read no longer closes a provider cycle.
 class AuthInterceptor extends Interceptor {
   AuthInterceptor({required Dio dio, required Ref ref})
     : _dio = dio,
@@ -33,7 +36,7 @@ class AuthInterceptor extends Interceptor {
       return;
     }
 
-    final token = _authService.currentToken;
+    final token = _ref.read(authTokenProvider);
 
     if (token != null && token.isNotEmpty) {
       options.headers.addAll(ApiConfig.authHeaders(token));
@@ -59,7 +62,7 @@ class AuthInterceptor extends Interceptor {
       return;
     }
 
-    final token = _authService.currentToken;
+    final token = _ref.read(authTokenProvider);
     if (token == null || token.isEmpty) {
       handler.next(err);
       return;
