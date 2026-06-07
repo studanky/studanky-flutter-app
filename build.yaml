@@ -1,0 +1,16 @@
+global_options:
+  # retrofit and riverpod generators can fight over output formatting when run
+  # in the same build. Let the generators emit unformatted code and rely on the
+  # final `dart format` pass instead.
+  retrofit_generator:
+    options:
+      format_output: false
+
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          explicit_to_json: true
+          create_to_json: true
+          field_rename: none
