@@ -19,6 +19,7 @@ import 'package:studanky_flutter_app/features/map_page/providers/map_marker_prov
 import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
 import 'package:studanky_flutter_app/features/map_page/utils/map_camera_animator.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/cluster_marker.dart';
+import 'package:studanky_flutter_app/features/map_page/widgets/map_attribution.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
@@ -289,6 +290,13 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     final positionStream = locationNotifier.positionStream;
     final headingStream = locationNotifier.headingStream;
 
+    // Mapy.com serves no dark map set, so in dark mode we apply an invert +
+    // hue-rotate colour filter over the raster tiles only (not our markers or
+    // the location dot). Driven by the system brightness — swap for the app
+    // theme's brightness once a dark theme is wired.
+    final isDarkMode =
+        MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+
     return SizedBox.expand(
       child: Stack(
         children: [
@@ -310,7 +318,13 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                 ),
               ),
               children: [
-                TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
+                if (isDarkMode)
+                  darkModeTilesContainerBuilder(
+                    context,
+                    TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
+                  )
+                else
+                  TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
                 CurrentLocationLayer(
                   positionStream: positionStream,
                   headingStream: headingStream,
@@ -372,6 +386,15 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                       count: favoritesCount,
                       onPressed: _openFavorites,
                     ),
+                  ),
+                  // Mandatory Mapy.com attribution, centred just above the
+                  // corner controls so it never overlaps them or overflows on
+                  // narrow screens.
+                  const Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 72,
+                    child: Center(child: MapAttribution()),
                   ),
                 ],
               ),
