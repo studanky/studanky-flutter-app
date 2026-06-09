@@ -68,6 +68,8 @@
   "@location_service_off": {},
   "location_action_settings": "Nastavení",
   "@location_action_settings": {},
+  "map_my_location": "Moje poloha",
+  "@map_my_location": {},
 
   "common_yes": "Ano",
   "@common_yes": {},

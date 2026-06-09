@@ -23,6 +23,8 @@ Marker buildSpringMarker(
     width: _springMarkerSize,
     height: _springMarkerSize,
     alignment: Alignment.center,
+    // Keep upright when the map is rotated.
+    rotate: true,
     child: _SpringMarkerPin(icon: icon, onTap: onTap),
   );
 }

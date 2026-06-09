@@ -13,6 +13,8 @@ Marker buildClusterMarker(Cluster cluster, {required VoidCallback onTap}) {
     width: size,
     height: size,
     alignment: Alignment.center,
+    // Keep upright when the map is rotated.
+    rotate: true,
     child: _ClusterBadge(count: cluster.count, size: size, onTap: onTap),
   );
 }

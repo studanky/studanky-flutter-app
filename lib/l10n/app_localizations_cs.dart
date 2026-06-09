@@ -128,6 +128,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get location_action_settings => 'Nastavení';
 
   @override
+  String get map_my_location => 'Moje poloha';
+
+  @override
   String get common_yes => 'Ano';
 
   @override

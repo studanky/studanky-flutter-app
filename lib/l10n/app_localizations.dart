@@ -304,6 +304,12 @@ abstract class AppLocalizations {
   /// **'Nastavení'**
   String get location_action_settings;
 
+  /// No description provided for @map_my_location.
+  ///
+  /// In cs, this message translates to:
+  /// **'Moje poloha'**
+  String get map_my_location;
+
   /// No description provided for @common_yes.
   ///
   /// In cs, this message translates to:

@@ -33,9 +33,15 @@ class UserLocationNotifier extends Notifier<UserLocationState> {
 
   Stream<LocationMarkerPosition?>? _positionStream;
   Stream<LocationMarkerHeading?>? _headingStream;
+  LatLng? _lastKnownPosition;
 
   @override
   UserLocationState build() => const UserLocationState();
+
+  /// Most recent fix observed on [positionStream], or null before the first
+  /// one. Lets the "my location" button recenter instantly without re-awaiting
+  /// the stream.
+  LatLng? get lastKnownPosition => _lastKnownPosition;
 
   /// The single shared position stream. Permission is requested exactly once,
   /// here – which is why it is also passed to [CurrentLocationLayer], so the
@@ -89,13 +95,14 @@ class UserLocationNotifier extends Notifier<UserLocationState> {
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
       ),
-    ).map(
-      (position) => LocationMarkerPosition(
+    ).map((position) {
+      _lastKnownPosition = LatLng(position.latitude, position.longitude);
+      return LocationMarkerPosition(
         latitude: position.latitude,
         longitude: position.longitude,
         accuracy: position.accuracy,
-      ),
-    ).handleError((Object error, StackTrace stackTrace) {
+      );
+    }).handleError((Object error, StackTrace stackTrace) {
       _logger.warning('Position stream error', error, stackTrace);
     });
   }
