@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_detail_provider.dart';
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_reports_provider.dart';
@@ -150,6 +151,21 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
     final statusUpdatedAt = detail?.statusUpdatedAt ?? marker.statusUpdatedAt;
     final statusIcon = config.iconFor(status.wireValue, statusUpdatedAt);
 
+    final isFavorite = ref.watch(
+      favoritesControllerProvider.select(
+        (favorites) =>
+            favorites.any((s) => s.documentId == marker.documentId),
+      ),
+    );
+    // Store the freshest summary available so the favourites list stays useful.
+    final favoriteEntity = SpringMarkerEntity(
+      documentId: marker.documentId,
+      name: name,
+      position: position,
+      status: status,
+      statusUpdatedAt: statusUpdatedAt,
+    );
+
     return CustomScrollView(
       controller: widget.scrollController,
       slivers: [
@@ -168,6 +184,10 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
             onShare: () => _share(name, position),
             onNavigate: () => _navigate(position),
             onCopyCoordinates: () => _copyCoordinates(position),
+            isFavorite: isFavorite,
+            onToggleFavorite: () => ref
+                .read(favoritesControllerProvider.notifier)
+                .toggle(favoriteEntity),
           ),
         ),
         const SliverToBoxAdapter(child: Divider(height: 1)),

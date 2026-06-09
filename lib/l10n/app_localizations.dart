@@ -310,6 +310,48 @@ abstract class AppLocalizations {
   /// **'Moje poloha'**
   String get map_my_location;
 
+  /// No description provided for @map_favorites.
+  ///
+  /// In cs, this message translates to:
+  /// **'Oblíbené studánky'**
+  String get map_favorites;
+
+  /// No description provided for @favorites_sheet_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Oblíbené studánky'**
+  String get favorites_sheet_title;
+
+  /// No description provided for @favorites_empty_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zatím žádné oblíbené'**
+  String get favorites_empty_title;
+
+  /// No description provided for @favorites_empty_message.
+  ///
+  /// In cs, this message translates to:
+  /// **'Studánku přidáte do oblíbených tlačítkem v jejím detailu.'**
+  String get favorites_empty_message;
+
+  /// No description provided for @favorites_remove.
+  ///
+  /// In cs, this message translates to:
+  /// **'Odebrat z oblíbených'**
+  String get favorites_remove;
+
+  /// No description provided for @spring_detail_add_favorite.
+  ///
+  /// In cs, this message translates to:
+  /// **'Přidat do oblíbených'**
+  String get spring_detail_add_favorite;
+
+  /// No description provided for @spring_detail_remove_favorite.
+  ///
+  /// In cs, this message translates to:
+  /// **'Odebrat z oblíbených'**
+  String get spring_detail_remove_favorite;
+
   /// No description provided for @common_yes.
   ///
   /// In cs, this message translates to:

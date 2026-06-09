@@ -11,6 +11,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_progress_indicator.dart';
+import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
+import 'package:studanky_flutter_app/features/favorites/widgets/favorites_sheet.dart';
 import 'package:studanky_flutter_app/features/map_page/constants/map_page_constants.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/map_marker_provider.dart';
@@ -234,6 +236,19 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     unawaited(showSpringDetailSheet(context, marker: spring));
   }
 
+  /// Opens the favourites popup; if the user picks one, animate-centers the map
+  /// on it and opens its detail.
+  Future<void> _openFavorites() async {
+    FocusScope.of(context).unfocus();
+    final selected = await showFavoritesSheet(context);
+    if (selected == null || !mounted) return;
+
+    unawaited(
+      _animator.animateTo(center: selected.position, zoom: _recenterMinZoom),
+    );
+    unawaited(showSpringDetailSheet(context, marker: selected));
+  }
+
   void _onSearchResultSelected(MapSearchResult result) {
     if (!mounted) return;
 
@@ -248,6 +263,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     final markerState = ref.watch(mapMarkerProvider);
     final config = ref.watch(platformConfigControllerProvider);
     final locationStatus = ref.watch(userLocationProvider).status;
+    final favoritesCount = ref.watch(
+      favoritesControllerProvider.select((favorites) => favorites.length),
+    );
 
     final markers = <Marker>[
       for (final item in markerState.items)
@@ -331,6 +349,14 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
               ),
             ),
           ),
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: _FavoritesButton(
+              count: favoritesCount,
+              onPressed: _openFavorites,
+            ),
+          ),
         ],
       ),
     );
@@ -411,6 +437,48 @@ class _MyLocationButton extends StatelessWidget {
                         dotColor: dotColor,
                       ),
                     ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Circular control that opens the saved-springs popup, badged with the count.
+class _FavoritesButton extends StatelessWidget {
+  const _FavoritesButton({required this.count, required this.onPressed});
+
+  final int count;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Styles.appColors;
+
+    return Semantics(
+      button: true,
+      label: context.l10n.map_favorites,
+      child: Material(
+        color: colors.onNeutral,
+        elevation: 3,
+        shape: const CircleBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onPressed,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Center(
+              child: Badge(
+                isLabelVisible: count > 0,
+                label: Text('$count'),
+                child: Icon(
+                  Icons.bookmarks_rounded,
+                  size: 24,
+                  color: colors.primaryMain,
+                ),
+              ),
             ),
           ),
         ),

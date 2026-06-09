@@ -22,6 +22,8 @@ class SpringDetailHeader extends StatelessWidget {
     required this.onShare,
     required this.onNavigate,
     required this.onCopyCoordinates,
+    required this.isFavorite,
+    required this.onToggleFavorite,
     super.key,
   });
 
@@ -34,6 +36,8 @@ class SpringDetailHeader extends StatelessWidget {
   final VoidCallback onShare;
   final VoidCallback onNavigate;
   final VoidCallback onCopyCoordinates;
+  final bool isFavorite;
+  final VoidCallback onToggleFavorite;
 
   @override
   Widget build(BuildContext context) {
@@ -43,15 +47,29 @@ class SpringDetailHeader extends StatelessWidget {
     final status = headerStatusVisual(statusIcon, colors, l10n);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 12, 8, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            name,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: text.h5.copyWith(color: colors.neutral900),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    name,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: text.h5.copyWith(color: colors.neutral900),
+                  ),
+                ),
+              ),
+              _FavoriteButton(
+                isFavorite: isFavorite,
+                onPressed: onToggleFavorite,
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           _StatusRow(status: status, statusUpdatedAt: statusUpdatedAt),
@@ -64,6 +82,30 @@ class SpringDetailHeader extends StatelessWidget {
           const SizedBox(height: 16),
           _ActionButtons(onShare: onShare, onNavigate: onNavigate),
         ],
+      ),
+    );
+  }
+}
+
+class _FavoriteButton extends StatelessWidget {
+  const _FavoriteButton({required this.isFavorite, required this.onPressed});
+
+  final bool isFavorite;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = Styles.appColors;
+
+    return IconButton(
+      onPressed: onPressed,
+      tooltip: isFavorite
+          ? l10n.spring_detail_remove_favorite
+          : l10n.spring_detail_add_favorite,
+      icon: Icon(
+        isFavorite ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+        color: isFavorite ? colors.primaryMain : colors.neutral700,
       ),
     );
   }

@@ -131,6 +131,28 @@ class AppLocalizationsCs extends AppLocalizations {
   String get map_my_location => 'Moje poloha';
 
   @override
+  String get map_favorites => 'Oblíbené studánky';
+
+  @override
+  String get favorites_sheet_title => 'Oblíbené studánky';
+
+  @override
+  String get favorites_empty_title => 'Zatím žádné oblíbené';
+
+  @override
+  String get favorites_empty_message =>
+      'Studánku přidáte do oblíbených tlačítkem v jejím detailu.';
+
+  @override
+  String get favorites_remove => 'Odebrat z oblíbených';
+
+  @override
+  String get spring_detail_add_favorite => 'Přidat do oblíbených';
+
+  @override
+  String get spring_detail_remove_favorite => 'Odebrat z oblíbených';
+
+  @override
   String get common_yes => 'Ano';
 
   @override

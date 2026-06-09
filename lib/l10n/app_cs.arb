@@ -70,6 +70,22 @@
   "@location_action_settings": {},
   "map_my_location": "Moje poloha",
   "@map_my_location": {},
+  "map_favorites": "Oblíbené studánky",
+  "@map_favorites": {},
+
+  "favorites_sheet_title": "Oblíbené studánky",
+  "@favorites_sheet_title": {},
+  "favorites_empty_title": "Zatím žádné oblíbené",
+  "@favorites_empty_title": {},
+  "favorites_empty_message": "Studánku přidáte do oblíbených tlačítkem v jejím detailu.",
+  "@favorites_empty_message": {},
+  "favorites_remove": "Odebrat z oblíbených",
+  "@favorites_remove": {},
+
+  "spring_detail_add_favorite": "Přidat do oblíbených",
+  "@spring_detail_add_favorite": {},
+  "spring_detail_remove_favorite": "Odebrat z oblíbených",
+  "@spring_detail_remove_favorite": {},
 
   "common_yes": "Ano",
   "@common_yes": {},
