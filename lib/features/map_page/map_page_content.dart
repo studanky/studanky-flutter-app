@@ -17,6 +17,7 @@ import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
+import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
@@ -120,9 +121,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent> {
   }
 
   void _onSpringTap(SpringMarkerEntity spring) {
-    // Out of scope for this feature: the spring detail screen is a separate
-    // feature. Hook kept so wiring navigation later is a one-line change.
     _logger.fine('Spring tapped: ${spring.documentId} (${spring.name})');
+    FocusScope.of(context).unfocus();
+    unawaited(showSpringDetailSheet(context, marker: spring));
   }
 
   void _onSearchResultSelected(MapSearchResult result) {

@@ -303,6 +303,204 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Nastavení'**
   String get location_action_settings;
+
+  /// No description provided for @common_yes.
+  ///
+  /// In cs, this message translates to:
+  /// **'Ano'**
+  String get common_yes;
+
+  /// No description provided for @common_no.
+  ///
+  /// In cs, this message translates to:
+  /// **'Ne'**
+  String get common_no;
+
+  /// No description provided for @spring_detail_status_flowing.
+  ///
+  /// In cs, this message translates to:
+  /// **'Teče'**
+  String get spring_detail_status_flowing;
+
+  /// No description provided for @spring_detail_status_not_flowing.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neteče'**
+  String get spring_detail_status_not_flowing;
+
+  /// No description provided for @spring_detail_status_unknown.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neznámo'**
+  String get spring_detail_status_unknown;
+
+  /// No description provided for @spring_detail_no_record_yet.
+  ///
+  /// In cs, this message translates to:
+  /// **'zatím bez záznamu'**
+  String get spring_detail_no_record_yet;
+
+  /// No description provided for @spring_detail_action_share.
+  ///
+  /// In cs, this message translates to:
+  /// **'Sdílet'**
+  String get spring_detail_action_share;
+
+  /// No description provided for @spring_detail_action_navigate.
+  ///
+  /// In cs, this message translates to:
+  /// **'Navigovat'**
+  String get spring_detail_action_navigate;
+
+  /// No description provided for @spring_detail_coordinates_copied.
+  ///
+  /// In cs, this message translates to:
+  /// **'Souřadnice zkopírovány'**
+  String get spring_detail_coordinates_copied;
+
+  /// No description provided for @spring_detail_navigation_failed.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nepodařilo se otevřít navigaci'**
+  String get spring_detail_navigation_failed;
+
+  /// No description provided for @spring_detail_share_text.
+  ///
+  /// In cs, this message translates to:
+  /// **'{name}\n{coordinates}\n{url}'**
+  String spring_detail_share_text(String name, String coordinates, String url);
+
+  /// No description provided for @spring_detail_load_error.
+  ///
+  /// In cs, this message translates to:
+  /// **'Detail studánky se nepodařilo načíst'**
+  String get spring_detail_load_error;
+
+  /// No description provided for @spring_detail_history_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Historie záznamů'**
+  String get spring_detail_history_title;
+
+  /// No description provided for @spring_detail_history_empty.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zatím žádné záznamy'**
+  String get spring_detail_history_empty;
+
+  /// No description provided for @spring_detail_history_error.
+  ///
+  /// In cs, this message translates to:
+  /// **'Záznamy se nepodařilo načíst'**
+  String get spring_detail_history_error;
+
+  /// No description provided for @spring_detail_history_load_more_error.
+  ///
+  /// In cs, this message translates to:
+  /// **'Další záznamy se nepodařilo načíst'**
+  String get spring_detail_history_load_more_error;
+
+  /// No description provided for @spring_detail_station_record.
+  ///
+  /// In cs, this message translates to:
+  /// **'ČHMÚ'**
+  String get spring_detail_station_record;
+
+  /// No description provided for @spring_detail_report_flow_rate.
+  ///
+  /// In cs, this message translates to:
+  /// **'Průtok'**
+  String get spring_detail_report_flow_rate;
+
+  /// No description provided for @spring_detail_report_flow_strength.
+  ///
+  /// In cs, this message translates to:
+  /// **'Síla pramene'**
+  String get spring_detail_report_flow_strength;
+
+  /// No description provided for @spring_detail_report_clarity.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zbarvení'**
+  String get spring_detail_report_clarity;
+
+  /// No description provided for @spring_detail_report_odor.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zápach'**
+  String get spring_detail_report_odor;
+
+  /// No description provided for @spring_detail_report_note.
+  ///
+  /// In cs, this message translates to:
+  /// **'Poznámka'**
+  String get spring_detail_report_note;
+
+  /// No description provided for @spring_detail_flow_strength_value.
+  ///
+  /// In cs, this message translates to:
+  /// **'{scale}/5'**
+  String spring_detail_flow_strength_value(int scale);
+
+  /// No description provided for @spring_detail_flow_rate_value.
+  ///
+  /// In cs, this message translates to:
+  /// **'{value} l/s'**
+  String spring_detail_flow_rate_value(String value);
+
+  /// No description provided for @water_clarity_crystal_clear.
+  ///
+  /// In cs, this message translates to:
+  /// **'Křišťálově čirá'**
+  String get water_clarity_crystal_clear;
+
+  /// No description provided for @water_clarity_clear.
+  ///
+  /// In cs, this message translates to:
+  /// **'Čirá'**
+  String get water_clarity_clear;
+
+  /// No description provided for @water_clarity_slightly_turbid.
+  ///
+  /// In cs, this message translates to:
+  /// **'Mírně zakalená'**
+  String get water_clarity_slightly_turbid;
+
+  /// No description provided for @water_clarity_turbid.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zakalená'**
+  String get water_clarity_turbid;
+
+  /// No description provided for @water_clarity_heavily_turbid.
+  ///
+  /// In cs, this message translates to:
+  /// **'Silně zakalená'**
+  String get water_clarity_heavily_turbid;
+
+  /// No description provided for @age_just_now.
+  ///
+  /// In cs, this message translates to:
+  /// **'právě teď'**
+  String get age_just_now;
+
+  /// No description provided for @age_minutes.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{před {count} minutou} few{před {count} minutami} other{před {count} minutami}}'**
+  String age_minutes(int count);
+
+  /// No description provided for @age_hours.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{před {count} hodinou} few{před {count} hodinami} other{před {count} hodinami}}'**
+  String age_hours(int count);
+
+  /// No description provided for @age_days.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{před {count} dnem} few{před {count} dny} other{před {count} dny}}'**
+  String age_days(int count);
 }
 
 class _AppLocalizationsDelegate

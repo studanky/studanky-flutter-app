@@ -23,8 +23,15 @@ class ApiConfig {
   /// Platform config single type (dynamic freshness threshold + flow scale).
   static const String platformConfigEndpoint = '/platform-config';
 
+  /// Spring collection root. Detail is `/springs/{documentId}` and its report
+  /// history `/springs/{documentId}/reports` (api-reference.md §3.2–3.3).
+  static const String springsEndpoint = '/springs';
+
   /// Minimal spring marker payload for the map, filtered by `bbox`.
   static const String springsMapEndpoint = '/springs/map';
+
+  /// Report history page size (server clamps to 1–100; api-reference.md §3.3).
+  static const int reportsPageSize = 20;
 
   // Timeouts optimized for mobile
   static const Duration connectTimeout = Duration(seconds: 10);

@@ -66,5 +66,97 @@
   "@location_permission_denied_forever": {},
   "location_service_off": "Služby určování polohy jsou vypnuté.",
   "@location_service_off": {},
-  "location_action_settings": "Nastavení"
+  "location_action_settings": "Nastavení",
+  "@location_action_settings": {},
+
+  "common_yes": "Ano",
+  "@common_yes": {},
+  "common_no": "Ne",
+  "@common_no": {},
+
+  "spring_detail_status_flowing": "Teče",
+  "@spring_detail_status_flowing": {},
+  "spring_detail_status_not_flowing": "Neteče",
+  "@spring_detail_status_not_flowing": {},
+  "spring_detail_status_unknown": "Neznámo",
+  "@spring_detail_status_unknown": {},
+
+  "spring_detail_no_record_yet": "zatím bez záznamu",
+  "@spring_detail_no_record_yet": {},
+
+  "spring_detail_action_share": "Sdílet",
+  "@spring_detail_action_share": {},
+  "spring_detail_action_navigate": "Navigovat",
+  "@spring_detail_action_navigate": {},
+  "spring_detail_coordinates_copied": "Souřadnice zkopírovány",
+  "@spring_detail_coordinates_copied": {},
+  "spring_detail_navigation_failed": "Nepodařilo se otevřít navigaci",
+  "@spring_detail_navigation_failed": {},
+  "spring_detail_share_text": "{name}\n{coordinates}\n{url}",
+  "@spring_detail_share_text": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "coordinates": { "type": "String" },
+      "url": { "type": "String" }
+    }
+  },
+
+  "spring_detail_load_error": "Detail studánky se nepodařilo načíst",
+  "@spring_detail_load_error": {},
+
+  "spring_detail_history_title": "Historie záznamů",
+  "@spring_detail_history_title": {},
+  "spring_detail_history_empty": "Zatím žádné záznamy",
+  "@spring_detail_history_empty": {},
+  "spring_detail_history_error": "Záznamy se nepodařilo načíst",
+  "@spring_detail_history_error": {},
+  "spring_detail_history_load_more_error": "Další záznamy se nepodařilo načíst",
+  "@spring_detail_history_load_more_error": {},
+
+  "spring_detail_station_record": "ČHMÚ",
+  "@spring_detail_station_record": {},
+  "spring_detail_report_flow_rate": "Průtok",
+  "@spring_detail_report_flow_rate": {},
+  "spring_detail_report_flow_strength": "Síla pramene",
+  "@spring_detail_report_flow_strength": {},
+  "spring_detail_report_clarity": "Zbarvení",
+  "@spring_detail_report_clarity": {},
+  "spring_detail_report_odor": "Zápach",
+  "@spring_detail_report_odor": {},
+  "spring_detail_report_note": "Poznámka",
+  "@spring_detail_report_note": {},
+  "spring_detail_flow_strength_value": "{scale}/5",
+  "@spring_detail_flow_strength_value": {
+    "placeholders": { "scale": { "type": "int" } }
+  },
+  "spring_detail_flow_rate_value": "{value} l/s",
+  "@spring_detail_flow_rate_value": {
+    "placeholders": { "value": { "type": "String" } }
+  },
+
+  "water_clarity_crystal_clear": "Křišťálově čirá",
+  "@water_clarity_crystal_clear": {},
+  "water_clarity_clear": "Čirá",
+  "@water_clarity_clear": {},
+  "water_clarity_slightly_turbid": "Mírně zakalená",
+  "@water_clarity_slightly_turbid": {},
+  "water_clarity_turbid": "Zakalená",
+  "@water_clarity_turbid": {},
+  "water_clarity_heavily_turbid": "Silně zakalená",
+  "@water_clarity_heavily_turbid": {},
+
+  "age_just_now": "právě teď",
+  "@age_just_now": {},
+  "age_minutes": "{count, plural, one{před {count} minutou} few{před {count} minutami} other{před {count} minutami}}",
+  "@age_minutes": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "age_hours": "{count, plural, one{před {count} hodinou} few{před {count} hodinami} other{před {count} hodinami}}",
+  "@age_hours": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "age_days": "{count, plural, one{před {count} dnem} few{před {count} dny} other{před {count} dny}}",
+  "@age_days": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

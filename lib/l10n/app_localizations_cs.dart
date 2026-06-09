@@ -126,4 +126,138 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get location_action_settings => 'Nastavení';
+
+  @override
+  String get common_yes => 'Ano';
+
+  @override
+  String get common_no => 'Ne';
+
+  @override
+  String get spring_detail_status_flowing => 'Teče';
+
+  @override
+  String get spring_detail_status_not_flowing => 'Neteče';
+
+  @override
+  String get spring_detail_status_unknown => 'Neznámo';
+
+  @override
+  String get spring_detail_no_record_yet => 'zatím bez záznamu';
+
+  @override
+  String get spring_detail_action_share => 'Sdílet';
+
+  @override
+  String get spring_detail_action_navigate => 'Navigovat';
+
+  @override
+  String get spring_detail_coordinates_copied => 'Souřadnice zkopírovány';
+
+  @override
+  String get spring_detail_navigation_failed =>
+      'Nepodařilo se otevřít navigaci';
+
+  @override
+  String spring_detail_share_text(String name, String coordinates, String url) {
+    return '$name\n$coordinates\n$url';
+  }
+
+  @override
+  String get spring_detail_load_error => 'Detail studánky se nepodařilo načíst';
+
+  @override
+  String get spring_detail_history_title => 'Historie záznamů';
+
+  @override
+  String get spring_detail_history_empty => 'Zatím žádné záznamy';
+
+  @override
+  String get spring_detail_history_error => 'Záznamy se nepodařilo načíst';
+
+  @override
+  String get spring_detail_history_load_more_error =>
+      'Další záznamy se nepodařilo načíst';
+
+  @override
+  String get spring_detail_station_record => 'ČHMÚ';
+
+  @override
+  String get spring_detail_report_flow_rate => 'Průtok';
+
+  @override
+  String get spring_detail_report_flow_strength => 'Síla pramene';
+
+  @override
+  String get spring_detail_report_clarity => 'Zbarvení';
+
+  @override
+  String get spring_detail_report_odor => 'Zápach';
+
+  @override
+  String get spring_detail_report_note => 'Poznámka';
+
+  @override
+  String spring_detail_flow_strength_value(int scale) {
+    return '$scale/5';
+  }
+
+  @override
+  String spring_detail_flow_rate_value(String value) {
+    return '$value l/s';
+  }
+
+  @override
+  String get water_clarity_crystal_clear => 'Křišťálově čirá';
+
+  @override
+  String get water_clarity_clear => 'Čirá';
+
+  @override
+  String get water_clarity_slightly_turbid => 'Mírně zakalená';
+
+  @override
+  String get water_clarity_turbid => 'Zakalená';
+
+  @override
+  String get water_clarity_heavily_turbid => 'Silně zakalená';
+
+  @override
+  String get age_just_now => 'právě teď';
+
+  @override
+  String age_minutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'před $count minutami',
+      few: 'před $count minutami',
+      one: 'před $count minutou',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String age_hours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'před $count hodinami',
+      few: 'před $count hodinami',
+      one: 'před $count hodinou',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String age_days(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'před $count dny',
+      few: 'před $count dny',
+      one: 'před $count dnem',
+    );
+    return '$_temp0';
+  }
 }
