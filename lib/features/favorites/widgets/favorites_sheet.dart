@@ -8,6 +8,9 @@ import 'package:studanky_flutter_app/features/spring_detail/widgets/status_visua
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
+/// Max width of the popup on large screens (tablets).
+const double _maxSheetWidth = 640;
+
 /// Opens the favourites popup and resolves with the spring the user tapped (to
 /// center the map on and open its detail), or null if dismissed.
 Future<SpringMarkerEntity?> showFavoritesSheet(BuildContext context) {
@@ -17,6 +20,8 @@ Future<SpringMarkerEntity?> showFavoritesSheet(BuildContext context) {
     useSafeArea: true,
     useRootNavigator: true,
     backgroundColor: Colors.transparent,
+    // Cap the width and centre on tablets/large screens.
+    constraints: const BoxConstraints(maxWidth: _maxSheetWidth),
     builder: (_) => const _FavoritesSheet(),
   );
 }
@@ -32,7 +37,8 @@ class _FavoritesSheet extends ConsumerWidget {
 
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      child: ColoredBox(
+      // Material (not a plain ColoredBox) so ListTile ink/splashes render.
+      child: Material(
         color: colors.onNeutral,
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: maxHeight),

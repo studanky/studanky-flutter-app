@@ -13,6 +13,10 @@ import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_photo
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
+/// Max width of the sheet on large screens (tablets); below this it stretches
+/// to the available width.
+const double _maxSheetWidth = 640;
+
 /// Opens the spring detail as a draggable bottom sheet that starts at half
 /// height and can be dragged to full screen (overlaying the bottom navigation
 /// via the root navigator).
@@ -23,10 +27,15 @@ Future<void> showSpringDetailSheet(
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
+    // Keep the fully-expanded sheet within the safe area (below the status bar,
+    // above the home indicator).
     useSafeArea: true,
     useRootNavigator: true,
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black.withValues(alpha: 0.25),
+    // On tablets/large screens, cap the width and centre the sheet rather than
+    // stretching edge to edge.
+    constraints: const BoxConstraints(maxWidth: _maxSheetWidth),
     builder: (_) => SpringDetailSheet(marker: marker),
   );
 }
@@ -80,7 +89,9 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
         builder: (context, scrollController) {
           return ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: ColoredBox(
+            // Material (not a plain ColoredBox) so the InkWell ripples in the
+            // header and report rows render on the sheet surface.
+            child: Material(
               color: colors.onNeutral,
               child: _SpringDetailBody(
                 marker: widget.marker,

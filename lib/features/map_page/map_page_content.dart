@@ -319,42 +319,62 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
               ],
             ),
           ),
-          if (markerState.status.isLoading)
-            Positioned(
-              top: MediaQuery.of(context).padding.top + 72,
-              left: 0,
-              right: 0,
-              child: const Center(child: AppProgressIndicator()),
-            ),
-          Positioned(
-            left: 16,
-            right: 16,
-            top: MediaQuery.of(context).padding.top + 12,
-            child: MapSearchWidget(
-              hintText: 'Hledejte...',
-              onResultSelected: _onSearchResultSelected,
-            ),
-          ),
-          Positioned(
-            left: 16,
-            bottom: 16,
-            child: ValueListenableBuilder<({double rotationRad, bool centered})>(
-              valueListenable: _compass,
-              builder: (context, compass, _) => _MyLocationButton(
-                status: locationStatus,
-                isLocating: _isLocating,
-                rotationRad: compass.rotationRad,
-                centered: compass.centered,
-                onPressed: _onLocationButtonTap,
+          // Controls live inside SafeArea so they clear the status bar and any
+          // notch/cutout insets; the map itself stays full-bleed underneath.
+          Positioned.fill(
+            child: SafeArea(
+              child: Stack(
+                children: [
+                  if (markerState.status.isLoading)
+                    const Positioned(
+                      top: 72,
+                      left: 0,
+                      right: 0,
+                      child: Center(child: AppProgressIndicator()),
+                    ),
+                  Positioned(
+                    left: 16,
+                    right: 16,
+                    top: 12,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ConstrainedBox(
+                        // Don't stretch the search field across wide screens.
+                        constraints: const BoxConstraints(maxWidth: 600),
+                        child: MapSearchWidget(
+                          hintText: 'Hledejte...',
+                          onResultSelected: _onSearchResultSelected,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 16,
+                    bottom: 16,
+                    child:
+                        ValueListenableBuilder<
+                          ({double rotationRad, bool centered})
+                        >(
+                          valueListenable: _compass,
+                          builder: (context, compass, _) => _MyLocationButton(
+                            status: locationStatus,
+                            isLocating: _isLocating,
+                            rotationRad: compass.rotationRad,
+                            centered: compass.centered,
+                            onPressed: _onLocationButtonTap,
+                          ),
+                        ),
+                  ),
+                  Positioned(
+                    right: 16,
+                    bottom: 16,
+                    child: _FavoritesButton(
+                      count: favoritesCount,
+                      onPressed: _openFavorites,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-          Positioned(
-            right: 16,
-            bottom: 16,
-            child: _FavoritesButton(
-              count: favoritesCount,
-              onPressed: _openFavorites,
             ),
           ),
         ],
