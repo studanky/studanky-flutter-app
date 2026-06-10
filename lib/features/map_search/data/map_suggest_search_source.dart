@@ -66,6 +66,7 @@ class MapSuggestSearchSource implements MapSearchSource {
               label: name,
               position: LatLng(lat, lon),
               type: _mapType(item.type),
+              bounds: _boundsFromBbox(item.bbox),
             );
           })
           .whereType<MapSearchResult>()
@@ -81,6 +82,17 @@ class MapSuggestSearchSource implements MapSearchSource {
       );
       return const [];
     }
+  }
+
+  /// Converts the suggest `[minLon, minLat, maxLon, maxLat]` bbox into
+  /// south-west / north-east corners; returns null when absent or malformed.
+  static MapSearchBounds? _boundsFromBbox(List<double>? bbox) {
+    if (bbox == null || bbox.length != 4) return null;
+    final (minLon, minLat, maxLon, maxLat) = (bbox[0], bbox[1], bbox[2], bbox[3]);
+    return MapSearchBounds(
+      southWest: LatLng(minLat, minLon),
+      northEast: LatLng(maxLat, maxLon),
+    );
   }
 
   static MapSearchResultType _mapType(MapSuggestTypeDto typeDto) {

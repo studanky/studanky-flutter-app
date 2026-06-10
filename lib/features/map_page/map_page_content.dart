@@ -22,6 +22,8 @@ import 'package:studanky_flutter_app/features/map_page/widgets/cluster_marker.da
 import 'package:studanky_flutter_app/features/map_page/widgets/map_attribution.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
+import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
@@ -51,6 +53,27 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
 
   /// Map rotation (degrees) below which north is treated as "up".
   static const double _northEpsilonDegrees = 1.0;
+
+  /// Don't zoom in closer than this when fitting a search result's extent, so a
+  /// tiny address bbox still lands at a sensible street-level zoom.
+  static const double _searchMaxFitZoom = 16;
+
+  /// Map event sources that mean the *user* moved the map (vs. our own
+  /// programmatic [MapEventSource.mapController] animations). Used to clear the
+  /// search once the user takes over the camera.
+  static const Set<MapEventSource> _userMoveSources = {
+    MapEventSource.dragStart,
+    MapEventSource.onDrag,
+    MapEventSource.dragEnd,
+    MapEventSource.multiFingerGestureStart,
+    MapEventSource.onMultiFinger,
+    MapEventSource.multiFingerEnd,
+    MapEventSource.flingAnimationController,
+    MapEventSource.doubleTapZoomAnimationController,
+    MapEventSource.scrollWheel,
+    MapEventSource.cursorKeyboardRotation,
+    MapEventSource.keyboard,
+  };
 
   /// Coalesce rapid pan/zoom events into one fetch once the map goes idle
   /// (api-reference.md §3.1). Reclustering itself runs inside the notifier.
@@ -95,8 +118,22 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     // Orientation/centered feedback must be live (every frame of a rotate or
     // pan), so update it immediately; only the marker fetch is debounced.
     _updateCompass();
+    if (_userMoveSources.contains(event.source)) {
+      _clearSearchOnUserMove();
+    }
     _cameraDebounceTimer?.cancel();
     _cameraDebounceTimer = Timer(_cameraDebounce, _emitCamera);
+  }
+
+  /// Once the user moves the map themselves (e.g. after we animated to a search
+  /// result), the stale search query/results are cleared. Programmatic camera
+  /// changes use [MapEventSource.mapController] and are intentionally excluded.
+  void _clearSearchOnUserMove() {
+    final provider = mapSearchProvider(
+      Localizations.localeOf(context).languageCode,
+    );
+    if (ref.read(provider).query.isEmpty) return;
+    ref.read(provider.notifier).clear();
   }
 
   void _updateCompass() {
@@ -252,12 +289,45 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
 
   void _onSearchResultSelected(MapSearchResult result) {
     if (!mounted) return;
-
     FocusScope.of(context).unfocus();
-    final currentZoom = _mapController.camera.zoom;
-    final targetZoom = currentZoom < 15.0 ? 15.0 : currentZoom;
-    _mapController.move(result.position, targetZoom);
+
+    final bounds = result.bounds;
+    if (bounds != null && !bounds.isPoint) {
+      // Fit the whole locality in view, leaving room for the overlay controls
+      // (search bar on top, buttons + attribution at the bottom), then animate
+      // to the resulting camera.
+      final fitted = CameraFit.bounds(
+        bounds: LatLngBounds(bounds.southWest, bounds.northEast),
+        padding: const EdgeInsets.fromLTRB(48, 110, 48, 96),
+        maxZoom: _searchMaxFitZoom,
+      ).fit(_mapController.camera);
+      unawaited(
+        _animator.animateTo(center: fitted.center, zoom: fitted.zoom),
+      );
+      return;
+    }
+
+    // No usable extent (e.g. a coordinate): centre on the point at a zoom
+    // sensible for the result type.
+    unawaited(
+      _animator.animateTo(
+        center: result.position,
+        zoom: _zoomForResultType(result.type),
+      ),
+    );
   }
+
+  double _zoomForResultType(MapSearchResultType type) => switch (type) {
+    MapSearchResultType.regional ||
+    MapSearchResultType.regionalCountry ||
+    MapSearchResultType.regionalRegion => 9,
+    MapSearchResultType.regionalMunicipality ||
+    MapSearchResultType.regionalMunicipalityPart => 12,
+    MapSearchResultType.regionalStreet => 15,
+    MapSearchResultType.regionalAddress || MapSearchResultType.poi => 16,
+    MapSearchResultType.coordinate => 16,
+    MapSearchResultType.other => 14,
+  };
 
   @override
   Widget build(BuildContext context) {

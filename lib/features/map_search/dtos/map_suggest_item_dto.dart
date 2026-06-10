@@ -10,6 +10,7 @@ class MapSuggestItemDto {
     required this.name,
     required this.position,
     required this.type,
+    this.bbox,
   });
 
   factory MapSuggestItemDto.fromJson(Map<String, dynamic> json) =>
@@ -18,6 +19,10 @@ class MapSuggestItemDto {
   final String name;
   final MapSuggestPositionDto position;
   final MapSuggestTypeDto type;
+
+  /// Bounding box of the locality as `[minLon, minLat, maxLon, maxLat]`, when
+  /// the suggest API provides one. Lets the client fit the whole place in view.
+  final List<double>? bbox;
 
   Map<String, dynamic> toJson() => _$MapSuggestItemDtoToJson(this);
 }

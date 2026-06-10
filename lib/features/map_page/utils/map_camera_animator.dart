@@ -13,8 +13,8 @@ class MapCameraAnimator {
   MapCameraAnimator({
     required MapController mapController,
     required TickerProvider vsync,
-    this.defaultDuration = const Duration(milliseconds: 500),
-    this.defaultCurve = Curves.easeInOutCubic,
+    this.defaultDuration = const Duration(milliseconds: 850),
+    this.defaultCurve = Curves.easeInOutCubicEmphasized,
   }) : _mapController = mapController,
        _controller = AnimationController(vsync: vsync);
 
