@@ -50,8 +50,13 @@ class MapCameraAnimator {
 
     _stop();
 
-    final progress = _controller.drive(CurveTween(curve: curve ?? defaultCurve));
-    final latTween = Tween(begin: beginCenter.latitude, end: endCenter.latitude);
+    final progress = _controller.drive(
+      CurveTween(curve: curve ?? defaultCurve),
+    );
+    final latTween = Tween(
+      begin: beginCenter.latitude,
+      end: endCenter.latitude,
+    );
     final lngTween = Tween(
       begin: beginCenter.longitude,
       end: endCenter.longitude,
@@ -77,7 +82,11 @@ class MapCameraAnimator {
       await _controller.forward(from: 0);
       // Settle on the exact, normalised target (e.g. 360° collapses to 0°) so
       // the stored camera rotation stays canonical.
-      _mapController.moveAndRotate(endCenter, endZoom, _normalize(targetRotation));
+      _mapController.moveAndRotate(
+        endCenter,
+        endZoom,
+        _normalize(targetRotation),
+      );
     } on TickerCanceled {
       // Superseded by a newer animation — leave the camera where it is.
     } finally {

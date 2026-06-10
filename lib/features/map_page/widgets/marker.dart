@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:studanky_flutter_app/core/app_constants.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
@@ -9,9 +7,10 @@ import 'package:studanky_flutter_app/features/springs/entities/spring_marker_ent
 
 const double _springMarkerSize = 40;
 
-/// Builds a single spring marker, coloured by its three-state [icon]
-/// (api-reference.md §4.1). The shared SVG is tinted per state; "stale" and
-/// "unknown" read neutrally, never as a confident flow state (spec §4.1).
+/// Builds a single spring marker, coloured **and shaped** by its three-state
+/// [icon] (spec §4.1, §6). Each state carries a distinct glyph as well as a
+/// colour so the status is legible for colour-blind users (zadání §6); "stale"
+/// and "unknown" read neutrally, never as a confident flow state.
 Marker buildSpringMarker(
   SpringMarkerEntity spring,
   SpringIcon icon, {
@@ -29,6 +28,28 @@ Marker buildSpringMarker(
   );
 }
 
+/// Visual treatment for each marker state: a status colour and a glyph.
+({Color color, IconData glyph}) _visualFor(SpringIcon icon, AppColors c) {
+  return switch (icon) {
+    SpringIcon.flowing => (
+      color: c.primaryMain,
+      glyph: Icons.water_drop_rounded,
+    ),
+    SpringIcon.notFlowing => (
+      color: c.error,
+      glyph: Icons.format_color_reset_rounded,
+    ),
+    SpringIcon.stale => (
+      color: c.secondaryVariant1,
+      glyph: Icons.schedule_rounded,
+    ),
+    SpringIcon.unknown => (
+      color: c.neutral500,
+      glyph: Icons.question_mark_rounded,
+    ),
+  };
+}
+
 class _SpringMarkerPin extends StatelessWidget {
   const _SpringMarkerPin({required this.icon, this.onTap});
 
@@ -37,39 +58,52 @@ class _SpringMarkerPin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final background = _backgroundColor(icon, colors);
-
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: background,
-          shape: BoxShape.circle,
-          border: Border.all(color: colors.onPrimary, width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(8),
-        child: SvgPicture.asset(
-          AppConstants.iconSpring,
-          colorFilter: ColorFilter.mode(colors.onPrimary, BlendMode.srcIn),
-        ),
-      ),
+      child: SpringMarkerIcon(icon: icon, size: _springMarkerSize),
     );
   }
+}
 
-  Color _backgroundColor(SpringIcon icon, AppColors colors) {
-    return switch (icon) {
-      SpringIcon.flowing => colors.primaryMain,
-      SpringIcon.notFlowing => colors.error,
-      SpringIcon.stale => colors.neutral500,
-      SpringIcon.unknown => colors.neutral300,
-    };
+/// The standalone pin glyph for a [SpringIcon] state — a coloured circle with
+/// a white ring, a status glyph and a coloured glow. Shared by the map marker
+/// and the About-sheet legend so both stay in lock-step.
+class SpringMarkerIcon extends StatelessWidget {
+  const SpringMarkerIcon({super.key, required this.icon, this.size = 40});
+
+  final SpringIcon icon;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Styles.appColors;
+    final isDark = colors.brightness == Brightness.dark;
+    final visual = _visualFor(icon, colors);
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: visual.color,
+        shape: BoxShape.circle,
+        border: Border.all(color: colors.onPrimary, width: 2),
+        boxShadow: [
+          // Coloured glow — stronger on the dark (inverted) map.
+          BoxShadow(
+            color: visual.color.withValues(alpha: isDark ? 0.6 : 0.45),
+            blurRadius: isDark ? 16 : 12,
+            spreadRadius: isDark ? 2 : 1,
+          ),
+          // Grounding drop shadow for separation from the map.
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.22),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Icon(visual.glyph, size: size * 0.45, color: colors.onPrimary),
+    );
   }
 }

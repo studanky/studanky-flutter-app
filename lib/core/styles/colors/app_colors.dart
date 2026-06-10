@@ -12,12 +12,27 @@ class AppColors implements AppColorsScheme {
 
   AppColorsScheme _currentScheme = AppColorsLight();
 
-  // This method is never called in the app yet
-  void setTheme(ThemeMode themeMode) {
-    _currentScheme = themeMode == ThemeMode.dark
+  /// Syncs the active scheme to the [Brightness] the [MaterialApp] resolved
+  /// (system or, later, a manual override). Called from the app's theme
+  /// builder so every `Styles.appColors.xxx` read reflects the live theme.
+  void setBrightness(Brightness brightness) {
+    if (_currentScheme.brightness == brightness) return;
+    _currentScheme = brightness == Brightness.dark
         ? AppColorsDark()
         : AppColorsLight();
   }
+
+  @override
+  Brightness get brightness => _currentScheme.brightness;
+
+  @override
+  Color get background => _currentScheme.background;
+
+  @override
+  Color get glassFill => _currentScheme.glassFill;
+
+  @override
+  Color get glassBorder => _currentScheme.glassBorder;
 
   @override
   Color get neutral900 => _currentScheme.neutral900;

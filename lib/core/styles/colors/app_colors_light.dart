@@ -1,8 +1,24 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors_scheme.dart';
 
+/// Light theme — premium "daylight on water" palette (sky blue), tuned for
+/// outdoor readability over a light map. Token roles are *semantic*: e.g.
+/// [neutral900] is the strongest text, [onNeutral] is the surface/card colour.
 class AppColorsLight extends AppColorsScheme {
+  @override
+  Brightness get brightness => Brightness.light;
+
+  @override
+  Color get background => const Color(0xFFF0F4F8);
+
+  @override
+  Color get glassFill => const Color(0x8CFFFFFF); // white @ 55%
+
+  @override
+  Color get glassBorder => const Color(0xBFFFFFFF); // white @ 75%
+
   @override
   Color get neutral900 => const Color(0xFF191A1A);
 

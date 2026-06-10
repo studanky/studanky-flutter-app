@@ -8,13 +8,7 @@ import 'package:logging/logging.dart';
 part 'user_location_provider.freezed.dart';
 
 /// Permission / availability status of the user's location.
-enum LocationStatus {
-  idle,
-  ready,
-  denied,
-  deniedForever,
-  serviceOff,
-}
+enum LocationStatus { idle, ready, denied, deniedForever, serviceOff }
 
 final userLocationProvider =
     NotifierProvider.autoDispose<UserLocationNotifier, UserLocationState>(
@@ -92,19 +86,21 @@ class UserLocationNotifier extends Notifier<UserLocationState> {
     _setStatus(LocationStatus.ready);
 
     yield* Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
-    ).map((position) {
-      _lastKnownPosition = LatLng(position.latitude, position.longitude);
-      return LocationMarkerPosition(
-        latitude: position.latitude,
-        longitude: position.longitude,
-        accuracy: position.accuracy,
-      );
-    }).handleError((Object error, StackTrace stackTrace) {
-      _logger.warning('Position stream error', error, stackTrace);
-    });
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
+        )
+        .map((position) {
+          _lastKnownPosition = LatLng(position.latitude, position.longitude);
+          return LocationMarkerPosition(
+            latitude: position.latitude,
+            longitude: position.longitude,
+            accuracy: position.accuracy,
+          );
+        })
+        .handleError((Object error, StackTrace stackTrace) {
+          _logger.warning('Position stream error', error, stackTrace);
+        });
   }
 
   void _setStatus(LocationStatus status) {

@@ -20,15 +20,24 @@ class MapSearchWidget extends ConsumerStatefulWidget {
 
 class _MapSearchWidgetState extends ConsumerState<MapSearchWidget> {
   late final TextEditingController _controller;
+  late final FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    // Rebuild on focus changes so the clear/dismiss button can appear as soon
+    // as the field is focused (even before anything is typed).
+    _focusNode = FocusNode()..addListener(_onFocusChanged);
   }
+
+  void _onFocusChanged() => setState(() {});
 
   @override
   void dispose() {
+    _focusNode
+      ..removeListener(_onFocusChanged)
+      ..dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -59,13 +68,13 @@ class _MapSearchWidgetState extends ConsumerState<MapSearchWidget> {
 
     return MapSearchOverlay(
       controller: _controller,
+      focusNode: _focusNode,
       state: state,
       hintText: widget.hintText,
       onQueryChanged: notifier.setQuery,
-      onClear: () {
-        notifier.clear();
-        FocusScope.of(context).unfocus();
-      },
+      // Clears the typed query but keeps the field focused so the user can keep
+      // typing; the overlay's trailing button handles dismissing an empty field.
+      onClear: notifier.clear,
       onResultTap: (result) => _handleResult(context, notifier, result),
     );
   }

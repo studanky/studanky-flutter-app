@@ -1,6 +1,21 @@
 import 'package:flutter/material.dart';
 
 abstract class AppColorsScheme {
+  /// Brightness this scheme is designed for. Lets widgets that build their own
+  /// translucent/blur effects (markers, glass panels) branch on the active
+  /// theme without reaching for [MediaQuery].
+  Brightness get brightness;
+
+  /// App scaffold / map backdrop colour.
+  Color get background;
+
+  /// Translucent fill for floating "glass" panels (search bar, control
+  /// buttons, zoom slider) layered over the map, used behind a backdrop blur.
+  Color get glassFill;
+
+  /// Hairline border that gives glass panels their edge highlight.
+  Color get glassBorder;
+
   Color get neutral900;
 
   Color get neutral800;

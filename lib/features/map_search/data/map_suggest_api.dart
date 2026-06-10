@@ -11,5 +11,7 @@ abstract class MapSuggestApi {
   factory MapSuggestApi(Dio dio, {String? baseUrl}) = _MapSuggestApi;
 
   @GET(MapSearchConstants.suggestPath)
-  Future<MapSuggestResponseDto> suggest(@Queries() Map<String, dynamic> queries);
+  Future<MapSuggestResponseDto> suggest(
+    @Queries() Map<String, dynamic> queries,
+  );
 }

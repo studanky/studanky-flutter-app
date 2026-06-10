@@ -19,6 +19,9 @@ class MapPage extends ConsumerWidget {
     }
 
     return Scaffold(
+      // Keep the map full-bleed and let the keyboard overlay the bottom strip
+      // (disclaimer + attribution) instead of resizing the body up.
+      resizeToAvoidBottomInset: false,
       body: AsyncValueBuilder<bool>(
         asyncValue: connectivity,
         error: (error, stackTrace) => AppErrorWidget(

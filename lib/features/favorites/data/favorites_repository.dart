@@ -31,10 +31,9 @@ class FavoritesRepository {
       final list = jsonDecode(raw) as List<dynamic>;
       return list
           .map(
-            (item) =>
-                FavoriteSpringMapper.fromDto(
-                  FavoriteSpringDto.fromJson(item as Map<String, dynamic>),
-                ),
+            (item) => FavoriteSpringMapper.fromDto(
+              FavoriteSpringDto.fromJson(item as Map<String, dynamic>),
+            ),
           )
           .toList(growable: false);
     } catch (error, stackTrace) {

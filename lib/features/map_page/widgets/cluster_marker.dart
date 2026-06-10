@@ -39,6 +39,7 @@ class _ClusterBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
+    final isDark = colors.brightness == Brightness.dark;
     final label = count >= 1000 ? '${(count / 1000).floor()}k+' : '$count';
 
     return GestureDetector(
@@ -52,7 +53,12 @@ class _ClusterBadge extends StatelessWidget {
           border: Border.all(color: colors.onPrimary, width: 2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
+              color: colors.primaryMain.withValues(alpha: isDark ? 0.55 : 0.4),
+              blurRadius: isDark ? 16 : 12,
+              spreadRadius: isDark ? 2 : 1,
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.22),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),

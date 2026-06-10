@@ -88,7 +88,12 @@ class MapSuggestSearchSource implements MapSearchSource {
   /// south-west / north-east corners; returns null when absent or malformed.
   static MapSearchBounds? _boundsFromBbox(List<double>? bbox) {
     if (bbox == null || bbox.length != 4) return null;
-    final (minLon, minLat, maxLon, maxLat) = (bbox[0], bbox[1], bbox[2], bbox[3]);
+    final (minLon, minLat, maxLon, maxLat) = (
+      bbox[0],
+      bbox[1],
+      bbox[2],
+      bbox[3],
+    );
     return MapSearchBounds(
       southWest: LatLng(minLat, minLon),
       northEast: LatLng(maxLat, maxLon),
