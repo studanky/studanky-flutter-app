@@ -94,18 +94,6 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('cs')];
 
-  /// No description provided for @bottom_nav_bar_item_map.
-  ///
-  /// In cs, this message translates to:
-  /// **'Mapa'**
-  String get bottom_nav_bar_item_map;
-
-  /// No description provided for @bottom_nav_bar_item_scanner.
-  ///
-  /// In cs, this message translates to:
-  /// **'QR sken'**
-  String get bottom_nav_bar_item_scanner;
-
   /// No description provided for @auth_error_provider_disabled.
   ///
   /// In cs, this message translates to:

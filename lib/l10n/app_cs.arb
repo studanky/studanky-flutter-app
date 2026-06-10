@@ -1,8 +1,4 @@
 {
-  "bottom_nav_bar_item_map": "Mapa",
-  "@bottom_nav_bar_item_map": {},
-  "bottom_nav_bar_item_scanner": "QR sken",
-  "@bottom_nav_bar_item_scanner": {},
   "auth_error_provider_disabled": "Tento způsob přihlášení není povolen",
   "@auth_error_provider_disabled": {},
   "auth_error_invalid_credentials": "Neplatné přihlašovací údaje",
