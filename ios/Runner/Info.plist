@@ -7,15 +7,19 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Studanky Flutter App</string>
+	<string>Studánky</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>cs</string>
+	</array>
 	<key>CFBundleName</key>
-	<string>studanky_flutter_app</string>
+	<string>Studánky</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -27,7 +31,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow camera access to scan spring QR codes.</string>
+	<string>Aplikace potřebuje přístup ke kameře pro skenování QR kódů studánek.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Aplikace potřebuje přístup k poloze, aby ji mohla zobrazit na mapě studánek.</string>
 	<key>UIApplicationSceneManifest</key>
