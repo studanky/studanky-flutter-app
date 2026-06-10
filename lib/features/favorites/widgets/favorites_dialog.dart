@@ -28,7 +28,9 @@ class _FavoritesCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Styles.appColors;
-    final favorites = ref.watch(favoritesControllerProvider);
+    final count = ref.watch(
+      favoritesControllerProvider.select((f) => f.length),
+    );
     final maxHeight = MediaQuery.of(context).size.height * 0.66;
 
     return ConstrainedBox(
@@ -42,26 +44,88 @@ class _FavoritesCard extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _Header(count: favorites.length),
+              _Header(count: count),
               Divider(height: 1, color: colors.neutral200),
-              if (favorites.isEmpty)
-                const Flexible(child: _EmptyState())
-              else
-                Flexible(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    itemCount: favorites.length,
-                    separatorBuilder: (context, _) =>
-                        Divider(height: 1, color: colors.neutral200),
-                    itemBuilder: (context, index) =>
-                        _FavoriteTile(spring: favorites[index]),
-                  ),
-                ),
+              const Flexible(child: _FavoritesBody()),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Animated favourites list: removals (and additions) play a size+fade
+/// transition via [AnimatedList] instead of the list snapping to a new height.
+class _FavoritesBody extends ConsumerStatefulWidget {
+  const _FavoritesBody();
+
+  @override
+  ConsumerState<_FavoritesBody> createState() => _FavoritesBodyState();
+}
+
+class _FavoritesBodyState extends ConsumerState<_FavoritesBody> {
+  final _listKey = GlobalKey<AnimatedListState>();
+  static const _animDuration = Duration(milliseconds: 260);
+
+  late List<SpringMarkerEntity> _items;
+
+  @override
+  void initState() {
+    super.initState();
+    _items = List.of(ref.read(favoritesControllerProvider));
+  }
+
+  /// Diffs the mirror against the provider's latest list and drives the
+  /// matching insert/remove animations.
+  void _sync(List<SpringMarkerEntity> next) {
+    for (var i = _items.length - 1; i >= 0; i--) {
+      final item = _items[i];
+      if (!next.any((e) => e.documentId == item.documentId)) {
+        _items.removeAt(i);
+        _listKey.currentState?.removeItem(
+          i,
+          (context, animation) => _animatedTile(item, animation),
+          duration: _animDuration,
+        );
+      }
+    }
+    for (var i = 0; i < next.length; i++) {
+      final item = next[i];
+      if (!_items.any((e) => e.documentId == item.documentId)) {
+        final insertAt = i.clamp(0, _items.length);
+        _items.insert(insertAt, item);
+        _listKey.currentState?.insertItem(insertAt, duration: _animDuration);
+      }
+    }
+    // Toggle between the empty state and the list once the model changed.
+    setState(() {});
+  }
+
+  Widget _animatedTile(SpringMarkerEntity spring, Animation<double> animation) {
+    final curved = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+    return SizeTransition(
+      sizeFactor: curved,
+      child: FadeTransition(
+        opacity: curved,
+        child: _FavoriteTile(spring: spring),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen(favoritesControllerProvider, (_, next) => _sync(next));
+
+    if (_items.isEmpty) return const _EmptyState();
+
+    return AnimatedList(
+      key: _listKey,
+      shrinkWrap: true,
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      initialItemCount: _items.length,
+      itemBuilder: (context, index, animation) =>
+          _animatedTile(_items[index], animation),
     );
   }
 }

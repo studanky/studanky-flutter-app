@@ -14,7 +14,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MapSearchResult {
 
- String get label; LatLng get position; MapSearchResultType get type;/// Geographic extent of the locality, when known. Used to fit the whole
+ String get label; LatLng get position; MapSearchResultType get type;/// Parent location (region / municipality) shown under the [label] to
+/// disambiguate identically named places; null when the API omits it.
+ String? get subtitle;/// Geographic extent of the locality, when known. Used to fit the whole
 /// place in view; null falls back to centring on [position].
  MapSearchBounds? get bounds;
 /// Create a copy of MapSearchResult
@@ -27,16 +29,16 @@ $MapSearchResultCopyWith<MapSearchResult> get copyWith => _$MapSearchResultCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type)&&(identical(other.bounds, bounds) || other.bounds == bounds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.bounds, bounds) || other.bounds == bounds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,label,position,type,bounds);
+int get hashCode => Object.hash(runtimeType,label,position,type,subtitle,bounds);
 
 @override
 String toString() {
-  return 'MapSearchResult(label: $label, position: $position, type: $type, bounds: $bounds)';
+  return 'MapSearchResult(label: $label, position: $position, type: $type, subtitle: $subtitle, bounds: $bounds)';
 }
 
 
@@ -47,7 +49,7 @@ abstract mixin class $MapSearchResultCopyWith<$Res>  {
   factory $MapSearchResultCopyWith(MapSearchResult value, $Res Function(MapSearchResult) _then) = _$MapSearchResultCopyWithImpl;
 @useResult
 $Res call({
- String label, LatLng position, MapSearchResultType type, MapSearchBounds? bounds
+ String label, LatLng position, MapSearchResultType type, String? subtitle, MapSearchBounds? bounds
 });
 
 
@@ -64,12 +66,13 @@ class _$MapSearchResultCopyWithImpl<$Res>
 
 /// Create a copy of MapSearchResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? position = null,Object? type = null,Object? bounds = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? position = null,Object? type = null,Object? subtitle = freezed,Object? bounds = freezed,}) {
   return _then(_self.copyWith(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as LatLng,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as MapSearchResultType,bounds: freezed == bounds ? _self.bounds : bounds // ignore: cast_nullable_to_non_nullable
+as MapSearchResultType,subtitle: freezed == subtitle ? _self.subtitle : subtitle // ignore: cast_nullable_to_non_nullable
+as String?,bounds: freezed == bounds ? _self.bounds : bounds // ignore: cast_nullable_to_non_nullable
 as MapSearchBounds?,
   ));
 }
@@ -167,10 +170,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  LatLng position,  MapSearchResultType type,  MapSearchBounds? bounds)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  LatLng position,  MapSearchResultType type,  String? subtitle,  MapSearchBounds? bounds)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MapSearchResult() when $default != null:
-return $default(_that.label,_that.position,_that.type,_that.bounds);case _:
+return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bounds);case _:
   return orElse();
 
 }
@@ -188,10 +191,10 @@ return $default(_that.label,_that.position,_that.type,_that.bounds);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  LatLng position,  MapSearchResultType type,  MapSearchBounds? bounds)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  LatLng position,  MapSearchResultType type,  String? subtitle,  MapSearchBounds? bounds)  $default,) {final _that = this;
 switch (_that) {
 case _MapSearchResult():
-return $default(_that.label,_that.position,_that.type,_that.bounds);case _:
+return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bounds);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +211,10 @@ return $default(_that.label,_that.position,_that.type,_that.bounds);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  LatLng position,  MapSearchResultType type,  MapSearchBounds? bounds)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  LatLng position,  MapSearchResultType type,  String? subtitle,  MapSearchBounds? bounds)?  $default,) {final _that = this;
 switch (_that) {
 case _MapSearchResult() when $default != null:
-return $default(_that.label,_that.position,_that.type,_that.bounds);case _:
+return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bounds);case _:
   return null;
 
 }
@@ -223,12 +226,15 @@ return $default(_that.label,_that.position,_that.type,_that.bounds);case _:
 
 
 class _MapSearchResult implements MapSearchResult {
-  const _MapSearchResult({required this.label, required this.position, required this.type, this.bounds});
+  const _MapSearchResult({required this.label, required this.position, required this.type, this.subtitle, this.bounds});
   
 
 @override final  String label;
 @override final  LatLng position;
 @override final  MapSearchResultType type;
+/// Parent location (region / municipality) shown under the [label] to
+/// disambiguate identically named places; null when the API omits it.
+@override final  String? subtitle;
 /// Geographic extent of the locality, when known. Used to fit the whole
 /// place in view; null falls back to centring on [position].
 @override final  MapSearchBounds? bounds;
@@ -243,16 +249,16 @@ _$MapSearchResultCopyWith<_MapSearchResult> get copyWith => __$MapSearchResultCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type)&&(identical(other.bounds, bounds) || other.bounds == bounds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.bounds, bounds) || other.bounds == bounds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,label,position,type,bounds);
+int get hashCode => Object.hash(runtimeType,label,position,type,subtitle,bounds);
 
 @override
 String toString() {
-  return 'MapSearchResult(label: $label, position: $position, type: $type, bounds: $bounds)';
+  return 'MapSearchResult(label: $label, position: $position, type: $type, subtitle: $subtitle, bounds: $bounds)';
 }
 
 
@@ -263,7 +269,7 @@ abstract mixin class _$MapSearchResultCopyWith<$Res> implements $MapSearchResult
   factory _$MapSearchResultCopyWith(_MapSearchResult value, $Res Function(_MapSearchResult) _then) = __$MapSearchResultCopyWithImpl;
 @override @useResult
 $Res call({
- String label, LatLng position, MapSearchResultType type, MapSearchBounds? bounds
+ String label, LatLng position, MapSearchResultType type, String? subtitle, MapSearchBounds? bounds
 });
 
 
@@ -280,12 +286,13 @@ class __$MapSearchResultCopyWithImpl<$Res>
 
 /// Create a copy of MapSearchResult
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? position = null,Object? type = null,Object? bounds = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? position = null,Object? type = null,Object? subtitle = freezed,Object? bounds = freezed,}) {
   return _then(_MapSearchResult(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as LatLng,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as MapSearchResultType,bounds: freezed == bounds ? _self.bounds : bounds // ignore: cast_nullable_to_non_nullable
+as MapSearchResultType,subtitle: freezed == subtitle ? _self.subtitle : subtitle // ignore: cast_nullable_to_non_nullable
+as String?,bounds: freezed == bounds ? _self.bounds : bounds // ignore: cast_nullable_to_non_nullable
 as MapSearchBounds?,
   ));
 }

@@ -13,6 +13,7 @@ MapSuggestItemDto _$MapSuggestItemDtoFromJson(Map<String, dynamic> json) =>
         json['position'] as Map<String, dynamic>,
       ),
       type: $enumDecode(_$MapSuggestTypeDtoEnumMap, json['type']),
+      location: json['location'] as String?,
       bbox: (json['bbox'] as List<dynamic>?)
           ?.map((e) => (e as num).toDouble())
           .toList(),
@@ -23,6 +24,7 @@ Map<String, dynamic> _$MapSuggestItemDtoToJson(MapSuggestItemDto instance) =>
       'name': instance.name,
       'position': instance.position.toJson(),
       'type': instance.type.toJson(),
+      'location': instance.location,
       'bbox': instance.bbox,
     };
 

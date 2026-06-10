@@ -14,7 +14,9 @@ class MapCameraAnimator {
     required MapController mapController,
     required TickerProvider vsync,
     this.defaultDuration = const Duration(milliseconds: 850),
-    this.defaultCurve = Curves.easeInOutCubicEmphasized,
+    // Linear easing for the whole move — a constant-speed glide across the map,
+    // as requested, rather than accelerating/decelerating.
+    this.defaultCurve = Curves.linear,
   }) : _mapController = mapController,
        _controller = AnimationController(vsync: vsync);
 

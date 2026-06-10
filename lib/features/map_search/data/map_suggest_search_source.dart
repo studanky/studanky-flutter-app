@@ -62,10 +62,14 @@ class MapSuggestSearchSource implements MapSearchSource {
             if (name.isEmpty) {
               return null;
             }
+            final location = item.location?.trim();
             return MapSearchResult(
               label: name,
               position: LatLng(lat, lon),
               type: _mapType(item.type),
+              subtitle: (location == null || location.isEmpty)
+                  ? null
+                  : location,
               bounds: _boundsFromBbox(item.bbox),
             );
           })

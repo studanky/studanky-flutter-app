@@ -10,6 +10,7 @@ class MapSuggestItemDto {
     required this.name,
     required this.position,
     required this.type,
+    this.location,
     this.bbox,
   });
 
@@ -19,6 +20,10 @@ class MapSuggestItemDto {
   final String name;
   final MapSuggestPositionDto position;
   final MapSuggestTypeDto type;
+
+  /// Human-readable parent location (e.g. "Praha, Hlavní město Praha"),
+  /// disambiguating places that share a [name]. Absent for some result types.
+  final String? location;
 
   /// Bounding box of the locality as `[minLon, minLat, maxLon, maxLat]`, when
   /// the suggest API provides one. Lets the client fit the whole place in view.

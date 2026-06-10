@@ -11,6 +11,10 @@ abstract class MapSearchResult with _$MapSearchResult {
     required LatLng position,
     required MapSearchResultType type,
 
+    /// Parent location (region / municipality) shown under the [label] to
+    /// disambiguate identically named places; null when the API omits it.
+    String? subtitle,
+
     /// Geographic extent of the locality, when known. Used to fit the whole
     /// place in view; null falls back to centring on [position].
     MapSearchBounds? bounds,

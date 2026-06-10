@@ -18,6 +18,7 @@ import 'package:studanky_flutter_app/features/map_page/providers/user_location_p
 import 'package:studanky_flutter_app/features/map_page/utils/map_camera_animator.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/about_dialog.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/cluster_marker.dart';
+import 'package:studanky_flutter_app/features/map_page/widgets/disclaimer_dialog.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_attribution.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_control_stack.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_disclaimer.dart';
@@ -49,6 +50,12 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// Camera zoom bounds; also the range the vertical zoom slider maps onto.
   static const double _minZoom = 5;
   static const double _maxZoom = 19;
+
+  /// Extra zoom added on top of a cluster's [Cluster.expansionZoom] so tapping
+  /// a cluster zooms in just enough for its points to spread out while keeping
+  /// the surrounding context in view — not so far that the split happens off
+  /// near the map edges or out of sight.
+  static const double _clusterExpandZoomBoost = 1.5;
 
   /// When recentering on the user, never stay zoomed further out than this so
   /// the location dot is comfortably in view.
@@ -286,14 +293,15 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   }
 
   void _onClusterTap(Cluster cluster) {
-    // Animate to the level at which the cluster breaks apart, centred on it.
-    // The resulting map events re-trigger clustering for the new viewport.
-    unawaited(
-      _animator.animateTo(
-        center: cluster.position,
-        zoom: cluster.expansionZoom,
-      ),
+    // [expansionZoom] is only the level at which the cluster *starts* to break
+    // apart — landing exactly there leaves the points still cramped. Push a few
+    // levels closer (clamped to the max) so the children spread out with room
+    // to read them, centred on the cluster.
+    final targetZoom = (cluster.expansionZoom + _clusterExpandZoomBoost).clamp(
+      _minZoom,
+      _maxZoom,
     );
+    unawaited(_animator.animateTo(center: cluster.position, zoom: targetZoom));
   }
 
   void _onSpringTap(SpringMarkerEntity spring) {
@@ -520,7 +528,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
               mainAxisSize: MainAxisSize.min,
               children: [
                 MapDisclaimer(
-                  onTap: () => unawaited(showAppAboutDialog(context)),
+                  onTap: () => unawaited(showDisclaimerDialog(context)),
                 ),
                 const SizedBox(height: 2),
                 const MapAttribution(),

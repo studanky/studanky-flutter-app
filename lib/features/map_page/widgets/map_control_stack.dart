@@ -69,13 +69,18 @@ class MapControlStack extends StatelessWidget {
         GlassIconButton(
           semanticLabel: l10n.map_favorites,
           onTap: onFavorites,
+          // Outlined red heart — the familiar "save / favourite" affordance.
+          // The count badge is recoloured to the primary blue so it doesn't
+          // blend into the red icon (and the neutral "?" button stays distinct).
           child: Badge(
             isLabelVisible: favoritesCount > 0,
+            backgroundColor: colors.primaryMain,
+            textColor: colors.onPrimary,
             label: Text('$favoritesCount'),
             child: Icon(
-              Icons.favorite_rounded,
+              Icons.favorite_border_rounded,
               size: 20,
-              color: colors.primaryMain,
+              color: colors.error,
             ),
           ),
         ),

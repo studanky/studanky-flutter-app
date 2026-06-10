@@ -60,7 +60,9 @@ class _ResultRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
-    final descriptor = _descriptorFor(result.type);
+    // Prefer the API's parent location (e.g. region) to tell apart places that
+    // share a name; fall back to a generic type descriptor when it's absent.
+    final secondary = result.subtitle ?? _descriptorFor(result.type);
 
     return InkWell(
       onTap: () => onTap(result),
@@ -82,7 +84,9 @@ class _ResultRow extends StatelessWidget {
                     style: text.title2.copyWith(color: colors.neutral900),
                   ),
                   Text(
-                    descriptor,
+                    secondary,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: text.body2.copyWith(
                       fontSize: 12,
                       color: colors.neutral500,
