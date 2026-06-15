@@ -322,6 +322,18 @@ abstract class AppLocalizations {
   /// **'Vyhledávání teď není dostupné.'**
   String get map_search_error;
 
+  /// No description provided for @map_empty_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'V této oblasti nejsou žádné studánky'**
+  String get map_empty_title;
+
+  /// No description provided for @map_empty_message.
+  ///
+  /// In cs, this message translates to:
+  /// **'Posuňte mapu nebo oddalte zobrazení.'**
+  String get map_empty_message;
+
   /// No description provided for @map_zoom_in.
   ///
   /// In cs, this message translates to:

@@ -137,6 +137,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get map_search_error => 'Vyhledávání teď není dostupné.';
 
   @override
+  String get map_empty_title => 'V této oblasti nejsou žádné studánky';
+
+  @override
+  String get map_empty_message => 'Posuňte mapu nebo oddalte zobrazení.';
+
+  @override
   String get map_zoom_in => 'Přiblížit';
 
   @override

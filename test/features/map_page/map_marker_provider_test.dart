@@ -111,4 +111,18 @@ void main() {
       3,
     );
   });
+
+  test(
+    'marks the visible bounds as loaded when no springs are returned',
+    () async {
+      final container = _containerWith([]);
+      final notifier = container.read(mapMarkerProvider.notifier);
+
+      await notifier.onCameraChanged(_pragueBounds, 18);
+
+      final state = container.read(mapMarkerProvider);
+      expect(state.items, isEmpty);
+      expect(state.visibleBoundsLoaded, isTrue);
+    },
+  );
 }

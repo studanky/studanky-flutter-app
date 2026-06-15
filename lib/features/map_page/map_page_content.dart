@@ -22,6 +22,7 @@ import 'package:studanky_flutter_app/features/map_page/widgets/disclaimer_dialog
 import 'package:studanky_flutter_app/features/map_page/widgets/map_attribution.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_control_stack.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_disclaimer.dart';
+import 'package:studanky_flutter_app/features/map_page/widgets/map_empty_state.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_zoom_slider.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
@@ -52,6 +53,8 @@ String _statusLabelFor(SpringIcon icon, AppLocalizations l10n) =>
       SpringIcon.stale => l10n.map_status_stale,
       SpringIcon.unknown => l10n.spring_detail_status_unknown,
     };
+
+enum _MapEmptyOverlayMode { hidden, empty, refreshing }
 
 class _MapPageContentState extends ConsumerState<MapPageContent>
     with SingleTickerProviderStateMixin {
@@ -105,12 +108,19 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// (api-reference.md §3.1). Reclustering itself runs inside the notifier.
   static const Duration _cameraDebounce = Duration(milliseconds: 300);
 
+  /// Empty-map messaging should feel settled, not blink during camera motion or
+  /// rapid fetch/status transitions.
+  static const Duration _emptyStateRevealDelay = Duration(milliseconds: 450);
+  static const Duration _emptyStateFadeDuration = Duration(milliseconds: 240);
+
   final MapController _mapController = MapController();
   final Logger _logger = Logger('MapPageContent');
   Timer? _cameraDebounceTimer;
+  Timer? _emptyStateRevealTimer;
 
   /// True while a tap on the "my location" button is waiting for the first fix.
   bool _isLocating = false;
+  _MapEmptyOverlayMode _mapEmptyOverlayMode = _MapEmptyOverlayMode.hidden;
 
   /// Live map orientation + centered state for the compass/location button.
   /// Kept in a [ValueNotifier] so map rotation repaints only the button, never
@@ -132,6 +142,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   @override
   void dispose() {
     _cameraDebounceTimer?.cancel();
+    _emptyStateRevealTimer?.cancel();
     _animator.dispose();
     _compass.dispose();
     _zoom.dispose();
@@ -149,6 +160,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     // Orientation/centered feedback must be live (every frame of a rotate or
     // pan), so update it immediately; only the marker fetch is debounced.
     _updateCompass();
+    _markMapEmptyStateRefreshing();
     if (_userMoveSources.contains(event.source)) {
       _clearSearchOnUserMove();
     }
@@ -203,8 +215,73 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     if (!mounted) return;
     final camera = _mapController.camera;
     unawaited(
-      _markerNotifier.onCameraChanged(camera.visibleBounds, camera.zoom),
+      _markerNotifier
+          .onCameraChanged(camera.visibleBounds, camera.zoom)
+          .whenComplete(() {
+            if (!mounted) return;
+            _syncMapEmptyState(ref.read(mapMarkerProvider));
+          }),
     );
+  }
+
+  bool _isEmptyStateEligible(MapMarkerState state) =>
+      state.visibleBoundsLoaded &&
+      state.items.isEmpty &&
+      !state.status.isLoading &&
+      !state.status.hasError;
+
+  bool get _isMapEmptyOverlayVisible =>
+      _mapEmptyOverlayMode != _MapEmptyOverlayMode.hidden;
+
+  void _syncMapEmptyState(MapMarkerState state) {
+    _emptyStateRevealTimer?.cancel();
+
+    if (state.items.isNotEmpty) {
+      _setMapEmptyOverlayMode(_MapEmptyOverlayMode.hidden);
+      return;
+    }
+
+    if (state.status.isLoading || !state.visibleBoundsLoaded) {
+      if (_isMapEmptyOverlayVisible) {
+        _setMapEmptyOverlayMode(_MapEmptyOverlayMode.refreshing);
+      }
+      return;
+    }
+
+    if (state.status.hasError) {
+      if (_isMapEmptyOverlayVisible) {
+        _setMapEmptyOverlayMode(_MapEmptyOverlayMode.empty);
+      }
+      return;
+    }
+
+    if (!_isEmptyStateEligible(state)) {
+      _setMapEmptyOverlayMode(_MapEmptyOverlayMode.hidden);
+      return;
+    }
+
+    if (_isMapEmptyOverlayVisible) {
+      _setMapEmptyOverlayMode(_MapEmptyOverlayMode.empty);
+      return;
+    }
+
+    _emptyStateRevealTimer = Timer(_emptyStateRevealDelay, () {
+      if (!mounted || !_isEmptyStateEligible(ref.read(mapMarkerProvider))) {
+        return;
+      }
+      _setMapEmptyOverlayMode(_MapEmptyOverlayMode.empty);
+    });
+  }
+
+  void _markMapEmptyStateRefreshing() {
+    _emptyStateRevealTimer?.cancel();
+    if (!_isMapEmptyOverlayVisible) return;
+    _setMapEmptyOverlayMode(_MapEmptyOverlayMode.refreshing);
+  }
+
+  void _setMapEmptyOverlayMode(_MapEmptyOverlayMode mode) {
+    if (!mounted || _mapEmptyOverlayMode == mode) return;
+    setState(() => _mapEmptyOverlayMode = mode);
   }
 
   /// Requests permission and centers the map on the user's first fix. On
@@ -378,6 +455,10 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<MapMarkerState>(mapMarkerProvider, (_, next) {
+      _syncMapEmptyState(next);
+    });
+
     final markerState = ref.watch(mapMarkerProvider);
     final config = ref.watch(platformConfigControllerProvider);
     final locationStatus = ref.watch(userLocationProvider).status;
@@ -385,6 +466,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
       favoritesControllerProvider.select((favorites) => favorites.length),
     );
     final l10n = context.l10n;
+    final isMapEmptyOverlayVisible = _isMapEmptyOverlayVisible;
+    final isMapEmptyOverlayRefreshing =
+        _mapEmptyOverlayMode == _MapEmptyOverlayMode.refreshing;
 
     final markers = <Marker>[
       for (final item in markerState.items)
@@ -499,13 +583,37 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
             child: SafeArea(
               child: Stack(
                 children: [
-                  if (markerState.status.isLoading)
+                  if (markerState.status.isLoading && !isMapEmptyOverlayVisible)
                     const Positioned(
                       top: 84,
                       left: 0,
                       right: 0,
                       child: Center(child: AppProgressIndicator()),
                     ),
+                  Positioned(
+                    left: 16,
+                    right: 16,
+                    top: 76,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: AnimatedSwitcher(
+                        duration: _emptyStateFadeDuration,
+                        reverseDuration: _emptyStateFadeDuration,
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        transitionBuilder: (child, animation) =>
+                            FadeTransition(opacity: animation, child: child),
+                        child: isMapEmptyOverlayVisible
+                            ? MapEmptyState(
+                                key: const ValueKey('map-empty-state'),
+                                refreshing: isMapEmptyOverlayRefreshing,
+                              )
+                            : const SizedBox.shrink(
+                                key: ValueKey('map-empty-state-hidden'),
+                              ),
+                      ),
+                    ),
+                  ),
                   // Left vertical control stack (location, favourites, help),
                   // within thumb reach and clear of the disclaimer.
                   Positioned(

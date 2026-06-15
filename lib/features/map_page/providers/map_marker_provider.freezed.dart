@@ -17,7 +17,10 @@ mixin _$MapMarkerState {
 /// Loading/error of the background fetch. Items stay visible while a new
 /// fetch runs, so this is a thin status channel, not the source of markers.
  AsyncValue<void> get status;/// Clustered, drawable items for the most recent camera.
- List<MapClusterItem> get items;
+ List<MapClusterItem> get items;/// True once the currently visible camera bounds are covered by fetched
+/// marker data. Lets the UI distinguish a real empty map area from a camera
+/// position that is still waiting for its first fetch.
+ bool get visibleBoundsLoaded;
 /// Create a copy of MapMarkerState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +31,16 @@ $MapMarkerStateCopyWith<MapMarkerState> get copyWith => _$MapMarkerStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapMarkerState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.items, items));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapMarkerState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.visibleBoundsLoaded, visibleBoundsLoaded) || other.visibleBoundsLoaded == visibleBoundsLoaded));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(items));
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(items),visibleBoundsLoaded);
 
 @override
 String toString() {
-  return 'MapMarkerState(status: $status, items: $items)';
+  return 'MapMarkerState(status: $status, items: $items, visibleBoundsLoaded: $visibleBoundsLoaded)';
 }
 
 
@@ -48,7 +51,7 @@ abstract mixin class $MapMarkerStateCopyWith<$Res>  {
   factory $MapMarkerStateCopyWith(MapMarkerState value, $Res Function(MapMarkerState) _then) = _$MapMarkerStateCopyWithImpl;
 @useResult
 $Res call({
- AsyncValue<void> status, List<MapClusterItem> items
+ AsyncValue<void> status, List<MapClusterItem> items, bool visibleBoundsLoaded
 });
 
 
@@ -65,11 +68,12 @@ class _$MapMarkerStateCopyWithImpl<$Res>
 
 /// Create a copy of MapMarkerState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? items = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? items = null,Object? visibleBoundsLoaded = null,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as AsyncValue<void>,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
-as List<MapClusterItem>,
+as List<MapClusterItem>,visibleBoundsLoaded: null == visibleBoundsLoaded ? _self.visibleBoundsLoaded : visibleBoundsLoaded // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -154,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<MapClusterItem> items)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<MapClusterItem> items,  bool visibleBoundsLoaded)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MapMarkerState() when $default != null:
-return $default(_that.status,_that.items);case _:
+return $default(_that.status,_that.items,_that.visibleBoundsLoaded);case _:
   return orElse();
 
 }
@@ -175,10 +179,10 @@ return $default(_that.status,_that.items);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<MapClusterItem> items)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<MapClusterItem> items,  bool visibleBoundsLoaded)  $default,) {final _that = this;
 switch (_that) {
 case _MapMarkerState():
-return $default(_that.status,_that.items);case _:
+return $default(_that.status,_that.items,_that.visibleBoundsLoaded);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +199,10 @@ return $default(_that.status,_that.items);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncValue<void> status,  List<MapClusterItem> items)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncValue<void> status,  List<MapClusterItem> items,  bool visibleBoundsLoaded)?  $default,) {final _that = this;
 switch (_that) {
 case _MapMarkerState() when $default != null:
-return $default(_that.status,_that.items);case _:
+return $default(_that.status,_that.items,_that.visibleBoundsLoaded);case _:
   return null;
 
 }
@@ -210,7 +214,7 @@ return $default(_that.status,_that.items);case _:
 
 
 class _MapMarkerState implements MapMarkerState {
-  const _MapMarkerState({this.status = const AsyncValue<void>.data(null), final  List<MapClusterItem> items = const <MapClusterItem>[]}): _items = items;
+  const _MapMarkerState({this.status = const AsyncValue<void>.data(null), final  List<MapClusterItem> items = const <MapClusterItem>[], this.visibleBoundsLoaded = false}): _items = items;
   
 
 /// Loading/error of the background fetch. Items stay visible while a new
@@ -225,6 +229,10 @@ class _MapMarkerState implements MapMarkerState {
   return EqualUnmodifiableListView(_items);
 }
 
+/// True once the currently visible camera bounds are covered by fetched
+/// marker data. Lets the UI distinguish a real empty map area from a camera
+/// position that is still waiting for its first fetch.
+@override@JsonKey() final  bool visibleBoundsLoaded;
 
 /// Create a copy of MapMarkerState
 /// with the given fields replaced by the non-null parameter values.
@@ -236,16 +244,16 @@ _$MapMarkerStateCopyWith<_MapMarkerState> get copyWith => __$MapMarkerStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapMarkerState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._items, _items));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapMarkerState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.visibleBoundsLoaded, visibleBoundsLoaded) || other.visibleBoundsLoaded == visibleBoundsLoaded));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_items));
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_items),visibleBoundsLoaded);
 
 @override
 String toString() {
-  return 'MapMarkerState(status: $status, items: $items)';
+  return 'MapMarkerState(status: $status, items: $items, visibleBoundsLoaded: $visibleBoundsLoaded)';
 }
 
 
@@ -256,7 +264,7 @@ abstract mixin class _$MapMarkerStateCopyWith<$Res> implements $MapMarkerStateCo
   factory _$MapMarkerStateCopyWith(_MapMarkerState value, $Res Function(_MapMarkerState) _then) = __$MapMarkerStateCopyWithImpl;
 @override @useResult
 $Res call({
- AsyncValue<void> status, List<MapClusterItem> items
+ AsyncValue<void> status, List<MapClusterItem> items, bool visibleBoundsLoaded
 });
 
 
@@ -273,11 +281,12 @@ class __$MapMarkerStateCopyWithImpl<$Res>
 
 /// Create a copy of MapMarkerState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? items = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? items = null,Object? visibleBoundsLoaded = null,}) {
   return _then(_MapMarkerState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as AsyncValue<void>,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
-as List<MapClusterItem>,
+as List<MapClusterItem>,visibleBoundsLoaded: null == visibleBoundsLoaded ? _self.visibleBoundsLoaded : visibleBoundsLoaded // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

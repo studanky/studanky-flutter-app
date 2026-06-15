@@ -28,6 +28,11 @@ abstract class MapMarkerState with _$MapMarkerState {
 
     /// Clustered, drawable items for the most recent camera.
     @Default(<MapClusterItem>[]) List<MapClusterItem> items,
+
+    /// True once the currently visible camera bounds are covered by fetched
+    /// marker data. Lets the UI distinguish a real empty map area from a camera
+    /// position that is still waiting for its first fetch.
+    @Default(false) bool visibleBoundsLoaded,
   }) = _MapMarkerState;
 }
 
@@ -74,7 +79,15 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
   void _recomputeItems() {
     final index = _index;
     final bounds = _lastVisibleBounds;
-    if (index == null || bounds == null) return;
+    final visibleBoundsLoaded =
+        bounds != null && (_cachedBounds?.containsBounds(bounds) ?? false);
+
+    if (index == null || bounds == null) {
+      if (state.visibleBoundsLoaded != visibleBoundsLoaded) {
+        state = state.copyWith(visibleBoundsLoaded: visibleBoundsLoaded);
+      }
+      return;
+    }
 
     final elements = index.search(
       bounds.west,
@@ -88,6 +101,7 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
       items: elements
           .map((element) => _toItem(index, element))
           .toList(growable: false),
+      visibleBoundsLoaded: visibleBoundsLoaded,
     );
   }
 
@@ -146,8 +160,8 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
             for (final spring in data) {
               _springsById[spring.documentId] = spring;
             }
-            _rebuildIndex();
             _cachedBounds = bounds;
+            _rebuildIndex();
             _recomputeItems();
             state = state.copyWith(status: const AsyncValue<void>.data(null));
           case Failure(:final exception):
