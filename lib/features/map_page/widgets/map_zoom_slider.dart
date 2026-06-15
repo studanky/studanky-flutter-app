@@ -1,7 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
+import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// Subtle vertical zoom control flush to the right edge (zadání §11): a glass
 /// pill with `+` / `−` steppers and a draggable thumb. Up = zoom in, down =
@@ -34,14 +35,25 @@ class MapZoomSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
+    final l10n = context.l10n;
     final iconColor = colors.neutral700;
 
-    Widget stepper(IconData icon, VoidCallback onTap) => InkResponse(
-      onTap: onTap,
-      radius: 18,
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: Icon(icon, size: 16, color: iconColor),
+    // 44pt-tall tap target (HIG) at the pill's slim width — the press axis on a
+    // vertical slider is vertical, so height is what matters for thumb accuracy.
+    Widget stepper(IconData icon, String label, VoidCallback onTap) => Semantics(
+      button: true,
+      label: label,
+      child: InkResponse(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        radius: 22,
+        child: SizedBox(
+          height: 44,
+          width: 28,
+          child: Center(child: Icon(icon, size: 18, color: iconColor)),
+        ),
       ),
     );
 
@@ -49,8 +61,7 @@ class MapZoomSlider extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          stepper(Icons.add_rounded, () => onStep(1)),
-          const SizedBox(height: 6),
+          stepper(Icons.add_rounded, l10n.map_zoom_in, () => onStep(1)),
           SizedBox(
             height: 120,
             child: _ZoomTrack(
@@ -60,15 +71,16 @@ class MapZoomSlider extends StatelessWidget {
               onChanged: onChanged,
             ),
           ),
-          const SizedBox(height: 6),
-          stepper(Icons.remove_rounded, () => onStep(-1)),
+          stepper(Icons.remove_rounded, l10n.map_zoom_out, () => onStep(-1)),
         ],
       ),
     );
   }
 }
 
-/// Glass pill flush with the screen's right edge (rounded on the left only).
+/// Glass pill flush with the screen's right edge: the shared [GlassSurface]
+/// rounded on the left only, with its right hairline dropped so it reads as
+/// part of the screen edge.
 class _ZoomGlass extends StatelessWidget {
   const _ZoomGlass({required this.child});
 
@@ -77,39 +89,17 @@ class _ZoomGlass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
-    final isDark = colors.brightness == Brightness.dark;
-    const radius = BorderRadius.horizontal(left: Radius.circular(20));
+    const radius = BorderRadius.horizontal(left: Radius.circular(kGlassRadius));
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: radius,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.14),
-            blurRadius: isDark ? 28 : 22,
-            offset: const Offset(0, 6),
-          ),
-        ],
+    return GlassSurface(
+      borderRadius: radius,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      border: Border(
+        top: BorderSide(color: colors.glassBorder, width: kGlassBorderWidth),
+        left: BorderSide(color: colors.glassBorder, width: kGlassBorderWidth),
+        bottom: BorderSide(color: colors.glassBorder, width: kGlassBorderWidth),
       ),
-      child: ClipRRect(
-        borderRadius: radius,
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            decoration: BoxDecoration(
-              color: colors.glassFill,
-              borderRadius: radius,
-              border: Border(
-                top: BorderSide(color: colors.glassBorder),
-                left: BorderSide(color: colors.glassBorder),
-                bottom: BorderSide(color: colors.glassBorder),
-              ),
-            ),
-            child: child,
-          ),
-        ),
-      ),
+      child: child,
     );
   }
 }

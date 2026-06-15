@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
-import 'package:studanky_flutter_app/core/widgets/glass_container.dart';
+import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_result_list.dart';
+import 'package:studanky_flutter_app/l10n/extension.dart';
 
 class MapSearchOverlay extends StatelessWidget {
   const MapSearchOverlay({
@@ -32,14 +33,14 @@ class MapSearchOverlay extends StatelessWidget {
     final searchResults = state.searchResults;
     final results = searchResults.value ?? const <MapSearchResult>[];
     final errorMessage = searchResults.hasError
-        ? 'Unable to search at the moment.'
+        ? context.l10n.map_search_error
         : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // Frosted-glass search pill (zadání §5).
-        GlassContainer(
+        GlassSurface(
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Row(
             children: [

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:studanky_flutter_app/core/widgets/app_state_view.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
-// TODO: redesign, Styles
+/// Shown instead of the map when the device is offline (map tiles need a
+/// connection). Uses the shared [AppStateView] so it matches every other
+/// empty/error state in the app.
 class OfflinePlaceholder extends StatelessWidget {
   const OfflinePlaceholder({super.key, required this.onRetry});
 
@@ -9,42 +12,16 @@ class OfflinePlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final l10n = context.l10n;
+
     return SafeArea(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.wifi_off_rounded,
-                size: 48,
-                color: theme.colorScheme.primary,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                context.l10n.offline_placeholder_title,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                context.l10n.offline_placeholder_message_offline,
-                style: theme.textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded),
-                label: Text(context.l10n.error_widget_default_try_again),
-              ),
-            ],
-          ),
-        ),
+      child: AppStateView(
+        icon: Icons.wifi_off_rounded,
+        title: l10n.offline_placeholder_title,
+        message: l10n.offline_placeholder_message_offline,
+        actionLabel: l10n.error_widget_default_try_again,
+        actionIcon: Icons.refresh_rounded,
+        onAction: onRetry,
       ),
     );
   }

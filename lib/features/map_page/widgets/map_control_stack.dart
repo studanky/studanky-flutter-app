@@ -2,12 +2,15 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
-/// Left vertical stack of floating glass controls over the map (zadání §7):
-/// location/compass, favourites, and help — ordered by reach/priority within
-/// thumb range. The right edge is reserved for the zoom slider.
+/// Left vertical stack of floating glass controls over the map (zadání §7),
+/// ordered by thumb reach: the rarely-used help sits at the top and the most
+/// frequent action — location/compass — sits at the bottom where the thumb
+/// rests, with favourites between them. The right edge is reserved for the
+/// zoom slider.
 class MapControlStack extends StatelessWidget {
   const MapControlStack({
     super.key,
@@ -35,13 +38,45 @@ class MapControlStack extends StatelessWidget {
     final colors = Styles.appColors;
     final l10n = context.l10n;
 
-    // The button stays a neutral glass tile in every state so the red north
+    // Each control is a neutral glass tile in every state so the red north
     // needle keeps strong contrast (an orange/amber fill washed it out). Map
     // rotation is signalled by the rotating needle; being centred on the user
     // is signalled by the filled blue centre dot.
+    //
+    // Top → bottom: help (rarest) · favourites · location (most frequent), so
+    // the primary action sits nearest the resting thumb.
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        GlassIconButton(
+          semanticLabel: l10n.map_help,
+          onTap: onHelp,
+          child: Icon(
+            Icons.help_outline_rounded,
+            size: 20,
+            color: colors.neutral700,
+          ),
+        ),
+        const SizedBox(height: 10),
+        GlassIconButton(
+          semanticLabel: l10n.map_favorites,
+          onTap: onFavorites,
+          // Outlined red heart — the familiar "save / favourite" affordance.
+          // The count badge is recoloured to the primary blue so it doesn't
+          // blend into the red icon (and the neutral "?" button stays distinct).
+          child: Badge(
+            isLabelVisible: favoritesCount > 0,
+            backgroundColor: colors.primaryMain,
+            textColor: colors.onPrimary,
+            label: Text('$favoritesCount'),
+            child: Icon(
+              Icons.favorite_border_rounded,
+              size: 20,
+              color: colors.error,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
         GlassIconButton(
           semanticLabel: l10n.map_my_location,
           onTap: isLocating ? null : onLocation,
@@ -65,106 +100,43 @@ class MapControlStack extends StatelessWidget {
                   ),
                 ),
         ),
-        const SizedBox(height: 10),
-        GlassIconButton(
-          semanticLabel: l10n.map_favorites,
-          onTap: onFavorites,
-          // Outlined red heart — the familiar "save / favourite" affordance.
-          // The count badge is recoloured to the primary blue so it doesn't
-          // blend into the red icon (and the neutral "?" button stays distinct).
-          child: Badge(
-            isLabelVisible: favoritesCount > 0,
-            backgroundColor: colors.primaryMain,
-            textColor: colors.onPrimary,
-            label: Text('$favoritesCount'),
-            child: Icon(
-              Icons.favorite_border_rounded,
-              size: 20,
-              color: colors.error,
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        GlassIconButton(
-          semanticLabel: MaterialLocalizations.of(context).moreButtonTooltip,
-          onTap: onHelp,
-          child: Icon(
-            Icons.help_outline_rounded,
-            size: 20,
-            color: colors.neutral700,
-          ),
-        ),
       ],
     );
   }
 }
 
-/// 44×44 frosted-glass square button. When [accent] is set it fills with that
-/// colour and glows (active state); otherwise it's a neutral glass tile.
+/// 44×44 frosted-glass square button built on the shared [GlassSurface] so it
+/// matches the search bar and zoom slider exactly (same blur, edge, shadow and
+/// corner radius). A neutral glass tile in every state.
 class GlassIconButton extends StatelessWidget {
   const GlassIconButton({
     super.key,
     required this.child,
     required this.semanticLabel,
     this.onTap,
-    this.accent,
   });
 
   final Widget child;
   final String semanticLabel;
   final VoidCallback? onTap;
-  final Color? accent;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final isDark = colors.brightness == Brightness.dark;
-    final active = accent != null;
-    const radius = BorderRadius.all(Radius.circular(16));
-
     return Semantics(
       button: true,
       label: semanticLabel,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: radius,
-          boxShadow: [
-            if (active)
-              BoxShadow(
-                color: accent!.withValues(alpha: 0.4),
-                blurRadius: 18,
-                spreadRadius: 1,
-              ),
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.16),
-              blurRadius: isDark ? 28 : 20,
-              offset: const Offset(0, 6),
+      child: GlassSurface(
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            onTap: onTap,
+            customBorder: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(kGlassRadius)),
             ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: radius,
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-            child: Material(
-              color: active ? accent : colors.glassFill,
-              child: InkWell(
-                onTap: onTap,
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: radius,
-                    border: Border.all(
-                      color: active
-                          ? colors.onPrimary.withValues(alpha: 0.5)
-                          : colors.glassBorder,
-                    ),
-                  ),
-                  child: child,
-                ),
-              ),
+            child: SizedBox(
+              width: 44,
+              height: 44,
+              child: Center(child: child),
             ),
           ),
         ),

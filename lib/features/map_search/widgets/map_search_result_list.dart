@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
-import 'package:studanky_flutter_app/core/widgets/glass_container.dart';
+import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
 
@@ -22,7 +22,7 @@ class MapSearchResultList extends StatelessWidget {
     final colors = Styles.appColors;
     final height = (results.length * 60.0).clamp(0, 300).toDouble();
 
-    return GlassContainer(
+    return GlassSurface(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Material(
         type: MaterialType.transparency,

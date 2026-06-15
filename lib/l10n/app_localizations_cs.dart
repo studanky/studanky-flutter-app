@@ -128,6 +128,34 @@ class AppLocalizationsCs extends AppLocalizations {
   String get map_favorites => 'Oblíbené studánky';
 
   @override
+  String get map_help => 'Nápověda';
+
+  @override
+  String get map_search_hint => 'Hledejte studánky, obce, adresy…';
+
+  @override
+  String get map_search_error => 'Vyhledávání teď není dostupné.';
+
+  @override
+  String get map_zoom_in => 'Přiblížit';
+
+  @override
+  String get map_zoom_out => 'Oddálit';
+
+  @override
+  String get map_status_stale => 'Neaktuální data';
+
+  @override
+  String map_marker_semantic(String name, String status) {
+    return 'Studánka $name: $status';
+  }
+
+  @override
+  String map_cluster_semantic(int count) {
+    return 'Shluk studánek, počet $count';
+  }
+
+  @override
   String get favorites_sheet_title => 'Oblíbené studánky';
 
   @override
@@ -160,6 +188,18 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get spring_detail_status_unknown => 'Neznámo';
+
+  @override
+  String get spring_detail_section_current => 'Současný stav';
+
+  @override
+  String get spring_detail_section_about => 'O studánce';
+
+  @override
+  String get spring_detail_section_location => 'Poloha a zdroj';
+
+  @override
+  String get spring_detail_source => 'Zdroj';
 
   @override
   String get spring_detail_no_record_yet => 'zatím bez záznamu';
@@ -199,27 +239,19 @@ class AppLocalizationsCs extends AppLocalizations {
       'Další záznamy se nepodařilo načíst';
 
   @override
-  String get spring_detail_station_record => 'ČHMÚ';
-
-  @override
   String get spring_detail_report_flow_rate => 'Průtok';
 
   @override
   String get spring_detail_report_flow_strength => 'Síla pramene';
 
   @override
-  String get spring_detail_report_clarity => 'Zbarvení';
+  String get spring_detail_report_clarity => 'Čistota';
 
   @override
   String get spring_detail_report_odor => 'Zápach';
 
   @override
   String get spring_detail_report_note => 'Poznámka';
-
-  @override
-  String spring_detail_flow_strength_value(int scale) {
-    return '$scale/5';
-  }
 
   @override
   String spring_detail_flow_rate_value(String value) {

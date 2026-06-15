@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
@@ -88,11 +89,13 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
         expand: false,
         builder: (context, scrollController) {
           return ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            // Material (not a plain ColoredBox) so the InkWell ripples in the
-            // header and report rows render on the sheet surface.
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(kRadiusCard),
+            ),
+            // The grouped background (lighter than the section cards) so the
+            // iOS-style inset sections read as cards floating on the sheet.
             child: Material(
-              color: colors.onNeutral,
+              color: colors.background,
               child: _SpringDetailBody(
                 marker: widget.marker,
                 scrollController: scrollController,
@@ -177,20 +180,42 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
       statusUpdatedAt: statusUpdatedAt,
     );
 
+    // Current-state metrics: the spring's denormalised "last_*" values, falling
+    // back to the newest report until the detail resolves. Clarity is a
+    // per-report field, so it always comes from the latest report.
+    final latestReport = reportsState.reports.isEmpty
+        ? null
+        : reportsState.reports.first;
+    final flowScale = detail?.lastFlowScale ?? latestReport?.flowScale;
+    final flowRateLps = detail?.lastFlowRateLps ?? latestReport?.flowRateLps;
+    final clarity = latestReport?.waterClarity;
+    final maxFlowScale = config.maxFlowScale;
+
     return CustomScrollView(
       controller: widget.scrollController,
       slivers: [
         const SliverToBoxAdapter(child: _Grabber()),
-        SliverToBoxAdapter(
-          child: SpringPhotoView(photo: detail?.photo),
-        ),
+        if (detail?.photo != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(kRadiusControl),
+                child: SpringPhotoView(photo: detail!.photo),
+              ),
+            ),
+          ),
         SliverToBoxAdapter(
           child: SpringDetailHeader(
             name: name,
             statusIcon: statusIcon,
             statusUpdatedAt: statusUpdatedAt,
             position: position,
-            photo: detail?.photo,
+            description: detail?.description,
+            flowScale: flowScale,
+            flowRateLps: flowRateLps,
+            clarity: clarity,
+            maxFlowScale: maxFlowScale,
             owner: detail?.owner,
             onShare: () => _share(name, position),
             onNavigate: () => _navigate(position),
@@ -201,10 +226,10 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
                 .toggle(favoriteEntity),
           ),
         ),
-        const SliverToBoxAdapter(child: Divider(height: 1)),
         ...buildReportHistorySlivers(
           context,
           state: reportsState,
+          maxFlowScale: maxFlowScale,
           onRetry: () =>
               ref.read(springReportsProvider(_documentId).notifier).retryInitial(),
           onRetryLoadMore: () =>

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
+import 'package:studanky_flutter_app/core/widgets/app_state_view.dart';
 import 'package:studanky_flutter_app/core/widgets/blurred_dialog.dart';
 import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
@@ -8,9 +10,6 @@ import 'package:studanky_flutter_app/features/spring_detail/utils/spring_formatt
 import 'package:studanky_flutter_app/features/spring_detail/widgets/status_visuals.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
-
-/// Max width of the floating card on large screens (tablets).
-const double _maxCardWidth = 460;
 
 /// Opens the favourites list as an iOS-style floating dialog over a blurred
 /// backdrop (a bottom sheet is reserved for the spring detail — zadání §9).
@@ -28,29 +27,20 @@ class _FavoritesCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Styles.appColors;
+    final text = Styles.textStyles;
     final count = ref.watch(
       favoritesControllerProvider.select((f) => f.length),
     );
-    final maxHeight = MediaQuery.of(context).size.height * 0.66;
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: _maxCardWidth),
-      child: Material(
-        color: colors.onNeutral,
-        borderRadius: BorderRadius.circular(24),
-        clipBehavior: Clip.antiAlias,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: maxHeight),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _Header(count: count),
-              Divider(height: 1, color: colors.neutral200),
-              const Flexible(child: _FavoritesBody()),
-            ],
-          ),
-        ),
-      ),
+    return AppDialogCard(
+      icon: Icons.favorite_rounded,
+      title: context.l10n.favorites_sheet_title,
+      trailing: count == 0
+          ? null
+          : Text('$count', style: text.body1.copyWith(color: colors.neutral500)),
+      dividerUnderHeader: true,
+      maxHeightFactor: 0.66,
+      child: const _FavoritesBody(),
     );
   }
 }
@@ -130,44 +120,6 @@ class _FavoritesBodyState extends ConsumerState<_FavoritesBody> {
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 12, 14),
-      child: Row(
-        children: [
-          Icon(Icons.favorite_rounded, size: 20, color: colors.primaryMain),
-          const SizedBox(width: 10),
-          Text(
-            context.l10n.favorites_sheet_title,
-            style: text.h5.copyWith(color: colors.neutral900),
-          ),
-          if (count > 0) ...[
-            const SizedBox(width: 8),
-            Text(
-              '$count',
-              style: text.body1.copyWith(color: colors.neutral500),
-            ),
-          ],
-          const Spacer(),
-          IconButton(
-            icon: Icon(Icons.close_rounded, color: colors.neutral700),
-            onPressed: () => Navigator.of(context).maybePop(),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _FavoriteTile extends ConsumerWidget {
   const _FavoriteTile({required this.spring});
 
@@ -218,32 +170,11 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.bookmark_border_rounded,
-            size: 48,
-            color: colors.neutral500,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            l10n.favorites_empty_title,
-            style: text.title1.copyWith(color: colors.neutral900),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            l10n.favorites_empty_message,
-            textAlign: TextAlign.center,
-            style: text.body2.copyWith(color: colors.neutral700),
-          ),
-        ],
-      ),
+    return AppStateView(
+      icon: Icons.bookmark_border_rounded,
+      title: l10n.favorites_empty_title,
+      message: l10n.favorites_empty_message,
     );
   }
 }

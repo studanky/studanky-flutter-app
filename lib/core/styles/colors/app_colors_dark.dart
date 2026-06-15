@@ -90,4 +90,19 @@ class AppColorsDark extends AppColorsScheme {
 
   @override
   Color get onSuccess => const Color(0xFFFFFFFF);
+
+  // Spring status palette, brightened for the inverted dark map. Roles match the
+  // light scheme: confident blue / warm red for flow, cool slate for stale and
+  // neutral grey for the hollow unknown pin.
+  @override
+  Color get statusFlowing => const Color(0xFF38BDF8);
+
+  @override
+  Color get statusNotFlowing => const Color(0xFFFF6B4A);
+
+  @override
+  Color get statusStale => const Color(0xFF7E93AD);
+
+  @override
+  Color get statusUnknown => const Color(0xFF93A9C0);
 }

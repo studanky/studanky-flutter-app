@@ -304,6 +304,54 @@ abstract class AppLocalizations {
   /// **'Oblíbené studánky'**
   String get map_favorites;
 
+  /// No description provided for @map_help.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nápověda'**
+  String get map_help;
+
+  /// No description provided for @map_search_hint.
+  ///
+  /// In cs, this message translates to:
+  /// **'Hledejte studánky, obce, adresy…'**
+  String get map_search_hint;
+
+  /// No description provided for @map_search_error.
+  ///
+  /// In cs, this message translates to:
+  /// **'Vyhledávání teď není dostupné.'**
+  String get map_search_error;
+
+  /// No description provided for @map_zoom_in.
+  ///
+  /// In cs, this message translates to:
+  /// **'Přiblížit'**
+  String get map_zoom_in;
+
+  /// No description provided for @map_zoom_out.
+  ///
+  /// In cs, this message translates to:
+  /// **'Oddálit'**
+  String get map_zoom_out;
+
+  /// No description provided for @map_status_stale.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neaktuální data'**
+  String get map_status_stale;
+
+  /// No description provided for @map_marker_semantic.
+  ///
+  /// In cs, this message translates to:
+  /// **'Studánka {name}: {status}'**
+  String map_marker_semantic(String name, String status);
+
+  /// No description provided for @map_cluster_semantic.
+  ///
+  /// In cs, this message translates to:
+  /// **'Shluk studánek, počet {count}'**
+  String map_cluster_semantic(int count);
+
   /// No description provided for @favorites_sheet_title.
   ///
   /// In cs, this message translates to:
@@ -369,6 +417,30 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Neznámo'**
   String get spring_detail_status_unknown;
+
+  /// No description provided for @spring_detail_section_current.
+  ///
+  /// In cs, this message translates to:
+  /// **'Současný stav'**
+  String get spring_detail_section_current;
+
+  /// No description provided for @spring_detail_section_about.
+  ///
+  /// In cs, this message translates to:
+  /// **'O studánce'**
+  String get spring_detail_section_about;
+
+  /// No description provided for @spring_detail_section_location.
+  ///
+  /// In cs, this message translates to:
+  /// **'Poloha a zdroj'**
+  String get spring_detail_section_location;
+
+  /// No description provided for @spring_detail_source.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zdroj'**
+  String get spring_detail_source;
 
   /// No description provided for @spring_detail_no_record_yet.
   ///
@@ -436,12 +508,6 @@ abstract class AppLocalizations {
   /// **'Další záznamy se nepodařilo načíst'**
   String get spring_detail_history_load_more_error;
 
-  /// No description provided for @spring_detail_station_record.
-  ///
-  /// In cs, this message translates to:
-  /// **'ČHMÚ'**
-  String get spring_detail_station_record;
-
   /// No description provided for @spring_detail_report_flow_rate.
   ///
   /// In cs, this message translates to:
@@ -457,7 +523,7 @@ abstract class AppLocalizations {
   /// No description provided for @spring_detail_report_clarity.
   ///
   /// In cs, this message translates to:
-  /// **'Zbarvení'**
+  /// **'Čistota'**
   String get spring_detail_report_clarity;
 
   /// No description provided for @spring_detail_report_odor.
@@ -471,12 +537,6 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Poznámka'**
   String get spring_detail_report_note;
-
-  /// No description provided for @spring_detail_flow_strength_value.
-  ///
-  /// In cs, this message translates to:
-  /// **'{scale}/5'**
-  String spring_detail_flow_strength_value(int scale);
 
   /// No description provided for @spring_detail_flow_rate_value.
   ///

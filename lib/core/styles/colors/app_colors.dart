@@ -102,4 +102,16 @@ class AppColors implements AppColorsScheme {
 
   @override
   Color get onSuccess => _currentScheme.onSuccess;
+
+  @override
+  Color get statusFlowing => _currentScheme.statusFlowing;
+
+  @override
+  Color get statusNotFlowing => _currentScheme.statusNotFlowing;
+
+  @override
+  Color get statusStale => _currentScheme.statusStale;
+
+  @override
+  Color get statusUnknown => _currentScheme.statusUnknown;
 }

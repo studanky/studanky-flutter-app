@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
 import 'package:studanky_flutter_app/core/widgets/blurred_dialog.dart';
 
 /// Opens a focused dialog that shows *only* the potability disclaimer — the
@@ -20,53 +21,32 @@ class _DisclaimerCard extends StatelessWidget {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 420),
-      child: Material(
-        color: colors.onNeutral,
-        borderRadius: BorderRadius.circular(24),
-        clipBehavior: Clip.antiAlias,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 22, 24, 22),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    color: colors.secondaryVariant1,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Tekoucí voda ≠ pitná voda',
-                      style: text.title1.copyWith(color: colors.neutral900),
-                    ),
-                  ),
-                ],
+    return AppDialogCard(
+      icon: Icons.warning_amber_rounded,
+      iconColor: colors.secondaryVariant1,
+      title: 'Tekoucí voda neznamená pitná voda',
+      maxWidth: 420,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 4, 24, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Aplikace informuje pouze o tom, zda je ve studánce hlášený tok '
+              'vody. Neověřuje zdravotní nezávadnost ani pitnost vody. '
+              'Užívání vody je na vlastní odpovědnost.',
+              style: text.body2.copyWith(color: colors.neutral700),
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () => Navigator.of(context).maybePop(),
+                child: const Text('Rozumím'),
               ),
-              const SizedBox(height: 14),
-              Text(
-                'Aplikace informuje pouze o tom, zda je ve studánce hlášený tok '
-                'vody. Neověřuje zdravotní nezávadnost ani pitnost vody. '
-                'Užívání vody je na vlastní odpovědnost.',
-                style: text.body2.copyWith(color: colors.neutral700),
-              ),
-              const SizedBox(height: 20),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => Navigator.of(context).maybePop(),
-                  child: Text(
-                    'Rozumím',
-                    style: text.button.copyWith(color: colors.primaryMain),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

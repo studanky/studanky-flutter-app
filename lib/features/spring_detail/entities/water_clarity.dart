@@ -11,6 +11,14 @@ enum WaterClarity {
 
   final String wireValue;
 
+  /// 1 (heavily turbid) … 5 (crystal clear) for the graphical clarity scale —
+  /// more filled segments mean clearer water. Derived from declaration order
+  /// (crystalClear first), so [values] must stay ordered best → worst.
+  int get clarityLevel => values.length - index;
+
+  /// Top of the clarity scale ("n").
+  static int get maxLevel => values.length;
+
   /// Parses the API value; returns null for null or any unrecognised value
   /// (forward-compatible with new server enum members).
   static WaterClarity? fromWire(String? value) {

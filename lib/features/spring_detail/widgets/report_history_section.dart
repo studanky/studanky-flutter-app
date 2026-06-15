@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_reports_provider.dart';
+import 'package:studanky_flutter_app/features/spring_detail/widgets/detail_section.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/report_tile.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
-/// Builds the "Historie záznamů" section as a list of slivers so it shares the
-/// sheet's single scroll view (and thus its drag-to-expand gesture).
+/// Builds the "Historie záznamů" section as slivers so it shares the sheet's
+/// single scroll view (and thus the drag-to-expand gesture). The records sit in
+/// one rounded grouped card to match the detail's other sections.
 ///
 /// Renders the right state from [state]: a first-page spinner, an error with
 /// retry, an empty message, or the accumulated list with a load-more footer.
 List<Widget> buildReportHistorySlivers(
   BuildContext context, {
   required SpringReportsState state,
+  required int maxFlowScale,
   required VoidCallback onRetry,
   required VoidCallback onRetryLoadMore,
 }) {
   return [
     SliverToBoxAdapter(child: _SectionTitle(total: state.total)),
-    _historyContent(context, state, onRetry),
+    _historyContent(context, state, maxFlowScale, onRetry),
     SliverToBoxAdapter(
       child: _Footer(state: state, onRetryLoadMore: onRetryLoadMore),
     ),
@@ -27,18 +31,23 @@ List<Widget> buildReportHistorySlivers(
 Widget _historyContent(
   BuildContext context,
   SpringReportsState state,
+  int maxFlowScale,
   VoidCallback onRetry,
 ) {
   if (state.isInitialLoading) {
-    return const SliverToBoxAdapter(child: _CenteredPadding(child: _Spinner()));
+    return const SliverToBoxAdapter(
+      child: _CardWrap(child: _CenteredPadding(child: _Spinner())),
+    );
   }
 
   if (state.hasInitialError) {
     return SliverToBoxAdapter(
-      child: _CenteredPadding(
-        child: _InlineError(
-          message: context.l10n.spring_detail_history_error,
-          onRetry: onRetry,
+      child: _CardWrap(
+        child: _CenteredPadding(
+          child: _InlineError(
+            message: context.l10n.spring_detail_history_error,
+            onRetry: onRetry,
+          ),
         ),
       ),
     );
@@ -46,11 +55,13 @@ Widget _historyContent(
 
   if (state.isEmpty) {
     return SliverToBoxAdapter(
-      child: _CenteredPadding(
-        child: Text(
-          context.l10n.spring_detail_history_empty,
-          style: Styles.textStyles.body2.copyWith(
-            color: Styles.appColors.neutral700,
+      child: _CardWrap(
+        child: _CenteredPadding(
+          child: Text(
+            context.l10n.spring_detail_history_empty,
+            style: Styles.textStyles.body2.copyWith(
+              color: Styles.appColors.neutral700,
+            ),
           ),
         ),
       ),
@@ -58,23 +69,36 @@ Widget _historyContent(
   }
 
   final reports = state.reports;
+  final colors = Styles.appColors;
+
   return SliverPadding(
     padding: const EdgeInsets.symmetric(horizontal: 16),
-    sliver: SliverList.separated(
-      itemCount: reports.length,
-      separatorBuilder: (context, _) => Divider(
-        height: 1,
-        color: Styles.appColors.neutral200,
+    sliver: DecoratedSliver(
+      decoration: BoxDecoration(
+        color: colors.onNeutral,
+        borderRadius: BorderRadius.circular(kRadiusControl),
+        border: Border.all(color: colors.neutral200),
       ),
-      itemBuilder: (context, index) => ReportTile(
-        key: ValueKey(reports[index].documentId),
-        report: reports[index],
-        initiallyExpanded: index == 0,
+      sliver: SliverPadding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        sliver: SliverList.separated(
+          itemCount: reports.length,
+          separatorBuilder: (context, _) =>
+              const Divider(height: 1, indent: 16, endIndent: 16),
+          itemBuilder: (context, index) => ReportTile(
+            key: ValueKey(reports[index].documentId),
+            report: reports[index],
+            maxFlowScale: maxFlowScale,
+            initiallyExpanded: index == 0,
+          ),
+        ),
       ),
     ),
   );
 }
 
+/// Section caption shared with [DetailSection]: uppercase, muted, with the
+/// total count appended.
 class _SectionTitle extends StatelessWidget {
   const _SectionTitle({required this.total});
 
@@ -84,24 +108,35 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
+    final title = context.l10n.spring_detail_history_title.toUpperCase();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-      child: Row(
-        children: [
-          Text(
-            context.l10n.spring_detail_history_title,
-            style: text.title1.copyWith(color: colors.neutral900),
-          ),
-          if (total > 0) ...[
-            const SizedBox(width: 8),
-            Text(
-              '$total',
-              style: text.body2.copyWith(color: colors.neutral500),
-            ),
-          ],
-        ],
+      padding: const EdgeInsets.fromLTRB(22, 18, 16, 8),
+      child: Text(
+        total > 0 ? '$title ($total)' : title,
+        style: text.body2.copyWith(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.6,
+          color: colors.neutral500,
+        ),
       ),
+    );
+  }
+}
+
+/// Wraps a one-off state (spinner / error / empty) in the same card the list
+/// uses, with side margins, so every history state reads consistently.
+class _CardWrap extends StatelessWidget {
+  const _CardWrap({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: DetailCard(padding: EdgeInsets.zero, child: child),
     );
   }
 }

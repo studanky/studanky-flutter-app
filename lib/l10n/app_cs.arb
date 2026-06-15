@@ -68,6 +68,29 @@
   "@map_my_location": {},
   "map_favorites": "Oblíbené studánky",
   "@map_favorites": {},
+  "map_help": "Nápověda",
+  "@map_help": {},
+  "map_search_hint": "Hledejte studánky, obce, adresy…",
+  "@map_search_hint": {},
+  "map_search_error": "Vyhledávání teď není dostupné.",
+  "@map_search_error": {},
+  "map_zoom_in": "Přiblížit",
+  "@map_zoom_in": {},
+  "map_zoom_out": "Oddálit",
+  "@map_zoom_out": {},
+  "map_status_stale": "Neaktuální data",
+  "@map_status_stale": {},
+  "map_marker_semantic": "Studánka {name}: {status}",
+  "@map_marker_semantic": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "status": { "type": "String" }
+    }
+  },
+  "map_cluster_semantic": "Shluk studánek, počet {count}",
+  "@map_cluster_semantic": {
+    "placeholders": { "count": { "type": "int" } }
+  },
 
   "favorites_sheet_title": "Oblíbené studánky",
   "@favorites_sheet_title": {},
@@ -94,6 +117,15 @@
   "@spring_detail_status_not_flowing": {},
   "spring_detail_status_unknown": "Neznámo",
   "@spring_detail_status_unknown": {},
+
+  "spring_detail_section_current": "Současný stav",
+  "@spring_detail_section_current": {},
+  "spring_detail_section_about": "O studánce",
+  "@spring_detail_section_about": {},
+  "spring_detail_section_location": "Poloha a zdroj",
+  "@spring_detail_section_location": {},
+  "spring_detail_source": "Zdroj",
+  "@spring_detail_source": {},
 
   "spring_detail_no_record_yet": "zatím bez záznamu",
   "@spring_detail_no_record_yet": {},
@@ -127,22 +159,16 @@
   "spring_detail_history_load_more_error": "Další záznamy se nepodařilo načíst",
   "@spring_detail_history_load_more_error": {},
 
-  "spring_detail_station_record": "ČHMÚ",
-  "@spring_detail_station_record": {},
   "spring_detail_report_flow_rate": "Průtok",
   "@spring_detail_report_flow_rate": {},
   "spring_detail_report_flow_strength": "Síla pramene",
   "@spring_detail_report_flow_strength": {},
-  "spring_detail_report_clarity": "Zbarvení",
+  "spring_detail_report_clarity": "Čistota",
   "@spring_detail_report_clarity": {},
   "spring_detail_report_odor": "Zápach",
   "@spring_detail_report_odor": {},
   "spring_detail_report_note": "Poznámka",
   "@spring_detail_report_note": {},
-  "spring_detail_flow_strength_value": "{scale}/5",
-  "@spring_detail_flow_strength_value": {
-    "placeholders": { "scale": { "type": "int" } }
-  },
   "spring_detail_flow_rate_value": "{value} l/s",
   "@spring_detail_flow_rate_value": {
     "placeholders": { "value": { "type": "String" } }

@@ -61,4 +61,17 @@ abstract class AppColorsScheme {
   Color get success;
 
   Color get onSuccess;
+
+  /// Spring status palette (zadání §6). Four legible, glyph-backed states:
+  /// [statusFlowing] is the confident water-blue and [statusNotFlowing] the warm
+  /// red, while [statusStale] (cool, desaturated slate) and [statusUnknown]
+  /// (neutral grey, rendered as a hollow pin) read neutrally so they never look
+  /// like a confident flow state.
+  Color get statusFlowing;
+
+  Color get statusNotFlowing;
+
+  Color get statusStale;
+
+  Color get statusUnknown;
 }

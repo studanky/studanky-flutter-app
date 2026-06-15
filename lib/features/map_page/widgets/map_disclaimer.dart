@@ -15,32 +15,36 @@ class MapDisclaimer extends StatelessWidget {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: colors.onNeutral.withValues(alpha: 0.85),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.warning_amber_rounded,
-                size: 13,
-                color: colors.secondaryVariant1,
-              ),
-              const SizedBox(width: 5),
-              Text(
-                'Tekoucí voda ≠ pitná voda',
-                style: text.body2.copyWith(
-                  fontSize: 11,
-                  color: colors.neutral700,
+    return Semantics(
+      button: true,
+      label: 'Tekoucí voda neznamená pitná voda. Otevřít vysvětlení.',
+      child: GestureDetector(
+        onTap: onTap,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: colors.onNeutral.withValues(alpha: 0.85),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  size: 13,
+                  color: colors.secondaryVariant1,
                 ),
-              ),
-            ],
+                const SizedBox(width: 5),
+                Text(
+                  'Tekoucí voda neznamená pitná voda',
+                  style: text.body2.copyWith(
+                    fontSize: 11,
+                    color: colors.neutral700,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -39,12 +39,12 @@ class SpringFormatters {
     return '$lat$latDir, $lng$lngDir';
   }
 
-  /// Measured discharge formatted for display ("0.42").
+  /// Measured discharge formatted for display ("0,42"). Uses the Czech decimal
+  /// comma; the app ships Czech only for now.
   static String flowRate(double lps) {
     final fixed = lps.toStringAsFixed(2);
     // Trim trailing zeros for a cleaner read (0.40 → 0.4, 1.00 → 1).
-    return fixed.contains('.')
-        ? fixed.replaceFirst(RegExp(r'\.?0+$'), '')
-        : fixed;
+    final trimmed = fixed.replaceFirst(RegExp(r'\.?0+$'), '');
+    return trimmed.replaceAll('.', ',');
   }
 }

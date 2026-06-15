@@ -5,7 +5,12 @@ import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item
 
 /// Builds a clustered-count badge in the app's blue theme. Tapping zooms in to
 /// the cluster's expansion level. Size grows mildly with the point count.
-Marker buildClusterMarker(Cluster cluster, {required VoidCallback onTap}) {
+/// [semanticsLabel] announces the cluster (e.g. "Shluk studánek, počet 12").
+Marker buildClusterMarker(
+  Cluster cluster, {
+  required VoidCallback onTap,
+  String? semanticsLabel,
+}) {
   final size = _sizeFor(cluster.count);
 
   return Marker(
@@ -15,7 +20,11 @@ Marker buildClusterMarker(Cluster cluster, {required VoidCallback onTap}) {
     alignment: Alignment.center,
     // Keep upright when the map is rotated.
     rotate: true,
-    child: _ClusterBadge(count: cluster.count, size: size, onTap: onTap),
+    child: Semantics(
+      button: true,
+      label: semanticsLabel,
+      child: _ClusterBadge(count: cluster.count, size: size, onTap: onTap),
+    ),
   );
 }
 

@@ -28,9 +28,11 @@ import 'package:studanky_flutter_app/features/map_search/entities/map_search_res
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
+import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
+import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 class MapPageContent extends ConsumerStatefulWidget {
@@ -39,6 +41,16 @@ class MapPageContent extends ConsumerStatefulWidget {
   @override
   ConsumerState<MapPageContent> createState() => _MapPageContentState();
 }
+
+/// Localized status word for a marker's screen-reader label. Reuses the detail
+/// sheet's flow labels; "stale" gets its own word so it isn't conflated with
+/// "unknown".
+String _statusLabelFor(SpringIcon icon, AppLocalizations l10n) => switch (icon) {
+  SpringIcon.flowing => l10n.spring_detail_status_flowing,
+  SpringIcon.notFlowing => l10n.spring_detail_status_not_flowing,
+  SpringIcon.stale => l10n.map_status_stale,
+  SpringIcon.unknown => l10n.spring_detail_status_unknown,
+};
 
 class _MapPageContentState extends ConsumerState<MapPageContent>
     with SingleTickerProviderStateMixin {
@@ -371,6 +383,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     final favoritesCount = ref.watch(
       favoritesControllerProvider.select((favorites) => favorites.length),
     );
+    final l10n = context.l10n;
 
     final markers = <Marker>[
       for (final item in markerState.items)
@@ -378,11 +391,19 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
           Cluster() => buildClusterMarker(
             item,
             onTap: () => _onClusterTap(item),
+            semanticsLabel: l10n.map_cluster_semantic(item.count),
           ),
           SpringPoint(:final spring) => buildSpringMarker(
             spring,
             config.iconFor(spring.status.wireValue, spring.statusUpdatedAt),
             onTap: () => _onSpringTap(spring),
+            semanticsLabel: l10n.map_marker_semantic(
+              spring.name,
+              _statusLabelFor(
+                config.iconFor(spring.status.wireValue, spring.statusUpdatedAt),
+                l10n,
+              ),
+            ),
           ),
         },
     ];
@@ -506,7 +527,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                         // Don't stretch the search field across wide screens.
                         constraints: const BoxConstraints(maxWidth: 600),
                         child: MapSearchWidget(
-                          hintText: 'Hledejte...',
+                          hintText: l10n.map_search_hint,
                           onResultSelected: _onSearchResultSelected,
                         ),
                       ),

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/flow_range.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
@@ -74,4 +76,11 @@ abstract class PlatformConfig with _$PlatformConfig {
     }
     return null;
   }
+
+  /// Top of the flow-strength scale ("n" in the 1…n readout). Derived from the
+  /// live ranges so the graphical scale tracks the server config; falls back to
+  /// the documented default of 5 before the ranges are populated.
+  int get maxFlowScale => flowScaleRanges.isEmpty
+      ? 5
+      : flowScaleRanges.map((r) => r.scale).reduce(math.max);
 }
