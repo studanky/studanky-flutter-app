@@ -20,6 +20,15 @@ abstract class SpringsApi {
   Future<StrapiListResponse<SpringMapMarkerDto>> getMap(
     @Query('bbox') String bbox,
   );
+
+  @GET(ApiConfig.springsSearchEndpoint)
+  Future<StrapiListResponse<SpringMapMarkerDto>> search(
+    @Query('q') String query,
+    @Query('lat') double? latitude,
+    @Query('lng') double? longitude,
+    @Query('limit') int limit,
+    @Query('locale') String? locale,
+  );
 }
 
 @Riverpod(keepAlive: true)

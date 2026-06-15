@@ -1,5 +1,6 @@
 // TODO: leave only types that are used in the app, others map as 'other'
 enum MapSearchResultType {
+  spring,
   regional,
   regionalCountry,
   regionalRegion,

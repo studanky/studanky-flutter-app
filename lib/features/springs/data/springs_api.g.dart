@@ -47,6 +47,49 @@ class _SpringsApi implements SpringsApi {
     return _value;
   }
 
+  @override
+  Future<StrapiListResponse<SpringMapMarkerDto>> search(
+    String query,
+    double? latitude,
+    double? longitude,
+    int limit,
+    String? locale,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'q': query,
+      r'lat': latitude,
+      r'lng': longitude,
+      r'limit': limit,
+      r'locale': locale,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<StrapiListResponse<SpringMapMarkerDto>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/springs/search',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late StrapiListResponse<SpringMapMarkerDto> _value;
+    try {
+      _value = StrapiListResponse<SpringMapMarkerDto>.fromJson(
+        _result.data!,
+        (json) => SpringMapMarkerDto.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

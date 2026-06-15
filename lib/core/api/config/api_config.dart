@@ -30,6 +30,9 @@ class ApiConfig {
   /// Minimal spring marker payload for the map, filtered by `bbox`.
   static const String springsMapEndpoint = '/springs/map';
 
+  /// Name autocomplete for map search; returns the same map-safe marker fields.
+  static const String springsSearchEndpoint = '/springs/search';
+
   /// Report history page size (server clamps to 1–100; api-reference.md §3.3).
   static const int reportsPageSize = 20;
 

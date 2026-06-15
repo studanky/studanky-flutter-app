@@ -77,6 +77,10 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// the location dot is comfortably in view.
   static const double _recenterMinZoom = 15.0;
 
+  /// Search-selected springs should open close enough for the selected marker
+  /// to be unambiguous before the detail sheet appears.
+  static const double _springSearchZoom = 17.0;
+
   /// Map center within this many metres of the user's fix counts as "centered".
   static const double _centeredThresholdMeters = 25;
 
@@ -120,7 +124,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
 
   /// True while a tap on the "my location" button is waiting for the first fix.
   bool _isLocating = false;
+  bool _isMapReady = false;
   _MapEmptyOverlayMode _mapEmptyOverlayMode = _MapEmptyOverlayMode.hidden;
+  int _searchSelectionToken = 0;
 
   /// Live map orientation + centered state for the compass/location button.
   /// Kept in a [ValueNotifier] so map rotation repaints only the button, never
@@ -150,6 +156,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   }
 
   void _onMapReady() {
+    _isMapReady = true;
     // First load is immediate; subsequent camera changes are debounced.
     _emitCamera();
     _updateCompass();
@@ -414,8 +421,27 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   }
 
   void _onSearchResultSelected(MapSearchResult result) {
+    unawaited(_handleSearchResultSelected(result));
+  }
+
+  Future<void> _handleSearchResultSelected(MapSearchResult result) async {
     if (!mounted) return;
     FocusScope.of(context).unfocus();
+
+    final selectionToken = ++_searchSelectionToken;
+    final spring = result.spring;
+    if (spring != null) {
+      _logger.fine(
+        'Spring search selected: ${spring.documentId} (${spring.name})',
+      );
+      await _animator.animateTo(
+        center: spring.position,
+        zoom: _springSearchZoom,
+      );
+      if (!mounted || selectionToken != _searchSelectionToken) return;
+      unawaited(showSpringDetailSheet(context, marker: spring));
+      return;
+    }
 
     final bounds = result.bounds;
     if (bounds != null && !bounds.isPoint) {
@@ -441,7 +467,13 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     );
   }
 
+  LatLng? _searchOrigin() {
+    if (!_isMapReady) return null;
+    return _mapController.camera.center;
+  }
+
   double _zoomForResultType(MapSearchResultType type) => switch (type) {
+    MapSearchResultType.spring => _springSearchZoom,
     MapSearchResultType.regional ||
     MapSearchResultType.regionalCountry ||
     MapSearchResultType.regionalRegion => 9,
@@ -650,6 +682,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                         constraints: const BoxConstraints(maxWidth: 600),
                         child: MapSearchWidget(
                           hintText: l10n.map_search_hint,
+                          originProvider: _searchOrigin,
                           onResultSelected: _onSearchResultSelected,
                         ),
                       ),

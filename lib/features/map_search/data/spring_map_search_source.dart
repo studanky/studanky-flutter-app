@@ -1,0 +1,86 @@
+import 'package:latlong2/latlong.dart';
+import 'package:logging/logging.dart';
+import 'package:studanky_flutter_app/core/api/utils/api_result.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
+import 'package:studanky_flutter_app/features/springs/data/spring_repository.dart';
+import 'package:studanky_flutter_app/features/springs/entities/spring_search_result.dart';
+
+/// First-party autocomplete backed by `GET /api/springs/search`.
+class SpringMapSearchSource implements MapSearchSource {
+  SpringMapSearchSource({
+    required this.repository,
+    required this.languageCode,
+    this.limit = 5,
+  });
+
+  static const int _minQueryLength = 2;
+
+  final SpringRepository repository;
+  final String languageCode;
+  final int limit;
+
+  final _logger = Logger('SpringMapSearchSource');
+  final Map<String, List<MapSearchResult>> _cache = {};
+
+  @override
+  Future<List<MapSearchResult>> search(String query, {LatLng? origin}) async {
+    final trimmed = query.trim();
+    if (trimmed.length < _minQueryLength) return const [];
+
+    final cacheKey = [
+      trimmed.toLowerCase(),
+      origin?.latitude.toStringAsFixed(4),
+      origin?.longitude.toStringAsFixed(4),
+      languageCode,
+    ].join('|');
+    final cached = _cache[cacheKey];
+    if (cached != null) return cached;
+
+    final result = await repository.searchByName(
+      query: trimmed,
+      origin: origin,
+      limit: limit,
+      locale: languageCode,
+    );
+
+    switch (result) {
+      case Success(:final data):
+        final mapped = data.map(_toMapSearchResult).toList(growable: false);
+        _cache[cacheKey] = mapped;
+        return mapped;
+      case Failure(:final exception):
+        _logger.warning('Spring search failed for "$trimmed"', exception);
+        return const [];
+    }
+  }
+
+  MapSearchResult _toMapSearchResult(SpringSearchResult result) {
+    final spring = result.spring;
+    return MapSearchResult(
+      label: spring.name,
+      position: spring.position,
+      type: MapSearchResultType.spring,
+      subtitle: _subtitle(result.distanceMeters),
+      spring: spring,
+    );
+  }
+
+  String _subtitle(int? distanceMeters) {
+    final distance = distanceMeters == null
+        ? null
+        : _formatDistance(distanceMeters);
+    return distance == null ? 'Studánka' : 'Studánka • $distance';
+  }
+
+  String _formatDistance(int meters) {
+    if (meters < 1000) return '$meters m';
+
+    final kilometers = meters / 1000;
+    final value = kilometers < 10
+        ? kilometers.toStringAsFixed(1)
+        : kilometers.round().toString();
+    return '${value.replaceAll('.', ',')} km';
+  }
+}

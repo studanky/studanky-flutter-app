@@ -18,6 +18,7 @@ class SpringMapMarkerDto {
     required this.lng,
     required this.currentStatus,
     this.statusUpdatedAt,
+    this.distanceMeters,
   });
 
   factory SpringMapMarkerDto.fromJson(Map<String, dynamic> json) =>
@@ -35,6 +36,11 @@ class SpringMapMarkerDto {
   /// when the spring has no report yet.
   @JsonKey(name: 'status_updated_at')
   final DateTime? statusUpdatedAt;
+
+  /// Rounded distance from the requested search origin in metres. Only present
+  /// on `GET /api/springs/search` when both `lat` and `lng` are valid.
+  @JsonKey(name: 'distance_m')
+  final int? distanceMeters;
 
   Map<String, dynamic> toJson() => _$SpringMapMarkerDtoToJson(this);
 }

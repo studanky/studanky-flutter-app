@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/core/api/models/strapi_response.dart';
 import 'package:studanky_flutter_app/features/springs/data/spring_repository.dart';
 import 'package:studanky_flutter_app/features/springs/data/springs_api.dart';
@@ -12,37 +13,93 @@ class _RecordingSpringsApi implements SpringsApi {
 
   final List<SpringMapMarkerDto> response;
   String? lastBbox;
+  String? lastQuery;
+  double? lastLatitude;
+  double? lastLongitude;
+  int? lastLimit;
+  String? lastLocale;
 
   @override
   Future<StrapiListResponse<SpringMapMarkerDto>> getMap(String bbox) async {
     lastBbox = bbox;
     return StrapiListResponse(data: response);
   }
+
+  @override
+  Future<StrapiListResponse<SpringMapMarkerDto>> search(
+    String query,
+    double? latitude,
+    double? longitude,
+    int limit,
+    String? locale,
+  ) async {
+    lastQuery = query;
+    lastLatitude = latitude;
+    lastLongitude = longitude;
+    lastLimit = limit;
+    lastLocale = locale;
+    return StrapiListResponse(data: response);
+  }
 }
 
 void main() {
-  test('builds the bbox as minLng,minLat,maxLng,maxLat and maps the data', () async {
+  test(
+    'builds the bbox as minLng,minLat,maxLng,maxLat and maps the data',
+    () async {
+      final api = _RecordingSpringsApi(const [
+        SpringMapMarkerDto(
+          documentId: 'd1',
+          name: 'Spring',
+          lat: 50.0,
+          lng: 14.5,
+          currentStatus: 'is_not_flowing',
+        ),
+      ]);
+      final repository = SpringRepositoryImpl(api);
+
+      final result = await repository.fetchMapMarkers(
+        const SpringBounds(north: 50.2, south: 49.4, east: 16.0, west: 14.0),
+      );
+
+      // west, south, east, north
+      expect(api.lastBbox, '14.0,49.4,16.0,50.2');
+
+      final springs = result.dataOrNull;
+      expect(springs, isNotNull);
+      expect(springs!.single.documentId, 'd1');
+      expect(springs.single.status, SpringStatus.isNotFlowing);
+    },
+  );
+
+  test('passes search parameters and keeps distance metadata', () async {
     final api = _RecordingSpringsApi(const [
       SpringMapMarkerDto(
         documentId: 'd1',
-        name: 'Spring',
-        lat: 50.0,
-        lng: 14.5,
-        currentStatus: 'is_not_flowing',
+        name: 'Ostružná',
+        lat: 50.18,
+        lng: 17.05,
+        currentStatus: 'is_flowing',
+        distanceMeters: 2310,
       ),
     ]);
     final repository = SpringRepositoryImpl(api);
 
-    final result = await repository.fetchMapMarkers(
-      const SpringBounds(north: 50.2, south: 49.4, east: 16.0, west: 14.0),
+    final result = await repository.searchByName(
+      query: 'ostr',
+      origin: const LatLng(50.1, 17.0),
+      limit: 7,
+      locale: 'cs',
     );
 
-    // west, south, east, north
-    expect(api.lastBbox, '14.0,49.4,16.0,50.2');
+    expect(api.lastQuery, 'ostr');
+    expect(api.lastLatitude, 50.1);
+    expect(api.lastLongitude, 17.0);
+    expect(api.lastLimit, 7);
+    expect(api.lastLocale, 'cs');
 
     final springs = result.dataOrNull;
     expect(springs, isNotNull);
-    expect(springs!.single.documentId, 'd1');
-    expect(springs.single.status, SpringStatus.isNotFlowing);
+    expect(springs!.single.spring.documentId, 'd1');
+    expect(springs.single.distanceMeters, 2310);
   });
 }

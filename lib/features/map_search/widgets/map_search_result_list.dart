@@ -104,6 +104,7 @@ class _ResultRow extends StatelessWidget {
 
 /// Icon per Mapy.com suggest result type (chosen for at-a-glance recognition).
 IconData _iconFor(MapSearchResultType type) => switch (type) {
+  MapSearchResultType.spring => Icons.water_drop_rounded,
   MapSearchResultType.regionalCountry => Icons.public_rounded,
   MapSearchResultType.regionalRegion => Icons.map_outlined,
   MapSearchResultType.regionalMunicipality => Icons.location_city_rounded,
@@ -118,6 +119,7 @@ IconData _iconFor(MapSearchResultType type) => switch (type) {
 
 /// Short Czech descriptor shown under each result's name.
 String _descriptorFor(MapSearchResultType type) => switch (type) {
+  MapSearchResultType.spring => 'Studánka',
   MapSearchResultType.regionalCountry => 'Země',
   MapSearchResultType.regionalRegion => 'Kraj / oblast',
   MapSearchResultType.regionalMunicipality => 'Obec / město',

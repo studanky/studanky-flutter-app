@@ -16,6 +16,7 @@ SpringMapMarkerDto _$SpringMapMarkerDtoFromJson(Map<String, dynamic> json) =>
       statusUpdatedAt: json['status_updated_at'] == null
           ? null
           : DateTime.parse(json['status_updated_at'] as String),
+      distanceMeters: (json['distance_m'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$SpringMapMarkerDtoToJson(SpringMapMarkerDto instance) =>
@@ -26,4 +27,5 @@ Map<String, dynamic> _$SpringMapMarkerDtoToJson(SpringMapMarkerDto instance) =>
       'lng': instance.lng,
       'current_status': instance.currentStatus,
       'status_updated_at': instance.statusUpdatedAt?.toIso8601String(),
+      'distance_m': instance.distanceMeters,
     };

@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
+import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 
 part 'map_search_result.freezed.dart';
 
@@ -18,6 +19,10 @@ abstract class MapSearchResult with _$MapSearchResult {
     /// Geographic extent of the locality, when known. Used to fit the whole
     /// place in view; null falls back to centring on [position].
     MapSearchBounds? bounds,
+
+    /// Present for first-party spring matches. Lets the map open the spring
+    /// detail directly after moving the camera.
+    SpringMarkerEntity? spring,
   }) = _MapSearchResult;
 }
 

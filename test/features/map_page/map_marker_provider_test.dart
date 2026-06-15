@@ -8,6 +8,7 @@ import 'package:studanky_flutter_app/features/map_page/providers/map_marker_prov
 import 'package:studanky_flutter_app/features/springs/data/spring_repository.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
+import 'package:studanky_flutter_app/features/springs/entities/spring_search_result.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_status.dart';
 
 SpringMarkerEntity _spring(String id, double lat, double lng) =>
@@ -55,6 +56,16 @@ class _FakeSpringRepository implements SpringRepository {
         )
         .toList(growable: false);
     return ApiResult.success(inBounds);
+  }
+
+  @override
+  Future<ApiResult<List<SpringSearchResult>>> searchByName({
+    required String query,
+    LatLng? origin,
+    int limit = 5,
+    String? locale,
+  }) async {
+    return const ApiResult.success([]);
   }
 }
 

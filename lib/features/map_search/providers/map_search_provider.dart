@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
@@ -44,7 +45,7 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
   }
 
   /// Sets the current query and schedules a debounced backend request.
-  void setQuery(String query) {
+  void setQuery(String query, {LatLng? origin}) {
     if (query == state.query) {
       return;
     }
@@ -63,7 +64,7 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
     );
 
     _debounceTimer = Timer(_kDebounceDuration, () {
-      _performSearch(query, token);
+      _performSearch(query, token, origin);
     });
   }
 
@@ -82,9 +83,9 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
     );
   }
 
-  Future<void> _performSearch(String query, int token) async {
+  Future<void> _performSearch(String query, int token, LatLng? origin) async {
     try {
-      final results = await _searchSource.search(query);
+      final results = await _searchSource.search(query, origin: origin);
       if (token != _lastToken) return;
 
       state = state.copyWith(

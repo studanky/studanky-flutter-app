@@ -3,9 +3,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:studanky_flutter_app/core/api/interceptors/logging_interceptor.dart';
 import 'package:studanky_flutter_app/core/env.dart';
 import 'package:studanky_flutter_app/features/map_search/constants/map_search_constants.dart';
+import 'package:studanky_flutter_app/features/map_search/data/composite_map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_search_source.dart';
+import 'package:studanky_flutter_app/features/map_search/data/spring_map_search_source.dart';
+import 'package:studanky_flutter_app/features/springs/data/spring_repository.dart';
 
 part 'map_search_source_provider.g.dart';
 
@@ -43,9 +46,15 @@ MapSearchSource mapSearchSource(Ref ref, String languageCode) {
     );
   }
 
-  return MapSuggestSearchSource(
-    api: ref.watch(mapSuggestApiProvider),
-    apiKey: apiKey,
-    languageCode: languageCode,
-  );
+  return CompositeMapSearchSource([
+    SpringMapSearchSource(
+      repository: ref.watch(springRepositoryProvider),
+      languageCode: languageCode,
+    ),
+    MapSuggestSearchSource(
+      api: ref.watch(mapSuggestApiProvider),
+      apiKey: apiKey,
+      languageCode: languageCode,
+    ),
+  ]);
 }

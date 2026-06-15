@@ -1,6 +1,7 @@
+import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 
 /// Contract implemented by all marker search backends.
 abstract class MapSearchSource {
-  Future<List<MapSearchResult>> search(String query);
+  Future<List<MapSearchResult>> search(String query, {LatLng? origin});
 }

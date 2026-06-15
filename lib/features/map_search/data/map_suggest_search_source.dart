@@ -35,7 +35,7 @@ class MapSuggestSearchSource implements MapSearchSource {
   final Map<String, List<MapSearchResult>> _cache = {};
 
   @override
-  Future<List<MapSearchResult>> search(String query) async {
+  Future<List<MapSearchResult>> search(String query, {LatLng? origin}) async {
     final trimmed = query.trim();
     if (trimmed.isEmpty) return const [];
 

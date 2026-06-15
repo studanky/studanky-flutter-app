@@ -18,7 +18,9 @@ mixin _$MapSearchResult {
 /// disambiguate identically named places; null when the API omits it.
  String? get subtitle;/// Geographic extent of the locality, when known. Used to fit the whole
 /// place in view; null falls back to centring on [position].
- MapSearchBounds? get bounds;
+ MapSearchBounds? get bounds;/// Present for first-party spring matches. Lets the map open the spring
+/// detail directly after moving the camera.
+ SpringMarkerEntity? get spring;
 /// Create a copy of MapSearchResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +31,16 @@ $MapSearchResultCopyWith<MapSearchResult> get copyWith => _$MapSearchResultCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.bounds, bounds) || other.bounds == bounds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.bounds, bounds) || other.bounds == bounds)&&(identical(other.spring, spring) || other.spring == spring));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,label,position,type,subtitle,bounds);
+int get hashCode => Object.hash(runtimeType,label,position,type,subtitle,bounds,spring);
 
 @override
 String toString() {
-  return 'MapSearchResult(label: $label, position: $position, type: $type, subtitle: $subtitle, bounds: $bounds)';
+  return 'MapSearchResult(label: $label, position: $position, type: $type, subtitle: $subtitle, bounds: $bounds, spring: $spring)';
 }
 
 
@@ -49,11 +51,11 @@ abstract mixin class $MapSearchResultCopyWith<$Res>  {
   factory $MapSearchResultCopyWith(MapSearchResult value, $Res Function(MapSearchResult) _then) = _$MapSearchResultCopyWithImpl;
 @useResult
 $Res call({
- String label, LatLng position, MapSearchResultType type, String? subtitle, MapSearchBounds? bounds
+ String label, LatLng position, MapSearchResultType type, String? subtitle, MapSearchBounds? bounds, SpringMarkerEntity? spring
 });
 
 
-$MapSearchBoundsCopyWith<$Res>? get bounds;
+$MapSearchBoundsCopyWith<$Res>? get bounds;$SpringMarkerEntityCopyWith<$Res>? get spring;
 
 }
 /// @nodoc
@@ -66,14 +68,15 @@ class _$MapSearchResultCopyWithImpl<$Res>
 
 /// Create a copy of MapSearchResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? position = null,Object? type = null,Object? subtitle = freezed,Object? bounds = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? position = null,Object? type = null,Object? subtitle = freezed,Object? bounds = freezed,Object? spring = freezed,}) {
   return _then(_self.copyWith(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as LatLng,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as MapSearchResultType,subtitle: freezed == subtitle ? _self.subtitle : subtitle // ignore: cast_nullable_to_non_nullable
 as String?,bounds: freezed == bounds ? _self.bounds : bounds // ignore: cast_nullable_to_non_nullable
-as MapSearchBounds?,
+as MapSearchBounds?,spring: freezed == spring ? _self.spring : spring // ignore: cast_nullable_to_non_nullable
+as SpringMarkerEntity?,
   ));
 }
 /// Create a copy of MapSearchResult
@@ -87,6 +90,18 @@ $MapSearchBoundsCopyWith<$Res>? get bounds {
 
   return $MapSearchBoundsCopyWith<$Res>(_self.bounds!, (value) {
     return _then(_self.copyWith(bounds: value));
+  });
+}/// Create a copy of MapSearchResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$SpringMarkerEntityCopyWith<$Res>? get spring {
+    if (_self.spring == null) {
+    return null;
+  }
+
+  return $SpringMarkerEntityCopyWith<$Res>(_self.spring!, (value) {
+    return _then(_self.copyWith(spring: value));
   });
 }
 }
@@ -170,10 +185,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  LatLng position,  MapSearchResultType type,  String? subtitle,  MapSearchBounds? bounds)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  LatLng position,  MapSearchResultType type,  String? subtitle,  MapSearchBounds? bounds,  SpringMarkerEntity? spring)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MapSearchResult() when $default != null:
-return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bounds);case _:
+return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bounds,_that.spring);case _:
   return orElse();
 
 }
@@ -191,10 +206,10 @@ return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bound
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  LatLng position,  MapSearchResultType type,  String? subtitle,  MapSearchBounds? bounds)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  LatLng position,  MapSearchResultType type,  String? subtitle,  MapSearchBounds? bounds,  SpringMarkerEntity? spring)  $default,) {final _that = this;
 switch (_that) {
 case _MapSearchResult():
-return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bounds);case _:
+return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bounds,_that.spring);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -211,10 +226,10 @@ return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bound
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  LatLng position,  MapSearchResultType type,  String? subtitle,  MapSearchBounds? bounds)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  LatLng position,  MapSearchResultType type,  String? subtitle,  MapSearchBounds? bounds,  SpringMarkerEntity? spring)?  $default,) {final _that = this;
 switch (_that) {
 case _MapSearchResult() when $default != null:
-return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bounds);case _:
+return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bounds,_that.spring);case _:
   return null;
 
 }
@@ -226,7 +241,7 @@ return $default(_that.label,_that.position,_that.type,_that.subtitle,_that.bound
 
 
 class _MapSearchResult implements MapSearchResult {
-  const _MapSearchResult({required this.label, required this.position, required this.type, this.subtitle, this.bounds});
+  const _MapSearchResult({required this.label, required this.position, required this.type, this.subtitle, this.bounds, this.spring});
   
 
 @override final  String label;
@@ -238,6 +253,9 @@ class _MapSearchResult implements MapSearchResult {
 /// Geographic extent of the locality, when known. Used to fit the whole
 /// place in view; null falls back to centring on [position].
 @override final  MapSearchBounds? bounds;
+/// Present for first-party spring matches. Lets the map open the spring
+/// detail directly after moving the camera.
+@override final  SpringMarkerEntity? spring;
 
 /// Create a copy of MapSearchResult
 /// with the given fields replaced by the non-null parameter values.
@@ -249,16 +267,16 @@ _$MapSearchResultCopyWith<_MapSearchResult> get copyWith => __$MapSearchResultCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.bounds, bounds) || other.bounds == bounds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.bounds, bounds) || other.bounds == bounds)&&(identical(other.spring, spring) || other.spring == spring));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,label,position,type,subtitle,bounds);
+int get hashCode => Object.hash(runtimeType,label,position,type,subtitle,bounds,spring);
 
 @override
 String toString() {
-  return 'MapSearchResult(label: $label, position: $position, type: $type, subtitle: $subtitle, bounds: $bounds)';
+  return 'MapSearchResult(label: $label, position: $position, type: $type, subtitle: $subtitle, bounds: $bounds, spring: $spring)';
 }
 
 
@@ -269,11 +287,11 @@ abstract mixin class _$MapSearchResultCopyWith<$Res> implements $MapSearchResult
   factory _$MapSearchResultCopyWith(_MapSearchResult value, $Res Function(_MapSearchResult) _then) = __$MapSearchResultCopyWithImpl;
 @override @useResult
 $Res call({
- String label, LatLng position, MapSearchResultType type, String? subtitle, MapSearchBounds? bounds
+ String label, LatLng position, MapSearchResultType type, String? subtitle, MapSearchBounds? bounds, SpringMarkerEntity? spring
 });
 
 
-@override $MapSearchBoundsCopyWith<$Res>? get bounds;
+@override $MapSearchBoundsCopyWith<$Res>? get bounds;@override $SpringMarkerEntityCopyWith<$Res>? get spring;
 
 }
 /// @nodoc
@@ -286,14 +304,15 @@ class __$MapSearchResultCopyWithImpl<$Res>
 
 /// Create a copy of MapSearchResult
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? position = null,Object? type = null,Object? subtitle = freezed,Object? bounds = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? position = null,Object? type = null,Object? subtitle = freezed,Object? bounds = freezed,Object? spring = freezed,}) {
   return _then(_MapSearchResult(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as LatLng,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as MapSearchResultType,subtitle: freezed == subtitle ? _self.subtitle : subtitle // ignore: cast_nullable_to_non_nullable
 as String?,bounds: freezed == bounds ? _self.bounds : bounds // ignore: cast_nullable_to_non_nullable
-as MapSearchBounds?,
+as MapSearchBounds?,spring: freezed == spring ? _self.spring : spring // ignore: cast_nullable_to_non_nullable
+as SpringMarkerEntity?,
   ));
 }
 
@@ -308,6 +327,18 @@ $MapSearchBoundsCopyWith<$Res>? get bounds {
 
   return $MapSearchBoundsCopyWith<$Res>(_self.bounds!, (value) {
     return _then(_self.copyWith(bounds: value));
+  });
+}/// Create a copy of MapSearchResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$SpringMarkerEntityCopyWith<$Res>? get spring {
+    if (_self.spring == null) {
+    return null;
+  }
+
+  return $SpringMarkerEntityCopyWith<$Res>(_self.spring!, (value) {
+    return _then(_self.copyWith(spring: value));
   });
 }
 }
