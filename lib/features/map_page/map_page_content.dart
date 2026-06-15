@@ -45,12 +45,13 @@ class MapPageContent extends ConsumerStatefulWidget {
 /// Localized status word for a marker's screen-reader label. Reuses the detail
 /// sheet's flow labels; "stale" gets its own word so it isn't conflated with
 /// "unknown".
-String _statusLabelFor(SpringIcon icon, AppLocalizations l10n) => switch (icon) {
-  SpringIcon.flowing => l10n.spring_detail_status_flowing,
-  SpringIcon.notFlowing => l10n.spring_detail_status_not_flowing,
-  SpringIcon.stale => l10n.map_status_stale,
-  SpringIcon.unknown => l10n.spring_detail_status_unknown,
-};
+String _statusLabelFor(SpringIcon icon, AppLocalizations l10n) =>
+    switch (icon) {
+      SpringIcon.flowing => l10n.spring_detail_status_flowing,
+      SpringIcon.notFlowing => l10n.spring_detail_status_not_flowing,
+      SpringIcon.stale => l10n.map_status_stale,
+      SpringIcon.unknown => l10n.spring_detail_status_unknown,
+    };
 
 class _MapPageContentState extends ConsumerState<MapPageContent>
     with SingleTickerProviderStateMixin {
@@ -459,6 +460,39 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
               ],
             ),
           ),
+          // The zoom slider intentionally ignores horizontal safe-area insets:
+          // its centre line must sit on the viewport's right edge. The inner
+          // stack clips the outside half, so the thumb reads as a semicircle
+          // without producing layout overflow.
+          Positioned.fill(
+            child: SafeArea(
+              left: false,
+              right: false,
+              child: Stack(
+                clipBehavior: Clip.hardEdge,
+                children: [
+                  Positioned(
+                    right: -MapZoomSlider.width / 2,
+                    top: 0,
+                    bottom: 0,
+                    child: Align(
+                      alignment: const Alignment(0, -0.1),
+                      child: ValueListenableBuilder<double>(
+                        valueListenable: _zoom,
+                        builder: (context, zoom, _) => MapZoomSlider(
+                          zoom: zoom,
+                          minZoom: _minZoom,
+                          maxZoom: _maxZoom,
+                          onChanged: _onZoomChanged,
+                          onStep: _onZoomStep,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           // Controls live inside SafeArea so they clear the status bar and any
           // notch/cutout insets; the map itself stays full-bleed underneath.
           Positioned.fill(
@@ -494,26 +528,6 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                                 unawaited(showAppAboutDialog(context)),
                           ),
                         ),
-                  ),
-                  // Right-edge vertical zoom slider, ergonomically centred and
-                  // off the very top/bottom (zadání §11).
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: Align(
-                      alignment: const Alignment(0, -0.1),
-                      child: ValueListenableBuilder<double>(
-                        valueListenable: _zoom,
-                        builder: (context, zoom, _) => MapZoomSlider(
-                          zoom: zoom,
-                          minZoom: _minZoom,
-                          maxZoom: _maxZoom,
-                          onChanged: _onZoomChanged,
-                          onStep: _onZoomStep,
-                        ),
-                      ),
-                    ),
                   ),
                   // Top glass search bar — kept last so the field and its
                   // results dropdown sit above every map control on the Z axis.
