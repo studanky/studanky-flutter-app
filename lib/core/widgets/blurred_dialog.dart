@@ -22,7 +22,10 @@ Future<T?> showBlurredDialog<T>({
     pageBuilder: (_, _, _) => const SizedBox.shrink(),
     transitionBuilder: (context, animation, _, _) {
       final t = Curves.easeOutCubic.transform(animation.value);
-      return _BlurredDialogLayout(t: t, child: child);
+      return Material(
+        type: MaterialType.transparency,
+        child: _BlurredDialogLayout(t: t, child: child),
+      );
     },
   );
 }
