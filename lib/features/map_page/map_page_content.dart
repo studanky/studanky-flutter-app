@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,6 +27,7 @@ import 'package:studanky_flutter_app/features/map_page/widgets/map_disclaimer.da
 import 'package:studanky_flutter_app/features/map_page/widgets/map_empty_state.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_zoom_slider.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
+import 'package:studanky_flutter_app/features/map_page/widgets/status_bar_scrim.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
@@ -534,7 +536,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     // the system setting and any future manual light/dark toggle.
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    return SizedBox.expand(
+    final content = SizedBox.expand(
       child: Stack(
         children: [
           Positioned.fill(
@@ -571,6 +573,14 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                 MarkerLayer(markers: markers),
               ],
             ),
+          ),
+          // Permanent frosted strip behind the OS status bar so the system
+          // clock/indicators stay legible over the full-bleed map.
+          const Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: StatusBarScrim(),
           ),
           // The zoom slider intentionally ignores horizontal safe-area insets:
           // its centre line must sit on the viewport's right edge. The inner
@@ -710,6 +720,13 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
           ),
         ],
       ),
+    );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      // Status-bar glyphs read against the frosted scrim: dark glyphs over the
+      // light wash (light theme), light glyphs over the dark wash (dark theme).
+      value: isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+      child: content,
     );
   }
 }
