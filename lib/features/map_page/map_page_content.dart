@@ -94,6 +94,20 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// tiny address bbox still lands at a sensible street-level zoom.
   static const double _searchMaxFitZoom = 16;
 
+  static const int _mapInteractionFlags =
+      InteractiveFlag.pinchZoom |
+      InteractiveFlag.pinchMove |
+      InteractiveFlag.doubleTapZoom |
+      InteractiveFlag.drag |
+      InteractiveFlag.rotate;
+
+  /// Multi-touch gestures are locked to the first intentional gesture. A pinch
+  /// may still pan around its focal point, but it cannot start rotating later.
+  static const int _pinchGestureWinGestures =
+      MultiFingerGesture.pinchZoom | MultiFingerGesture.pinchMove;
+  static const double _pinchZoomGestureThreshold = 0.12;
+  static const double _rotationGestureThresholdDegrees = 20.0;
+
   /// Map event sources that mean the *user* moved the map (vs. our own
   /// programmatic [MapEventSource.mapController] animations). Used to clear the
   /// search once the user takes over the camera.
@@ -550,12 +564,13 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                 onMapReady: _onMapReady,
                 onMapEvent: _onMapEvent,
                 interactionOptions: const InteractionOptions(
-                  flags:
-                      InteractiveFlag.pinchZoom |
-                      InteractiveFlag.pinchMove |
-                      InteractiveFlag.doubleTapZoom |
-                      InteractiveFlag.drag |
-                      InteractiveFlag.rotate,
+                  flags: _mapInteractionFlags,
+                  enableMultiFingerGestureRace: true,
+                  pinchZoomThreshold: _pinchZoomGestureThreshold,
+                  rotationThreshold: _rotationGestureThresholdDegrees,
+                  pinchZoomWinGestures: _pinchGestureWinGestures,
+                  pinchMoveWinGestures: _pinchGestureWinGestures,
+                  rotationWinGestures: MultiFingerGesture.rotate,
                 ),
               ),
               children: [
@@ -576,12 +591,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
           ),
           // Permanent frosted strip behind the OS status bar so the system
           // clock/indicators stay legible over the full-bleed map.
-          const Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: StatusBarScrim(),
-          ),
+          const Positioned(top: 0, left: 0, right: 0, child: StatusBarScrim()),
           // The zoom slider intentionally ignores horizontal safe-area insets:
           // its centre line must sit on the viewport's right edge. The inner
           // stack clips the outside half, so the thumb reads as a semicircle
@@ -725,7 +735,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     return AnnotatedRegion<SystemUiOverlayStyle>(
       // Status-bar glyphs read against the frosted scrim: dark glyphs over the
       // light wash (light theme), light glyphs over the dark wash (dark theme).
-      value: isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+      value: isDarkMode
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
       child: content,
     );
   }
