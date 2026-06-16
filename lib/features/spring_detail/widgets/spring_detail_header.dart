@@ -130,6 +130,7 @@ class SpringDetailHeader extends StatelessWidget {
           ),
         ),
         _CurrentStateSection(
+          statusIcon: statusIcon,
           flowScale: flowScale,
           flowRateLps: flowRateLps,
           clarity: clarity,
@@ -149,16 +150,23 @@ class SpringDetailHeader extends StatelessWidget {
 }
 
 /// "Current state" grouped section: the latest flow strength (graphical 1…n),
-/// measured discharge and water clarity (graphical), each row separated by an
-/// iOS-style inset divider. Hidden entirely when none of the three is known.
+/// measured discharge and water clarity (graphical). Hidden when none of the
+/// three is known.
+///
+/// When the data is **stale**, the section honestly reframes itself: the title
+/// becomes "last known state" and the metrics are muted to the neutral slate of
+/// the stale marker/chip — so the readout never implies a confidence it no
+/// longer has (zadání §18).
 class _CurrentStateSection extends StatelessWidget {
   const _CurrentStateSection({
+    required this.statusIcon,
     required this.flowScale,
     required this.flowRateLps,
     required this.clarity,
     required this.maxFlowScale,
   });
 
+  final SpringIcon statusIcon;
   final int? flowScale;
   final double? flowRateLps;
   final WaterClarity? clarity;
@@ -170,6 +178,12 @@ class _CurrentStateSection extends StatelessWidget {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
 
+    final isStale = statusIcon == SpringIcon.stale;
+    // Stale: slate scale + muted value, matching the marker/chip. Fresh: the
+    // confident primary blue (SegmentScale's default) + strong value.
+    final scaleColor = isStale ? colors.statusStale : null;
+    final valueColor = isStale ? colors.neutral700 : colors.neutral900;
+
     const rowPadding = EdgeInsets.zero;
     final rows = <Widget>[
       if (flowScale != null)
@@ -177,8 +191,13 @@ class _CurrentStateSection extends StatelessWidget {
           padding: rowPadding,
           label: l10n.spring_detail_report_flow_strength,
           value: _ScaleValue(
-            scale: SegmentScale(value: flowScale!, max: maxFlowScale),
+            scale: SegmentScale(
+              value: flowScale!,
+              max: maxFlowScale,
+              color: scaleColor,
+            ),
             label: '$flowScale/$maxFlowScale',
+            labelColor: valueColor,
           ),
         ),
       if (flowRateLps != null)
@@ -189,7 +208,7 @@ class _CurrentStateSection extends StatelessWidget {
             l10n.spring_detail_flow_rate_value(
               SpringFormatters.flowRate(flowRateLps!),
             ),
-            style: text.title2.copyWith(color: colors.neutral900),
+            style: text.title2.copyWith(color: valueColor),
           ),
         ),
       if (clarity != null)
@@ -200,8 +219,10 @@ class _CurrentStateSection extends StatelessWidget {
             scale: SegmentScale(
               value: clarity!.clarityLevel,
               max: WaterClarity.maxLevel,
+              color: scaleColor,
             ),
             label: waterClarityLabel(clarity!, l10n),
+            labelColor: valueColor,
           ),
         ),
     ];
@@ -209,7 +230,9 @@ class _CurrentStateSection extends StatelessWidget {
     if (rows.isEmpty) return const SizedBox.shrink();
 
     return DetailSection(
-      title: l10n.spring_detail_section_current,
+      title: isStale
+          ? l10n.spring_detail_section_last_known
+          : l10n.spring_detail_section_current,
       child: Column(
         children: [
           for (var i = 0; i < rows.length; i++) ...[
@@ -224,22 +247,24 @@ class _CurrentStateSection extends StatelessWidget {
 
 /// A graphical scale plus its trailing word/number label, right-aligned.
 class _ScaleValue extends StatelessWidget {
-  const _ScaleValue({required this.scale, required this.label});
+  const _ScaleValue({
+    required this.scale,
+    required this.label,
+    required this.labelColor,
+  });
 
   final Widget scale;
   final String label;
+  final Color labelColor;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         scale,
         const SizedBox(width: 10),
-        Text(label, style: text.title2.copyWith(color: colors.neutral900)),
+        Text(label, style: Styles.textStyles.title2.copyWith(color: labelColor)),
       ],
     );
   }

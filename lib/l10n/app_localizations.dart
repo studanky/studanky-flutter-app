@@ -436,6 +436,12 @@ abstract class AppLocalizations {
   /// **'Současný stav'**
   String get spring_detail_section_current;
 
+  /// No description provided for @spring_detail_section_last_known.
+  ///
+  /// In cs, this message translates to:
+  /// **'Poslední známý stav'**
+  String get spring_detail_section_last_known;
+
   /// No description provided for @spring_detail_section_about.
   ///
   /// In cs, this message translates to:

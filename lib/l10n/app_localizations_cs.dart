@@ -199,6 +199,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get spring_detail_section_current => 'Současný stav';
 
   @override
+  String get spring_detail_section_last_known => 'Poslední známý stav';
+
+  @override
   String get spring_detail_section_about => 'O studánce';
 
   @override

@@ -124,6 +124,8 @@
 
   "spring_detail_section_current": "Současný stav",
   "@spring_detail_section_current": {},
+  "spring_detail_section_last_known": "Poslední známý stav",
+  "@spring_detail_section_last_known": {},
   "spring_detail_section_about": "O studánce",
   "@spring_detail_section_about": {},
 
