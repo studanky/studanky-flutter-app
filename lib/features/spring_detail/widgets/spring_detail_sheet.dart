@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
@@ -25,20 +27,85 @@ Future<void> showSpringDetailSheet(
   BuildContext context, {
   required SpringMarkerEntity marker,
 }) {
+  // Full-bleed frost instead of a dim: the blur sits *behind* the sheet inside
+  // the modal content (so the sheet stays sharp) and spans the whole screen —
+  // including the status-bar and home-indicator strips, since we opt out of
+  // useSafeArea and re-apply the top inset ourselves. Tap-to-dismiss is handled
+  // explicitly by the backdrop (the transparent modal barrier is unreliable once
+  // full-bleed content covers it).
+  //
+  // Read the top inset from the *caller's* context: inside the sheet route the
+  // MediaQuery top inset is stripped to 0 (it removes top padding *and*
+  // viewPadding when useSafeArea is false), so reading it there would let the
+  // maximised sheet slide under the status bar.
+  final topInset = MediaQuery.viewPaddingOf(context).top;
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    // Keep the fully-expanded sheet within the safe area (below the status bar,
-    // above the home indicator).
-    useSafeArea: true,
+    useSafeArea: false,
     useRootNavigator: true,
     backgroundColor: Colors.transparent,
-    barrierColor: Colors.black.withValues(alpha: 0.25),
-    // On tablets/large screens, cap the width and centre the sheet rather than
-    // stretching edge to edge.
-    constraints: const BoxConstraints(maxWidth: _maxSheetWidth),
-    builder: (_) => SpringDetailSheet(marker: marker),
+    barrierColor: Colors.transparent,
+    builder: (sheetContext) {
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: _SheetBackdrop(
+              onTapOutside: () => Navigator.of(sheetContext).maybePop(),
+            ),
+          ),
+          // The sheet does not fill the screen (DraggableScrollableSheet sizes
+          // it), so the area above stays empty for the backdrop to catch taps.
+          // The top padding caps its fully-expanded height below the status bar.
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: _maxSheetWidth),
+              child: Padding(
+                padding: EdgeInsets.only(top: topInset),
+                child: SpringDetailSheet(marker: marker),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
   );
+}
+
+/// Full-bleed frosted backdrop behind the sheet: a light gaussian blur over the
+/// map whose strength eases in/out with the sheet's open/close transition, plus
+/// an explicit tap-to-dismiss for the area above the sheet.
+class _SheetBackdrop extends StatelessWidget {
+  const _SheetBackdrop({required this.onTapOutside});
+
+  final VoidCallback onTapOutside;
+
+  /// Light by design — the map stays legible, just softened.
+  static const double _maxSigma = 8;
+
+  @override
+  Widget build(BuildContext context) {
+    final animation =
+        ModalRoute.of(context)?.animation ??
+        const AlwaysStoppedAnimation(1.0);
+
+    return GestureDetector(
+      onTap: onTapOutside,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedBuilder(
+        animation: animation,
+        builder: (context, _) {
+          final t = Curves.easeOut.transform(animation.value.clamp(0.0, 1.0));
+          final sigma = _maxSigma * t;
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
+            child: const SizedBox.expand(),
+          );
+        },
+      ),
+    );
+  }
 }
 
 class SpringDetailSheet extends StatefulWidget {
@@ -234,7 +301,11 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
           onRetryLoadMore: () =>
               ref.read(springReportsProvider(_documentId).notifier).loadMore(),
         ),
-        const SliverToBoxAdapter(child: SizedBox(height: 24)),
+        // Bottom breathing room + the home-indicator inset (the sheet is
+        // full-bleed, so it clears the bottom safe area itself).
+        SliverToBoxAdapter(
+          child: SizedBox(height: 24 + MediaQuery.viewPaddingOf(context).bottom),
+        ),
       ],
     );
   }
