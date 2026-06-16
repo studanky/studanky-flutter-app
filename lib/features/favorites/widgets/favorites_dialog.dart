@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
 import 'package:studanky_flutter_app/core/widgets/app_state_view.dart';
 import 'package:studanky_flutter_app/core/widgets/blurred_dialog.dart';
 import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
+import 'package:studanky_flutter_app/features/favorites/widgets/swipe_to_delete_tile.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
 import 'package:studanky_flutter_app/features/spring_detail/utils/spring_formatters.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/status_visuals.dart';
@@ -27,17 +29,15 @@ class _FavoritesCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Styles.appColors;
-    final text = Styles.textStyles;
     final count = ref.watch(
       favoritesControllerProvider.select((f) => f.length),
     );
 
     return AppDialogCard(
-      icon: Icons.favorite_rounded,
+      icon: Icons.favorite_border_rounded,
+      iconColor: colors.error,
       title: context.l10n.favorites_sheet_title,
-      trailing: count == 0
-          ? null
-          : Text('$count', style: text.body1.copyWith(color: colors.neutral500)),
+      trailing: count == 0 ? null : _FavoritesCountBadge(count: count),
       dividerUnderHeader: true,
       maxHeightFactor: 0.66,
       child: const _FavoritesBody(),
@@ -45,77 +45,47 @@ class _FavoritesCard extends ConsumerWidget {
   }
 }
 
-/// Animated favourites list: removals (and additions) play a size+fade
-/// transition via [AnimatedList] instead of the list snapping to a new height.
-class _FavoritesBody extends ConsumerStatefulWidget {
-  const _FavoritesBody();
+class _FavoritesCountBadge extends StatelessWidget {
+  const _FavoritesCountBadge({required this.count});
 
-  @override
-  ConsumerState<_FavoritesBody> createState() => _FavoritesBodyState();
-}
-
-class _FavoritesBodyState extends ConsumerState<_FavoritesBody> {
-  final _listKey = GlobalKey<AnimatedListState>();
-  static const _animDuration = Duration(milliseconds: 260);
-
-  late List<SpringMarkerEntity> _items;
-
-  @override
-  void initState() {
-    super.initState();
-    _items = List.of(ref.read(favoritesControllerProvider));
-  }
-
-  /// Diffs the mirror against the provider's latest list and drives the
-  /// matching insert/remove animations.
-  void _sync(List<SpringMarkerEntity> next) {
-    for (var i = _items.length - 1; i >= 0; i--) {
-      final item = _items[i];
-      if (!next.any((e) => e.documentId == item.documentId)) {
-        _items.removeAt(i);
-        _listKey.currentState?.removeItem(
-          i,
-          (context, animation) => _animatedTile(item, animation),
-          duration: _animDuration,
-        );
-      }
-    }
-    for (var i = 0; i < next.length; i++) {
-      final item = next[i];
-      if (!_items.any((e) => e.documentId == item.documentId)) {
-        final insertAt = i.clamp(0, _items.length);
-        _items.insert(insertAt, item);
-        _listKey.currentState?.insertItem(insertAt, duration: _animDuration);
-      }
-    }
-    // Toggle between the empty state and the list once the model changed.
-    setState(() {});
-  }
-
-  Widget _animatedTile(SpringMarkerEntity spring, Animation<double> animation) {
-    final curved = CurvedAnimation(parent: animation, curve: Curves.easeOut);
-    return SizeTransition(
-      sizeFactor: curved,
-      child: FadeTransition(
-        opacity: curved,
-        child: _FavoriteTile(spring: spring),
-      ),
-    );
-  }
+  final int count;
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(favoritesControllerProvider, (_, next) => _sync(next));
+    final colors = Styles.appColors;
+    final text = Styles.textStyles;
 
-    if (_items.isEmpty) return const _EmptyState();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration: BoxDecoration(
+        color: colors.primaryMain.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(kRadiusPill),
+      ),
+      child: Text(
+        '$count',
+        style: text.title2.copyWith(color: colors.primaryMain),
+      ),
+    );
+  }
+}
 
-    return AnimatedList(
-      key: _listKey,
+/// Favourite rows support the iOS-style destructive swipe from trailing edge.
+/// Each row keeps its own drag state so only the rounded tile moves.
+class _FavoritesBody extends ConsumerWidget {
+  const _FavoritesBody();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final items = ref.watch(favoritesControllerProvider);
+
+    if (items.isEmpty) return const _EmptyState();
+
+    return ListView.builder(
       shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      initialItemCount: _items.length,
-      itemBuilder: (context, index, animation) =>
-          _animatedTile(_items[index], animation),
+      primary: false,
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
+      itemCount: items.length,
+      itemBuilder: (context, index) => _FavoriteTile(spring: items[index]),
     );
   }
 }
@@ -129,7 +99,6 @@ class _FavoriteTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final colors = Styles.appColors;
-    final text = Styles.textStyles;
     final config = ref.watch(platformConfigControllerProvider);
     final visual = headerStatusVisual(
       config.iconFor(spring.status.wireValue, spring.statusUpdatedAt),
@@ -137,29 +106,103 @@ class _FavoriteTile extends ConsumerWidget {
       l10n,
     );
     final updatedAt = spring.statusUpdatedAt;
+    final subtitle = updatedAt == null
+        ? visual.label
+        : '${visual.label} · ${SpringFormatters.relativeAge(l10n, updatedAt)}';
 
-    return ListTile(
-      onTap: () => Navigator.of(context).pop(spring),
-      leading: Icon(visual.icon, color: visual.color),
-      title: Text(
-        spring.name,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: text.title2.copyWith(color: colors.neutral900),
+    Future<void> removeFavorite() => ref
+        .read(favoritesControllerProvider.notifier)
+        .remove(spring.documentId);
+
+    return SwipeToDeleteTile(
+      key: ValueKey('favorite-${spring.documentId}'),
+      deleteSemanticLabel: l10n.favorites_remove,
+      onDelete: removeFavorite,
+      child: _FavoriteTileSurface(
+        spring: spring,
+        visual: visual,
+        subtitle: subtitle,
       ),
-      subtitle: updatedAt == null
-          ? null
-          : Text(
-              SpringFormatters.relativeAge(l10n, updatedAt),
-              style: text.body2.copyWith(color: colors.neutral700),
-            ),
-      trailing: IconButton(
-        icon: Icon(Icons.bookmark_remove_outlined, color: colors.neutral500),
-        tooltip: l10n.favorites_remove,
-        onPressed: () => ref
-            .read(favoritesControllerProvider.notifier)
-            .remove(spring.documentId),
+    );
+  }
+}
+
+class _FavoriteTileSurface extends StatelessWidget {
+  const _FavoriteTileSurface({
+    required this.spring,
+    required this.visual,
+    required this.subtitle,
+  });
+
+  final SpringMarkerEntity spring;
+  final StatusVisual visual;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Styles.appColors;
+    final text = Styles.textStyles;
+
+    return Material(
+      color: colors.onNeutral,
+      borderRadius: BorderRadius.circular(kRadiusControl),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => Navigator.of(context).pop(spring),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+          child: Row(
+            children: [
+              _FavoriteStatusBadge(visual: visual),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      spring.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: text.title2.copyWith(color: colors.neutral900),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: text.body2.copyWith(
+                        fontSize: 12,
+                        color: colors.neutral500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+}
+
+class _FavoriteStatusBadge extends StatelessWidget {
+  const _FavoriteStatusBadge({required this.visual});
+
+  final StatusVisual visual;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: visual.color.withValues(alpha: 0.12),
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: Icon(visual.icon, color: visual.color, size: 20),
     );
   }
 }
@@ -172,7 +215,7 @@ class _EmptyState extends StatelessWidget {
     final l10n = context.l10n;
 
     return AppStateView(
-      icon: Icons.bookmark_border_rounded,
+      icon: Icons.favorite_border_rounded,
       title: l10n.favorites_empty_title,
       message: l10n.favorites_empty_message,
     );
