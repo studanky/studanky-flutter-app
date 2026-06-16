@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/entities/qr_scan_result.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/providers/qr_scan_provider.dart';
+import 'package:studanky_flutter_app/l10n/app_localizations.dart';
+import 'package:studanky_flutter_app/l10n/extension.dart';
 
 class QrScanOverlay extends StatelessWidget {
   const QrScanOverlay({super.key, required this.state, required this.onRescan});
@@ -12,6 +14,7 @@ class QrScanOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     return SafeArea(
       child: Align(
         alignment: Alignment.bottomCenter,
@@ -20,9 +23,9 @@ class QrScanOverlay extends StatelessWidget {
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 250),
             child: state.capture.when(
-              data: (result) => _buildDataPanel(theme, result),
-              loading: () => _buildLoadingPanel(theme),
-              error: (error, _) => _buildErrorPanel(theme, error),
+              data: (result) => _buildDataPanel(theme, l10n, result),
+              loading: () => _buildLoadingPanel(theme, l10n),
+              error: (error, _) => _buildErrorPanel(theme, l10n, error),
             ),
           ),
         ),
@@ -30,7 +33,11 @@ class QrScanOverlay extends StatelessWidget {
     );
   }
 
-  Widget _buildDataPanel(ThemeData theme, QrScanResult? result) {
+  Widget _buildDataPanel(
+    ThemeData theme,
+    AppLocalizations l10n,
+    QrScanResult? result,
+  ) {
     if (result == null) {
       return _OverlayCard(
         child: Column(
@@ -38,12 +45,12 @@ class QrScanOverlay extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Scan QR code',
+              l10n.qr_scan_title,
               style: theme.textTheme.titleMedium?.copyWith(color: Colors.white),
             ),
             const SizedBox(height: 8),
             Text(
-              'Align the code within the frame. Results show here.',
+              l10n.qr_scan_message,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: Colors.white70,
               ),
@@ -59,7 +66,7 @@ class QrScanOverlay extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'QR code detected',
+            l10n.qr_scan_detected_title,
             style: theme.textTheme.titleMedium?.copyWith(color: Colors.white),
           ),
           const SizedBox(height: 8),
@@ -79,14 +86,14 @@ class QrScanOverlay extends StatelessWidget {
           FilledButton.icon(
             onPressed: onRescan,
             icon: const Icon(Icons.refresh),
-            label: const Text('Scan again'),
+            label: Text(l10n.qr_scan_again),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLoadingPanel(ThemeData theme) {
+  Widget _buildLoadingPanel(ThemeData theme, AppLocalizations l10n) {
     return _OverlayCard(
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -98,7 +105,7 @@ class QrScanOverlay extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            'Processing…',
+            l10n.qr_scan_processing,
             style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white),
           ),
         ],
@@ -106,26 +113,34 @@ class QrScanOverlay extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorPanel(ThemeData theme, Object error) {
+  Widget _buildErrorPanel(
+    ThemeData theme,
+    AppLocalizations l10n,
+    Object error,
+  ) {
+    final message = error is FormatException
+        ? l10n.qr_scan_invalid_data
+        : error.toString();
+
     return _OverlayCard(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Scan failed',
+            l10n.qr_scan_failed,
             style: theme.textTheme.titleMedium?.copyWith(color: Colors.white),
           ),
           const SizedBox(height: 8),
           Text(
-            error.toString(),
+            message,
             style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white70),
           ),
           const SizedBox(height: 12),
           FilledButton.icon(
             onPressed: onRescan,
             icon: const Icon(Icons.refresh),
-            label: const Text('Try again'),
+            label: Text(l10n.qr_scan_try_again),
           ),
         ],
       ),

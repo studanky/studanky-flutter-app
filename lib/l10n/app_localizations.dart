@@ -310,6 +310,72 @@ abstract class AppLocalizations {
   /// **'Nápověda'**
   String get map_help;
 
+  /// No description provided for @map_potability_disclaimer_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Tekoucí voda neznamená pitná voda'**
+  String get map_potability_disclaimer_title;
+
+  /// No description provided for @map_potability_disclaimer_semantic.
+  ///
+  /// In cs, this message translates to:
+  /// **'Tekoucí voda neznamená pitná voda. Otevřít vysvětlení.'**
+  String get map_potability_disclaimer_semantic;
+
+  /// No description provided for @map_potability_disclaimer_body.
+  ///
+  /// In cs, this message translates to:
+  /// **'Aplikace informuje pouze o tom, zda je ve studánce hlášený tok vody. Neověřuje zdravotní nezávadnost ani pitnost vody. Užívání vody je na vlastní odpovědnost.'**
+  String get map_potability_disclaimer_body;
+
+  /// No description provided for @map_potability_disclaimer_confirm.
+  ///
+  /// In cs, this message translates to:
+  /// **'Rozumím'**
+  String get map_potability_disclaimer_confirm;
+
+  /// No description provided for @about_dialog_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Studánky'**
+  String get about_dialog_title;
+
+  /// No description provided for @about_dialog_body.
+  ///
+  /// In cs, this message translates to:
+  /// **'Aplikace na mapě ukazuje, zda ve studánce hlášeně teče voda a jak čerstvá je informace. Trasu si naplánujte ve své mapové aplikaci přes tlačítko Navigovat v detailu studánky.'**
+  String get about_dialog_body;
+
+  /// No description provided for @about_dialog_legend_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Význam značek'**
+  String get about_dialog_legend_title;
+
+  /// No description provided for @about_dialog_legend_flowing.
+  ///
+  /// In cs, this message translates to:
+  /// **'Teče voda'**
+  String get about_dialog_legend_flowing;
+
+  /// No description provided for @about_dialog_legend_not_flowing.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neteče voda'**
+  String get about_dialog_legend_not_flowing;
+
+  /// No description provided for @about_dialog_legend_stale.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neaktuální'**
+  String get about_dialog_legend_stale;
+
+  /// No description provided for @about_dialog_legend_unknown.
+  ///
+  /// In cs, this message translates to:
+  /// **'Neznámý stav'**
+  String get about_dialog_legend_unknown;
+
   /// No description provided for @map_search_hint.
   ///
   /// In cs, this message translates to:
@@ -321,6 +387,60 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Vyhledávání teď není dostupné.'**
   String get map_search_error;
+
+  /// No description provided for @map_search_type_spring.
+  ///
+  /// In cs, this message translates to:
+  /// **'Studánka'**
+  String get map_search_type_spring;
+
+  /// No description provided for @map_search_type_country.
+  ///
+  /// In cs, this message translates to:
+  /// **'Země'**
+  String get map_search_type_country;
+
+  /// No description provided for @map_search_type_region.
+  ///
+  /// In cs, this message translates to:
+  /// **'Kraj / oblast'**
+  String get map_search_type_region;
+
+  /// No description provided for @map_search_type_municipality.
+  ///
+  /// In cs, this message translates to:
+  /// **'Obec / město'**
+  String get map_search_type_municipality;
+
+  /// No description provided for @map_search_type_municipality_part.
+  ///
+  /// In cs, this message translates to:
+  /// **'Část obce'**
+  String get map_search_type_municipality_part;
+
+  /// No description provided for @map_search_type_street.
+  ///
+  /// In cs, this message translates to:
+  /// **'Ulice'**
+  String get map_search_type_street;
+
+  /// No description provided for @map_search_type_address.
+  ///
+  /// In cs, this message translates to:
+  /// **'Adresa'**
+  String get map_search_type_address;
+
+  /// No description provided for @map_search_type_place.
+  ///
+  /// In cs, this message translates to:
+  /// **'Místo'**
+  String get map_search_type_place;
+
+  /// No description provided for @map_search_type_coordinate.
+  ///
+  /// In cs, this message translates to:
+  /// **'Souřadnice'**
+  String get map_search_type_coordinate;
 
   /// No description provided for @map_empty_title.
   ///
@@ -387,6 +507,60 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Odebrat z oblíbených'**
   String get favorites_remove;
+
+  /// No description provided for @qr_scan_camera_error.
+  ///
+  /// In cs, this message translates to:
+  /// **'Kameru se nepodařilo otevřít. Zkontrolujte oprávnění a zkuste to znovu.'**
+  String get qr_scan_camera_error;
+
+  /// No description provided for @qr_scan_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Naskenujte QR kód'**
+  String get qr_scan_title;
+
+  /// No description provided for @qr_scan_message.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zarovnejte kód do rámečku. Výsledek se zobrazí zde.'**
+  String get qr_scan_message;
+
+  /// No description provided for @qr_scan_detected_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'QR kód načten'**
+  String get qr_scan_detected_title;
+
+  /// No description provided for @qr_scan_again.
+  ///
+  /// In cs, this message translates to:
+  /// **'Skenovat znovu'**
+  String get qr_scan_again;
+
+  /// No description provided for @qr_scan_processing.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zpracovávám…'**
+  String get qr_scan_processing;
+
+  /// No description provided for @qr_scan_failed.
+  ///
+  /// In cs, this message translates to:
+  /// **'Skenování selhalo'**
+  String get qr_scan_failed;
+
+  /// No description provided for @qr_scan_try_again.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zkusit znovu'**
+  String get qr_scan_try_again;
+
+  /// No description provided for @qr_scan_invalid_data.
+  ///
+  /// In cs, this message translates to:
+  /// **'QR kód neobsahuje platná data'**
+  String get qr_scan_invalid_data;
 
   /// No description provided for @spring_detail_add_favorite.
   ///

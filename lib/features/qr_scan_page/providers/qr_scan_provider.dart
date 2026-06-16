@@ -45,7 +45,7 @@ class QrScanNotifier extends Notifier<QrScanState> {
     if (result == null) {
       state = state.copyWith(
         capture: AsyncValue<QrScanResult?>.error(
-          const FormatException('QR kód neobsahuje platná data'),
+          const FormatException(),
           StackTrace.current,
         ),
       );

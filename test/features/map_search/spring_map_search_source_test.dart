@@ -50,6 +50,7 @@ void main() {
       final source = SpringMapSearchSource(
         repository: repository,
         languageCode: 'cs',
+        springLabel: 'Studánka',
       );
 
       final results = await source.search('o');
@@ -74,6 +75,7 @@ void main() {
       final source = SpringMapSearchSource(
         repository: repository,
         languageCode: 'cs',
+        springLabel: 'Studánka',
         limit: 7,
       );
       const origin = LatLng(50.1, 17.0);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// Always-visible bottom notice that the app reports water *flow*, never
 /// potability (spec §9.3, zadání §12). Deliberately understated — same visual
@@ -14,10 +15,11 @@ class MapDisclaimer extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
+    final l10n = context.l10n;
 
     return Semantics(
       button: true,
-      label: 'Tekoucí voda neznamená pitná voda. Otevřít vysvětlení.',
+      label: l10n.map_potability_disclaimer_semantic,
       child: GestureDetector(
         onTap: onTap,
         child: DecoratedBox(
@@ -37,7 +39,7 @@ class MapDisclaimer extends StatelessWidget {
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  'Tekoucí voda neznamená pitná voda',
+                  l10n.map_potability_disclaimer_title,
                   style: text.body2.copyWith(
                     fontSize: 11,
                     color: colors.neutral700,

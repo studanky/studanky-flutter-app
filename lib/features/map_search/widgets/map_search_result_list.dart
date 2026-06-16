@@ -3,6 +3,7 @@ import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
+import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// Dropdown of search suggestions, styled as the same frosted-glass surface as
 /// the search field so the two read as one component. Each row carries an icon
@@ -62,7 +63,7 @@ class _ResultRow extends StatelessWidget {
     final text = Styles.textStyles;
     // Prefer the API's parent location (e.g. region) to tell apart places that
     // share a name; fall back to a generic type descriptor when it's absent.
-    final secondary = result.subtitle ?? _descriptorFor(result.type);
+    final secondary = result.subtitle ?? _descriptorFor(context, result.type);
 
     return InkWell(
       onTap: () => onTap(result),
@@ -117,16 +118,23 @@ IconData _iconFor(MapSearchResultType type) => switch (type) {
   MapSearchResultType.other => Icons.place_outlined,
 };
 
-/// Short Czech descriptor shown under each result's name.
-String _descriptorFor(MapSearchResultType type) => switch (type) {
-  MapSearchResultType.spring => 'Studánka',
-  MapSearchResultType.regionalCountry => 'Země',
-  MapSearchResultType.regionalRegion => 'Kraj / oblast',
-  MapSearchResultType.regionalMunicipality => 'Obec / město',
-  MapSearchResultType.regionalMunicipalityPart => 'Část obce',
-  MapSearchResultType.regionalStreet => 'Ulice',
-  MapSearchResultType.regionalAddress => 'Adresa',
-  MapSearchResultType.poi => 'Místo',
-  MapSearchResultType.coordinate => 'Souřadnice',
-  MapSearchResultType.regional || MapSearchResultType.other => 'Místo',
-};
+/// Short localized descriptor shown under each result's name.
+String _descriptorFor(BuildContext context, MapSearchResultType type) {
+  final l10n = context.l10n;
+
+  return switch (type) {
+    MapSearchResultType.spring => l10n.map_search_type_spring,
+    MapSearchResultType.regionalCountry => l10n.map_search_type_country,
+    MapSearchResultType.regionalRegion => l10n.map_search_type_region,
+    MapSearchResultType.regionalMunicipality =>
+      l10n.map_search_type_municipality,
+    MapSearchResultType.regionalMunicipalityPart =>
+      l10n.map_search_type_municipality_part,
+    MapSearchResultType.regionalStreet => l10n.map_search_type_street,
+    MapSearchResultType.regionalAddress => l10n.map_search_type_address,
+    MapSearchResultType.poi => l10n.map_search_type_place,
+    MapSearchResultType.coordinate => l10n.map_search_type_coordinate,
+    MapSearchResultType.regional ||
+    MapSearchResultType.other => l10n.map_search_type_place,
+  };
+}

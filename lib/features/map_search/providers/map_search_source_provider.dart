@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:studanky_flutter_app/core/api/interceptors/logging_interceptor.dart';
 import 'package:studanky_flutter_app/core/env.dart';
@@ -9,6 +10,7 @@ import 'package:studanky_flutter_app/features/map_search/data/map_suggest_api.da
 import 'package:studanky_flutter_app/features/map_search/data/map_suggest_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/data/spring_map_search_source.dart';
 import 'package:studanky_flutter_app/features/springs/data/spring_repository.dart';
+import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
 part 'map_search_source_provider.g.dart';
 
@@ -50,6 +52,9 @@ MapSearchSource mapSearchSource(Ref ref, String languageCode) {
     SpringMapSearchSource(
       repository: ref.watch(springRepositoryProvider),
       languageCode: languageCode,
+      springLabel: lookupAppLocalizations(
+        Locale(languageCode),
+      ).map_search_type_spring,
     ),
     MapSuggestSearchSource(
       api: ref.watch(mapSuggestApiProvider),

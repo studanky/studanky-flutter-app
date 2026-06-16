@@ -12,6 +12,7 @@ class SpringMapSearchSource implements MapSearchSource {
   SpringMapSearchSource({
     required this.repository,
     required this.languageCode,
+    required this.springLabel,
     this.limit = 5,
   });
 
@@ -19,6 +20,7 @@ class SpringMapSearchSource implements MapSearchSource {
 
   final SpringRepository repository;
   final String languageCode;
+  final String springLabel;
   final int limit;
 
   final _logger = Logger('SpringMapSearchSource');
@@ -71,7 +73,7 @@ class SpringMapSearchSource implements MapSearchSource {
     final distance = distanceMeters == null
         ? null
         : _formatDistance(distanceMeters);
-    return distance == null ? 'Studánka' : 'Studánka • $distance';
+    return distance == null ? springLabel : '$springLabel • $distance';
   }
 
   String _formatDistance(int meters) {

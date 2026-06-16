@@ -3,6 +3,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/providers/qr_scan_provider.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/widgets/qr_scan_error.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/widgets/qr_scan_overlay.dart';
+import 'package:studanky_flutter_app/l10n/extension.dart';
 
 class QrScanContent extends StatelessWidget {
   const QrScanContent({
@@ -30,10 +31,8 @@ class QrScanContent extends StatelessWidget {
               color: Colors.black,
               child: Center(child: CircularProgressIndicator()),
             ),
-            errorBuilder: (context, error) => const QrScanError(
-              message:
-                  'Unable to open the camera. Please check permissions and try again.',
-            ),
+            errorBuilder: (context, error) =>
+                QrScanError(message: context.l10n.qr_scan_camera_error),
           ),
         ),
         QrScanOverlay(state: state, onRescan: onRescan),

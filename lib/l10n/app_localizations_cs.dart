@@ -131,10 +131,74 @@ class AppLocalizationsCs extends AppLocalizations {
   String get map_help => 'Nápověda';
 
   @override
+  String get map_potability_disclaimer_title =>
+      'Tekoucí voda neznamená pitná voda';
+
+  @override
+  String get map_potability_disclaimer_semantic =>
+      'Tekoucí voda neznamená pitná voda. Otevřít vysvětlení.';
+
+  @override
+  String get map_potability_disclaimer_body =>
+      'Aplikace informuje pouze o tom, zda je ve studánce hlášený tok vody. Neověřuje zdravotní nezávadnost ani pitnost vody. Užívání vody je na vlastní odpovědnost.';
+
+  @override
+  String get map_potability_disclaimer_confirm => 'Rozumím';
+
+  @override
+  String get about_dialog_title => 'Studánky';
+
+  @override
+  String get about_dialog_body =>
+      'Aplikace na mapě ukazuje, zda ve studánce hlášeně teče voda a jak čerstvá je informace. Trasu si naplánujte ve své mapové aplikaci přes tlačítko Navigovat v detailu studánky.';
+
+  @override
+  String get about_dialog_legend_title => 'Význam značek';
+
+  @override
+  String get about_dialog_legend_flowing => 'Teče voda';
+
+  @override
+  String get about_dialog_legend_not_flowing => 'Neteče voda';
+
+  @override
+  String get about_dialog_legend_stale => 'Neaktuální';
+
+  @override
+  String get about_dialog_legend_unknown => 'Neznámý stav';
+
+  @override
   String get map_search_hint => 'Hledejte studánky, obce, adresy…';
 
   @override
   String get map_search_error => 'Vyhledávání teď není dostupné.';
+
+  @override
+  String get map_search_type_spring => 'Studánka';
+
+  @override
+  String get map_search_type_country => 'Země';
+
+  @override
+  String get map_search_type_region => 'Kraj / oblast';
+
+  @override
+  String get map_search_type_municipality => 'Obec / město';
+
+  @override
+  String get map_search_type_municipality_part => 'Část obce';
+
+  @override
+  String get map_search_type_street => 'Ulice';
+
+  @override
+  String get map_search_type_address => 'Adresa';
+
+  @override
+  String get map_search_type_place => 'Místo';
+
+  @override
+  String get map_search_type_coordinate => 'Souřadnice';
 
   @override
   String get map_empty_title => 'V této oblasti nejsou žádné studánky';
@@ -173,6 +237,35 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get favorites_remove => 'Odebrat z oblíbených';
+
+  @override
+  String get qr_scan_camera_error =>
+      'Kameru se nepodařilo otevřít. Zkontrolujte oprávnění a zkuste to znovu.';
+
+  @override
+  String get qr_scan_title => 'Naskenujte QR kód';
+
+  @override
+  String get qr_scan_message =>
+      'Zarovnejte kód do rámečku. Výsledek se zobrazí zde.';
+
+  @override
+  String get qr_scan_detected_title => 'QR kód načten';
+
+  @override
+  String get qr_scan_again => 'Skenovat znovu';
+
+  @override
+  String get qr_scan_processing => 'Zpracovávám…';
+
+  @override
+  String get qr_scan_failed => 'Skenování selhalo';
+
+  @override
+  String get qr_scan_try_again => 'Zkusit znovu';
+
+  @override
+  String get qr_scan_invalid_data => 'QR kód neobsahuje platná data';
 
   @override
   String get spring_detail_add_favorite => 'Přidat do oblíbených';

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
 import 'package:studanky_flutter_app/core/widgets/blurred_dialog.dart';
+import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// Opens a focused dialog that shows *only* the potability disclaimer — the
 /// fuller "what the app shows / marker legend" content lives in the About
@@ -20,11 +21,12 @@ class _DisclaimerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
+    final l10n = context.l10n;
 
     return AppDialogCard(
       icon: Icons.warning_amber_rounded,
       iconColor: colors.secondaryVariant1,
-      title: 'Tekoucí voda neznamená pitná voda',
+      title: l10n.map_potability_disclaimer_title,
       maxWidth: 420,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 4, 24, 20),
@@ -33,9 +35,7 @@ class _DisclaimerCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Aplikace informuje pouze o tom, zda je ve studánce hlášený tok '
-              'vody. Neověřuje zdravotní nezávadnost ani pitnost vody. '
-              'Užívání vody je na vlastní odpovědnost.',
+              l10n.map_potability_disclaimer_body,
               style: text.body2.copyWith(color: colors.neutral700),
             ),
             const SizedBox(height: 16),
@@ -43,7 +43,7 @@ class _DisclaimerCard extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () => Navigator.of(context).maybePop(),
-                child: const Text('Rozumím'),
+                child: Text(l10n.map_potability_disclaimer_confirm),
               ),
             ),
           ],

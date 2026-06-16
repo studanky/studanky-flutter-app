@@ -7,10 +7,8 @@ import 'package:studanky_flutter_app/features/map_page/providers/user_location_p
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// Left vertical stack of floating glass controls over the map (zadání §7),
-/// ordered by thumb reach: the rarely-used help sits at the top and the most
-/// frequent action — location/compass — sits at the bottom where the thumb
-/// rests, with favourites between them. The right edge is reserved for the
-/// zoom slider.
+/// ordered as compass/location, favourites, then help. The right edge is
+/// reserved for the zoom slider.
 class MapControlStack extends StatelessWidget {
   const MapControlStack({
     super.key,
@@ -43,40 +41,10 @@ class MapControlStack extends StatelessWidget {
     // rotation is signalled by the rotating needle; being centred on the user
     // is signalled by the filled blue centre dot.
     //
-    // Top → bottom: help (rarest) · favourites · location (most frequent), so
-    // the primary action sits nearest the resting thumb.
+    // Top → bottom: location/compass · favourites · help.
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        GlassIconButton(
-          semanticLabel: l10n.map_help,
-          onTap: onHelp,
-          child: Icon(
-            Icons.help_outline_rounded,
-            size: 20,
-            color: colors.neutral700,
-          ),
-        ),
-        const SizedBox(height: 10),
-        GlassIconButton(
-          semanticLabel: l10n.map_favorites,
-          onTap: onFavorites,
-          // Outlined red heart — the familiar "save / favourite" affordance.
-          // The count badge is recoloured to the primary blue so it doesn't
-          // blend into the red icon (and the neutral "?" button stays distinct).
-          child: Badge(
-            isLabelVisible: favoritesCount > 0,
-            backgroundColor: colors.primaryMain,
-            textColor: colors.onPrimary,
-            label: Text('$favoritesCount'),
-            child: Icon(
-              Icons.favorite_border_rounded,
-              size: 20,
-              color: colors.error,
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
         GlassIconButton(
           semanticLabel: l10n.map_my_location,
           onTap: isLocating ? null : onLocation,
@@ -99,6 +67,35 @@ class MapControlStack extends StatelessWidget {
                     dotColor: centered ? colors.primaryMain : colors.neutral700,
                   ),
                 ),
+        ),
+        const SizedBox(height: 10),
+        GlassIconButton(
+          semanticLabel: l10n.map_favorites,
+          onTap: onFavorites,
+          // Outlined red heart — the familiar "save / favourite" affordance.
+          // The count badge is recoloured to the primary blue so it doesn't
+          // blend into the red icon (and the neutral "?" button stays distinct).
+          child: Badge(
+            isLabelVisible: favoritesCount > 0,
+            backgroundColor: colors.primaryMain,
+            textColor: colors.onPrimary,
+            label: Text('$favoritesCount'),
+            child: Icon(
+              Icons.favorite_border_rounded,
+              size: 20,
+              color: colors.error,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        GlassIconButton(
+          semanticLabel: l10n.map_help,
+          onTap: onHelp,
+          child: Icon(
+            Icons.help_outline_rounded,
+            size: 20,
+            color: colors.neutral700,
+          ),
         ),
       ],
     );
@@ -133,11 +130,7 @@ class GlassIconButton extends StatelessWidget {
             customBorder: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(kGlassRadius)),
             ),
-            child: SizedBox(
-              width: 44,
-              height: 44,
-              child: Center(child: child),
-            ),
+            child: SizedBox(width: 44, height: 44, child: Center(child: child)),
           ),
         ),
       ),
