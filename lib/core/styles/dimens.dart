@@ -17,3 +17,9 @@ const double kRadiusButton = 14;
 
 /// Small tags / chips.
 const double kRadiusChip = 10;
+
+/// Gaussian blur sigma for the full-screen frost behind a modal (the spring
+/// detail sheet and the dialogs) — the iOS-style glass backdrop, no dim. Light
+/// by design so the map stays legible. Distinct from the glass *controls'*
+/// internal blur (`kGlassBlurSigma`), which frosts only a small floating tile.
+const double kBackdropBlurSigma = 8;

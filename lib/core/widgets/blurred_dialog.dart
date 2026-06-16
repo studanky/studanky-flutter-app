@@ -1,10 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:studanky_flutter_app/core/styles/dimens.dart';
 
 /// Shows [child] as a centred, iOS-style floating card over a background that
-/// blurs and dims as the dialog animates in — the look favourites and the
-/// About panel use instead of bottom sheets (which are reserved for the spring
+/// frosts (no dim) as the dialog animates in — the same glass backdrop as the
+/// spring-detail sheet, so every overlay reads alike. Favourites and the About
+/// panel use this instead of bottom sheets (which are reserved for the spring
 /// detail). Tapping outside the card dismisses it; the card itself absorbs
 /// taps. Resolves with whatever the card pops via `Navigator.pop`.
 Future<T?> showBlurredDialog<T>({
@@ -34,22 +36,20 @@ class _BlurredDialogLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Stack(
       children: [
-        // Animated blur + dim covering the whole screen; tapping it dismisses.
+        // Animated full-screen frost (no dim) — the same glass backdrop as the
+        // spring-detail sheet; tapping it dismisses.
         Positioned.fill(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () => Navigator.of(context).maybePop(),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 22 * t, sigmaY: 22 * t),
-              child: ColoredBox(
-                color: Colors.black.withValues(
-                  alpha: (isDark ? 0.45 : 0.25) * t,
-                ),
+              filter: ImageFilter.blur(
+                sigmaX: kBackdropBlurSigma * t,
+                sigmaY: kBackdropBlurSigma * t,
               ),
+              child: const SizedBox.expand(),
             ),
           ),
         ),

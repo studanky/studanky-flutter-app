@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/core/widgets/app_progress_indicator.dart';
+import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
 import 'package:studanky_flutter_app/features/favorites/widgets/favorites_dialog.dart';
 import 'package:studanky_flutter_app/features/map_page/constants/map_page_constants.dart';
@@ -323,16 +324,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
 
     if (feedback == null) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(feedback.$1),
-        action: feedback.$2 == null
-            ? null
-            : SnackBarAction(
-                label: l10n.location_action_settings,
-                onPressed: () => feedback.$2!(),
-              ),
-      ),
+    showGlassSnackBar(
+      context,
+      message: feedback.$1,
+      actionLabel: feedback.$2 == null ? null : l10n.location_action_settings,
+      onAction: feedback.$2,
     );
   }
 

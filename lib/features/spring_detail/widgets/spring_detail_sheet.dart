@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_detail_provider.dart';
@@ -81,8 +82,9 @@ class _SheetBackdrop extends StatelessWidget {
 
   final VoidCallback onTapOutside;
 
-  /// Light by design — the map stays legible, just softened.
-  static const double _maxSigma = 8;
+  /// Shared with the dialogs (`kBackdropBlurSigma`) so every modal backdrop
+  /// frosts identically. Light by design — the map stays legible, just softened.
+  static const double _maxSigma = kBackdropBlurSigma;
 
   @override
   Widget build(BuildContext context) {
@@ -317,8 +319,9 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
   Future<void> _navigate(LatLng position) async {
     final launched = await SpringActions.navigate(position);
     if (!launched && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.spring_detail_navigation_failed)),
+      showGlassSnackBar(
+        context,
+        message: context.l10n.spring_detail_navigation_failed,
       );
     }
   }
@@ -326,8 +329,9 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
   Future<void> _copyCoordinates(LatLng position) async {
     await SpringActions.copyCoordinates(position);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.spring_detail_coordinates_copied)),
+    showGlassSnackBar(
+      context,
+      message: context.l10n.spring_detail_coordinates_copied,
     );
   }
 }
