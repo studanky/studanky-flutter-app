@@ -126,10 +126,6 @@
   "@spring_detail_section_current": {},
   "spring_detail_section_about": "O studánce",
   "@spring_detail_section_about": {},
-  "spring_detail_section_location": "Poloha a zdroj",
-  "@spring_detail_section_location": {},
-  "spring_detail_source": "Zdroj",
-  "@spring_detail_source": {},
 
   "spring_detail_no_record_yet": "zatím bez záznamu",
   "@spring_detail_no_record_yet": {},
@@ -173,6 +169,8 @@
   "@spring_detail_report_odor": {},
   "spring_detail_report_note": "Poznámka",
   "@spring_detail_report_note": {},
+  "spring_detail_station_record": "ČHMÚ",
+  "@spring_detail_station_record": {},
   "spring_detail_flow_rate_value": "{value} l/s",
   "@spring_detail_flow_rate_value": {
     "placeholders": { "value": { "type": "String" } }

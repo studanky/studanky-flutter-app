@@ -202,12 +202,6 @@ class AppLocalizationsCs extends AppLocalizations {
   String get spring_detail_section_about => 'O studánce';
 
   @override
-  String get spring_detail_section_location => 'Poloha a zdroj';
-
-  @override
-  String get spring_detail_source => 'Zdroj';
-
-  @override
   String get spring_detail_no_record_yet => 'zatím bez záznamu';
 
   @override
@@ -258,6 +252,9 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get spring_detail_report_note => 'Poznámka';
+
+  @override
+  String get spring_detail_station_record => 'ČHMÚ';
 
   @override
   String spring_detail_flow_rate_value(String value) {

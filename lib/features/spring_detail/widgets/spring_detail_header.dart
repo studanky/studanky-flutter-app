@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
-import 'package:studanky_flutter_app/features/spring_detail/entities/spring_owner.dart';
 import 'package:studanky_flutter_app/features/spring_detail/entities/water_clarity.dart';
 import 'package:studanky_flutter_app/features/spring_detail/utils/spring_formatters.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/detail_section.dart';
@@ -10,11 +9,11 @@ import 'package:studanky_flutter_app/features/spring_detail/widgets/segment_scal
 import 'package:studanky_flutter_app/features/spring_detail/widgets/status_visuals.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
-/// Everything above the history list: the title block (name · favourite · status
-/// · concrete age), the primary actions, and the iOS-style grouped sections —
-/// "current state" (flow strength / rate / clarity, shown graphically), "about"
-/// and "location & source". Each section and row is omitted when it has no data
-/// so the detail never shows empty placeholders (zadání §14).
+/// Everything above the history list: the hero block (name · favourite · status
+/// · concrete age · minimalist copyable coordinates), the primary actions, and
+/// the iOS-style grouped sections — "current state" (flow strength / rate /
+/// clarity, shown graphically) and "about". Each section and row is omitted when
+/// it has no data so the detail never shows empty placeholders (zadání §14).
 class SpringDetailHeader extends StatelessWidget {
   const SpringDetailHeader({
     required this.name,
@@ -26,7 +25,6 @@ class SpringDetailHeader extends StatelessWidget {
     required this.flowRateLps,
     required this.clarity,
     required this.maxFlowScale,
-    required this.owner,
     required this.onShare,
     required this.onNavigate,
     required this.onCopyCoordinates,
@@ -47,7 +45,6 @@ class SpringDetailHeader extends StatelessWidget {
   final WaterClarity? clarity;
   final int maxFlowScale;
 
-  final SpringOwner? owner;
   final VoidCallback onShare;
   final VoidCallback onNavigate;
   final VoidCallback onCopyCoordinates;
@@ -106,9 +103,12 @@ class SpringDetailHeader extends StatelessWidget {
             ],
           ),
         ),
+        // Minimalist, copyable coordinates — kept up in the hero (zadání: hned
+        // pod stav), so the position is glanceable and one tap copies it.
+        _HeroCoordinates(position: position, onCopy: onCopyCoordinates),
         // Primary actions.
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
           child: Row(
             children: [
               Expanded(
@@ -143,27 +143,14 @@ class SpringDetailHeader extends StatelessWidget {
               style: text.body2.copyWith(color: colors.neutral800, height: 1.5),
             ),
           ),
-        DetailSection(
-          title: l10n.spring_detail_section_location,
-          padding: EdgeInsets.zero,
-          child: Column(
-            children: [
-              _CoordinatesRow(position: position, onCopy: onCopyCoordinates),
-              if (owner != null) ...[
-                const Divider(height: 1, indent: 16, endIndent: 16),
-                _SourceRow(owner: owner!),
-              ],
-            ],
-          ),
-        ),
       ],
     );
   }
 }
 
 /// "Current state" grouped section: the latest flow strength (graphical 1…n),
-/// measured discharge and water clarity (graphical). Hidden entirely when none
-/// of the three is known.
+/// measured discharge and water clarity (graphical), each row separated by an
+/// iOS-style inset divider. Hidden entirely when none of the three is known.
 class _CurrentStateSection extends StatelessWidget {
   const _CurrentStateSection({
     required this.flowScale,
@@ -183,9 +170,11 @@ class _CurrentStateSection extends StatelessWidget {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
 
+    const rowPadding = EdgeInsets.zero;
     final rows = <Widget>[
       if (flowScale != null)
         DetailMetricRow(
+          padding: rowPadding,
           label: l10n.spring_detail_report_flow_strength,
           value: _ScaleValue(
             scale: SegmentScale(value: flowScale!, max: maxFlowScale),
@@ -194,6 +183,7 @@ class _CurrentStateSection extends StatelessWidget {
         ),
       if (flowRateLps != null)
         DetailMetricRow(
+          padding: rowPadding,
           label: l10n.spring_detail_report_flow_rate,
           value: Text(
             l10n.spring_detail_flow_rate_value(
@@ -204,6 +194,7 @@ class _CurrentStateSection extends StatelessWidget {
         ),
       if (clarity != null)
         DetailMetricRow(
+          padding: rowPadding,
           label: l10n.spring_detail_report_clarity,
           value: _ScaleValue(
             scale: SegmentScale(
@@ -265,21 +256,25 @@ class _FavoriteButton extends StatelessWidget {
     final l10n = context.l10n;
     final colors = Styles.appColors;
 
+    // Apple-style favourite (matching the map control): an outline heart that
+    // fills red once saved.
     return IconButton(
       onPressed: onPressed,
       tooltip: isFavorite
           ? l10n.spring_detail_remove_favorite
           : l10n.spring_detail_add_favorite,
       icon: Icon(
-        isFavorite ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-        color: isFavorite ? colors.primaryMain : colors.neutral700,
+        isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+        color: isFavorite ? colors.error : colors.neutral700,
       ),
     );
   }
 }
 
-class _CoordinatesRow extends StatelessWidget {
-  const _CoordinatesRow({required this.position, required this.onCopy});
+/// Compact, copyable coordinates for the hero: a small pin, the directional
+/// coordinates and a copy glyph; tapping copies them to the clipboard.
+class _HeroCoordinates extends StatelessWidget {
+  const _HeroCoordinates({required this.position, required this.onCopy});
 
   final LatLng position;
   final VoidCallback onCopy;
@@ -289,58 +284,33 @@ class _CoordinatesRow extends StatelessWidget {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
 
-    return InkWell(
-      onTap: onCopy,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children: [
-            Icon(Icons.place_outlined, size: 18, color: colors.neutral700),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                SpringFormatters.coordinates(position),
-                style: text.body2.copyWith(color: colors.neutral800),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Icon(Icons.copy_rounded, size: 16, color: colors.neutral500),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SourceRow extends StatelessWidget {
-  const _SourceRow({required this.owner});
-
-  final SpringOwner owner;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        children: [
-          Icon(Icons.verified_rounded, size: 18, color: colors.primaryMain),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              l10n.spring_detail_source,
-              style: text.body2.copyWith(color: colors.neutral700),
+      padding: const EdgeInsets.fromLTRB(12, 10, 16, 0),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: InkWell(
+          onTap: onCopy,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.place_outlined, size: 14, color: colors.neutral500),
+                const SizedBox(width: 5),
+                Text(
+                  SpringFormatters.coordinates(position),
+                  style: text.body2.copyWith(
+                    fontSize: 12.5,
+                    color: colors.neutral700,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Icon(Icons.copy_rounded, size: 13, color: colors.neutral500),
+              ],
             ),
           ),
-          Text(
-            owner.name,
-            style: text.title2.copyWith(color: colors.neutral900),
-          ),
-        ],
+        ),
       ),
     );
   }

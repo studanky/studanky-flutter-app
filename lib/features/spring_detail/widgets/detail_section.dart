@@ -89,23 +89,35 @@ class DetailCard extends StatelessWidget {
 /// A label → value row used inside a [DetailSection] card (iOS settings style):
 /// muted label on the left, the value (text or a graphical scale) on the right.
 class DetailMetricRow extends StatelessWidget {
-  const DetailMetricRow({super.key, required this.label, required this.value});
+  const DetailMetricRow({
+    super.key,
+    required this.label,
+    required this.value,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  });
 
   final String label;
   final Widget value;
+
+  /// Row padding; the leading inset should match the divider indent so the
+  /// label and the separators above/below line up.
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(label, style: text.body2.copyWith(color: colors.neutral700)),
-        const SizedBox(width: 12),
-        Expanded(child: Align(alignment: Alignment.centerRight, child: value)),
-      ],
+    return Padding(
+      padding: padding,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(label, style: text.body2.copyWith(color: colors.neutral700)),
+          const SizedBox(width: 12),
+          Expanded(child: Align(alignment: Alignment.centerRight, child: value)),
+        ],
+      ),
     );
   }
 }

@@ -442,18 +442,6 @@ abstract class AppLocalizations {
   /// **'O studánce'**
   String get spring_detail_section_about;
 
-  /// No description provided for @spring_detail_section_location.
-  ///
-  /// In cs, this message translates to:
-  /// **'Poloha a zdroj'**
-  String get spring_detail_section_location;
-
-  /// No description provided for @spring_detail_source.
-  ///
-  /// In cs, this message translates to:
-  /// **'Zdroj'**
-  String get spring_detail_source;
-
   /// No description provided for @spring_detail_no_record_yet.
   ///
   /// In cs, this message translates to:
@@ -549,6 +537,12 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Poznámka'**
   String get spring_detail_report_note;
+
+  /// No description provided for @spring_detail_station_record.
+  ///
+  /// In cs, this message translates to:
+  /// **'ČHMÚ'**
+  String get spring_detail_station_record;
 
   /// No description provided for @spring_detail_flow_rate_value.
   ///

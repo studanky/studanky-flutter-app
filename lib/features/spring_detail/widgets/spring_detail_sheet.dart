@@ -216,7 +216,6 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
             flowRateLps: flowRateLps,
             clarity: clarity,
             maxFlowScale: maxFlowScale,
-            owner: detail?.owner,
             onShare: () => _share(name, position),
             onNavigate: () => _navigate(position),
             onCopyCoordinates: () => _copyCoordinates(position),
