@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
+import 'package:studanky_flutter_app/core/widgets/scroll_edge_effect.dart';
 import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_detail_provider.dart';
@@ -89,8 +90,7 @@ class _SheetBackdrop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final animation =
-        ModalRoute.of(context)?.animation ??
-        const AlwaysStoppedAnimation(1.0);
+        ModalRoute.of(context)?.animation ?? const AlwaysStoppedAnimation(1.0);
 
     return GestureDetector(
       onTap: onTapOutside,
@@ -180,7 +180,10 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
 /// Scrollable body shared by the half- and full-height states. Owns the
 /// infinite-scroll trigger for the report history.
 class _SpringDetailBody extends ConsumerStatefulWidget {
-  const _SpringDetailBody({required this.marker, required this.scrollController});
+  const _SpringDetailBody({
+    required this.marker,
+    required this.scrollController,
+  });
 
   final SpringMarkerEntity marker;
   final ScrollController scrollController;
@@ -236,8 +239,7 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
 
     final isFavorite = ref.watch(
       favoritesControllerProvider.select(
-        (favorites) =>
-            favorites.any((s) => s.documentId == marker.documentId),
+        (favorites) => favorites.any((s) => s.documentId == marker.documentId),
       ),
     );
     // Store the freshest summary available so the favourites list stays useful.
@@ -260,55 +262,61 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
     final clarity = latestReport?.waterClarity;
     final maxFlowScale = config.maxFlowScale;
 
-    return CustomScrollView(
-      controller: widget.scrollController,
-      slivers: [
-        const SliverToBoxAdapter(child: _Grabber()),
-        if (detail?.photo != null)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(kRadiusControl),
-                child: SpringPhotoView(photo: detail!.photo),
+    return ScrollEdgeEffect(
+      child: CustomScrollView(
+        controller: widget.scrollController,
+        slivers: [
+          const SliverToBoxAdapter(child: _Grabber()),
+          if (detail?.photo != null)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(kRadiusControl),
+                  child: SpringPhotoView(photo: detail!.photo),
+                ),
               ),
             ),
+          SliverToBoxAdapter(
+            child: SpringDetailHeader(
+              name: name,
+              statusIcon: statusIcon,
+              statusUpdatedAt: statusUpdatedAt,
+              position: position,
+              description: detail?.description,
+              flowScale: flowScale,
+              flowRateLps: flowRateLps,
+              clarity: clarity,
+              maxFlowScale: maxFlowScale,
+              onShare: () => _share(name, position),
+              onNavigate: () => _navigate(position),
+              onCopyCoordinates: () => _copyCoordinates(position),
+              isFavorite: isFavorite,
+              onToggleFavorite: () => ref
+                  .read(favoritesControllerProvider.notifier)
+                  .toggle(favoriteEntity),
+            ),
           ),
-        SliverToBoxAdapter(
-          child: SpringDetailHeader(
-            name: name,
-            statusIcon: statusIcon,
-            statusUpdatedAt: statusUpdatedAt,
-            position: position,
-            description: detail?.description,
-            flowScale: flowScale,
-            flowRateLps: flowRateLps,
-            clarity: clarity,
+          ...buildReportHistorySlivers(
+            context,
+            state: reportsState,
             maxFlowScale: maxFlowScale,
-            onShare: () => _share(name, position),
-            onNavigate: () => _navigate(position),
-            onCopyCoordinates: () => _copyCoordinates(position),
-            isFavorite: isFavorite,
-            onToggleFavorite: () => ref
-                .read(favoritesControllerProvider.notifier)
-                .toggle(favoriteEntity),
+            onRetry: () => ref
+                .read(springReportsProvider(_documentId).notifier)
+                .retryInitial(),
+            onRetryLoadMore: () => ref
+                .read(springReportsProvider(_documentId).notifier)
+                .loadMore(),
           ),
-        ),
-        ...buildReportHistorySlivers(
-          context,
-          state: reportsState,
-          maxFlowScale: maxFlowScale,
-          onRetry: () =>
-              ref.read(springReportsProvider(_documentId).notifier).retryInitial(),
-          onRetryLoadMore: () =>
-              ref.read(springReportsProvider(_documentId).notifier).loadMore(),
-        ),
-        // Bottom breathing room + the home-indicator inset (the sheet is
-        // full-bleed, so it clears the bottom safe area itself).
-        SliverToBoxAdapter(
-          child: SizedBox(height: 24 + MediaQuery.viewPaddingOf(context).bottom),
-        ),
-      ],
+          // Bottom breathing room + the home-indicator inset (the sheet is
+          // full-bleed, so it clears the bottom safe area itself).
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 24 + MediaQuery.viewPaddingOf(context).bottom,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

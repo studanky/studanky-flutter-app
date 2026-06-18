@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
+import 'package:studanky_flutter_app/core/widgets/scroll_edge_effect.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
@@ -32,18 +33,20 @@ class MapSearchResultList extends StatelessWidget {
             maxHeight: height,
             minWidth: double.infinity,
           ),
-          child: ListView.separated(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            itemCount: results.length,
-            separatorBuilder: (_, _) => Divider(
-              height: 1,
-              indent: 52,
-              endIndent: 16,
-              color: colors.neutral500.withValues(alpha: 0.18),
+          child: ScrollEdgeEffect(
+            child: ListView.separated(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              itemCount: results.length,
+              separatorBuilder: (_, _) => Divider(
+                height: 1,
+                indent: 52,
+                endIndent: 16,
+                color: colors.neutral500.withValues(alpha: 0.18),
+              ),
+              itemBuilder: (context, index) =>
+                  _ResultRow(result: results[index], onTap: onTap),
             ),
-            itemBuilder: (context, index) =>
-                _ResultRow(result: results[index], onTap: onTap),
           ),
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
 import 'package:studanky_flutter_app/core/widgets/app_state_view.dart';
 import 'package:studanky_flutter_app/core/widgets/blurred_dialog.dart';
+import 'package:studanky_flutter_app/core/widgets/scroll_edge_effect.dart';
 import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
 import 'package:studanky_flutter_app/features/favorites/widgets/swipe_to_delete_tile.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
@@ -80,12 +81,14 @@ class _FavoritesBody extends ConsumerWidget {
 
     if (items.isEmpty) return const _EmptyState();
 
-    return ListView.builder(
-      shrinkWrap: true,
-      primary: false,
-      padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
-      itemCount: items.length,
-      itemBuilder: (context, index) => _FavoriteTile(spring: items[index]),
+    return ScrollEdgeEffect(
+      child: ListView.builder(
+        shrinkWrap: true,
+        primary: false,
+        padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
+        itemCount: items.length,
+        itemBuilder: (context, index) => _FavoriteTile(spring: items[index]),
+      ),
     );
   }
 }
