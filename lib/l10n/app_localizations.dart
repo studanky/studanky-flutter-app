@@ -649,8 +649,14 @@ abstract class AppLocalizations {
   /// No description provided for @spring_detail_navigation_failed.
   ///
   /// In cs, this message translates to:
-  /// **'Nepodařilo se otevřít navigaci'**
+  /// **'Nepodařilo se otevřít mapu'**
   String get spring_detail_navigation_failed;
+
+  /// No description provided for @spring_detail_open_in_app.
+  ///
+  /// In cs, this message translates to:
+  /// **'Otevřít v aplikaci'**
+  String get spring_detail_open_in_app;
 
   /// No description provided for @spring_detail_share_text.
   ///

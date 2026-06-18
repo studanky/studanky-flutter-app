@@ -310,8 +310,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get spring_detail_coordinates_copied => 'Souřadnice zkopírovány';
 
   @override
-  String get spring_detail_navigation_failed =>
-      'Nepodařilo se otevřít navigaci';
+  String get spring_detail_navigation_failed => 'Nepodařilo se otevřít mapu';
+
+  @override
+  String get spring_detail_open_in_app => 'Otevřít v aplikaci';
 
   @override
   String spring_detail_share_text(String name, String coordinates, String url) {

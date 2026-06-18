@@ -28,6 +28,28 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<!-- map_launcher: schemes we may query to detect installed maps apps for the
+		     "show spring on map" picker. Declaring a scheme only grants permission to
+		     ask whether it is installed (canOpenURL) — apps the user does not have
+		     never appear in the picker, and we show every maps app they do have.
+		     Covers the EU/global apps a user might realistically have; Apple Maps
+		     needs no scheme. -->
+		<string>szn-mapy</string>
+		<string>osmandmaps</string>
+		<string>mapswithme</string>
+		<string>comgooglemaps</string>
+		<string>waze</string>
+		<string>here-location</string>
+		<string>yandexmaps</string>
+		<string>yandexnavi</string>
+		<string>tomtomgo</string>
+		<string>citymapper</string>
+		<string>com.sygic.aura</string>
+		<string>copilot</string>
+		<string>moovit</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>

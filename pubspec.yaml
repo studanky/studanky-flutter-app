@@ -28,6 +28,7 @@ dependencies:
   json_annotation: ^4.12.0
   latlong2: ^0.9.1
   logging: ^1.3.0
+  map_launcher: ^4.5.0
   mobile_scanner: ^7.1.2
   retrofit: ^4.9.2
   riverpod_annotation: ^4.0.2

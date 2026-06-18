@@ -3,6 +3,7 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:map_launcher/map_launcher.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
@@ -12,6 +13,7 @@ import 'package:studanky_flutter_app/features/platform_config/providers/platform
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_detail_provider.dart';
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_reports_provider.dart';
 import 'package:studanky_flutter_app/features/spring_detail/utils/spring_actions.dart';
+import 'package:studanky_flutter_app/features/spring_detail/widgets/map_picker_sheet.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/report_history_section.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_header.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_photo_view.dart';
@@ -289,7 +291,7 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
               clarity: clarity,
               maxFlowScale: maxFlowScale,
               onShare: () => _share(name, position),
-              onNavigate: () => _navigate(position),
+              onNavigate: () => _openInMap(name, position),
               onCopyCoordinates: () => _copyCoordinates(position),
               isFavorite: isFavorite,
               onToggleFavorite: () => ref
@@ -324,9 +326,37 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
     return SpringActions.share(context.l10n, name: name, position: position);
   }
 
-  Future<void> _navigate(LatLng position) async {
-    final launched = await SpringActions.navigate(position);
-    if (!launched && mounted) {
+  /// Opens the spring as a pinned marker in a maps app the user actually has.
+  /// Shows the picker only when there is a real choice: 0 installed → silent
+  /// Mapy.cz web fallback, 1 → open it directly, 2+ → let the user pick.
+  Future<void> _openInMap(String name, LatLng position) async {
+    final maps = await SpringActions.installedMaps();
+    if (!mounted) return;
+
+    final AvailableMap chosen;
+    if (maps.isEmpty) {
+      final opened = await SpringActions.openInBrowser(position);
+      if (!opened && mounted) {
+        showGlassSnackBar(
+          context,
+          message: context.l10n.spring_detail_navigation_failed,
+        );
+      }
+      return;
+    } else if (maps.length == 1) {
+      chosen = maps.single;
+    } else {
+      final picked = await showMapPickerSheet(context, maps: maps);
+      if (picked == null) return; // dismissed without choosing
+      chosen = picked;
+    }
+
+    final opened = await SpringActions.showMarker(
+      chosen,
+      position: position,
+      title: name,
+    );
+    if (!opened && mounted) {
       showGlassSnackBar(
         context,
         message: context.l10n.spring_detail_navigation_failed,

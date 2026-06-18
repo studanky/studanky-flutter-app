@@ -197,8 +197,10 @@
   "@spring_detail_action_navigate": {},
   "spring_detail_coordinates_copied": "Souřadnice zkopírovány",
   "@spring_detail_coordinates_copied": {},
-  "spring_detail_navigation_failed": "Nepodařilo se otevřít navigaci",
+  "spring_detail_navigation_failed": "Nepodařilo se otevřít mapu",
   "@spring_detail_navigation_failed": {},
+  "spring_detail_open_in_app": "Otevřít v aplikaci",
+  "@spring_detail_open_in_app": {},
   "spring_detail_share_text": "{name}\n{coordinates}\n{url}",
   "@spring_detail_share_text": {
     "placeholders": {
