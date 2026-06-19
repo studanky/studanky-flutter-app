@@ -10,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/core/haptics/haptics.dart';
+import 'package:studanky_flutter_app/core/navigation/app_router.dart';
 import 'package:studanky_flutter_app/core/widgets/app_progress_indicator.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
@@ -35,7 +36,6 @@ import 'package:studanky_flutter_app/features/map_search/providers/map_search_pr
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
@@ -432,7 +432,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     Haptics.tap();
     _logger.fine('Spring tapped: ${spring.documentId} (${spring.name})');
     FocusScope.of(context).unfocus();
-    unawaited(showSpringDetailSheet(context, marker: spring));
+    unawaited(
+      SpringRoute(documentId: spring.documentId, $extra: spring).push(context),
+    );
   }
 
   /// Opens the favourites popup; if the user picks one, animate-centers the map
@@ -446,7 +448,12 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     unawaited(
       _animator.animateTo(center: selected.position, zoom: _recenterMinZoom),
     );
-    unawaited(showSpringDetailSheet(context, marker: selected));
+    unawaited(
+      SpringRoute(
+        documentId: selected.documentId,
+        $extra: selected,
+      ).push(context),
+    );
   }
 
   void _onSearchResultSelected(MapSearchResult result) {
@@ -468,7 +475,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
         zoom: _springSearchZoom,
       );
       if (!mounted || selectionToken != _searchSelectionToken) return;
-      unawaited(showSpringDetailSheet(context, marker: spring));
+      unawaited(
+        SpringRoute(documentId: spring.documentId, $extra: spring).push(context),
+      );
       return;
     }
 

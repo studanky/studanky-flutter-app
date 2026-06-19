@@ -166,7 +166,7 @@ final class MapSearchSourceProvider
   }
 }
 
-String _$mapSearchSourceHash() => r'0108a511f3527ceae133e22dc84baf3217ad011b';
+String _$mapSearchSourceHash() => r'1c62b26e060cbaee1f0b62152b1426f5c2dcb0b2';
 
 /// Provides the active search backend. Requires the Mapy.com suggest API.
 

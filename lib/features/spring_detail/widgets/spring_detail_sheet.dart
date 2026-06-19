@@ -1,12 +1,13 @@
-import 'dart:ui' show ImageFilter;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/core/widgets/app_progress_indicator.dart';
+import 'package:studanky_flutter_app/core/widgets/error_widget.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/core/widgets/scroll_edge_effect.dart';
 import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
@@ -21,102 +22,22 @@ import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_photo
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
-/// Max width of the sheet on large screens (tablets); below this it stretches
-/// to the available width.
-const double _maxSheetWidth = 640;
-
-/// Opens the spring detail as a draggable bottom sheet that starts at half
-/// height and can be dragged to full screen (overlaying the bottom navigation
-/// via the root navigator).
-Future<void> showSpringDetailSheet(
-  BuildContext context, {
-  required SpringMarkerEntity marker,
-}) {
-  // Full-bleed frost instead of a dim: the blur sits *behind* the sheet inside
-  // the modal content (so the sheet stays sharp) and spans the whole screen —
-  // including the status-bar and home-indicator strips, since we opt out of
-  // useSafeArea and re-apply the top inset ourselves. Tap-to-dismiss is handled
-  // explicitly by the backdrop (the transparent modal barrier is unreliable once
-  // full-bleed content covers it).
-  //
-  // Read the top inset from the *caller's* context: inside the sheet route the
-  // MediaQuery top inset is stripped to 0 (it removes top padding *and*
-  // viewPadding when useSafeArea is false), so reading it there would let the
-  // maximised sheet slide under the status bar.
-  final topInset = MediaQuery.viewPaddingOf(context).top;
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: false,
-    useRootNavigator: true,
-    backgroundColor: Colors.transparent,
-    barrierColor: Colors.transparent,
-    builder: (sheetContext) {
-      return Stack(
-        children: [
-          Positioned.fill(
-            child: _SheetBackdrop(
-              onTapOutside: () => Navigator.of(sheetContext).maybePop(),
-            ),
-          ),
-          // The sheet does not fill the screen (DraggableScrollableSheet sizes
-          // it), so the area above stays empty for the backdrop to catch taps.
-          // The top padding caps its fully-expanded height below the status bar.
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: _maxSheetWidth),
-              child: Padding(
-                padding: EdgeInsets.only(top: topInset),
-                child: SpringDetailSheet(marker: marker),
-              ),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-/// Full-bleed frosted backdrop behind the sheet: a light gaussian blur over the
-/// map whose strength eases in/out with the sheet's open/close transition, plus
-/// an explicit tap-to-dismiss for the area above the sheet.
-class _SheetBackdrop extends StatelessWidget {
-  const _SheetBackdrop({required this.onTapOutside});
-
-  final VoidCallback onTapOutside;
-
-  /// Shared with the dialogs (`kBackdropBlurSigma`) so every modal backdrop
-  /// frosts identically. Light by design — the map stays legible, just softened.
-  static const double _maxSigma = kBackdropBlurSigma;
-
-  @override
-  Widget build(BuildContext context) {
-    final animation =
-        ModalRoute.of(context)?.animation ?? const AlwaysStoppedAnimation(1.0);
-
-    return GestureDetector(
-      onTap: onTapOutside,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedBuilder(
-        animation: animation,
-        builder: (context, _) {
-          final t = Curves.easeOut.transform(animation.value.clamp(0.0, 1.0));
-          final sigma = _maxSigma * t;
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
-            child: const SizedBox.expand(),
-          );
-        },
-      ),
-    );
-  }
-}
-
+/// The spring detail content: a draggable sheet that starts at half height and
+/// can be dragged to full screen. Hosted by `SpringDetailPage`, which provides
+/// the routed, non-opaque presentation (frosted backdrop + slide transition).
 class SpringDetailSheet extends StatefulWidget {
-  const SpringDetailSheet({required this.marker, super.key});
+  const SpringDetailSheet({
+    required this.documentId,
+    this.marker,
+    super.key,
+  });
 
-  final SpringMarkerEntity marker;
+  /// Identifies which spring to load. Always present (route path param).
+  final String documentId;
+
+  /// Optional pre-loaded summary for an instant header; null on a deep link /
+  /// QR scan, where the sheet falls back to fetching by [documentId].
+  final SpringMarkerEntity? marker;
 
   @override
   State<SpringDetailSheet> createState() => _SpringDetailSheetState();
@@ -146,7 +67,7 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
     if (!_dismissing && notification.extent < _dismissThreshold) {
       _dismissing = true;
       Haptics.selection();
-      Navigator.of(context).maybePop();
+      context.pop();
     }
 
     // A subtle detent tick when the sheet lands at (or leaves) full height.
@@ -181,6 +102,7 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
             child: Material(
               color: colors.background,
               child: _SpringDetailBody(
+                documentId: widget.documentId,
                 marker: widget.marker,
                 scrollController: scrollController,
               ),
@@ -196,11 +118,13 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
 /// infinite-scroll trigger for the report history.
 class _SpringDetailBody extends ConsumerStatefulWidget {
   const _SpringDetailBody({
+    required this.documentId,
     required this.marker,
     required this.scrollController,
   });
 
-  final SpringMarkerEntity marker;
+  final String documentId;
+  final SpringMarkerEntity? marker;
   final ScrollController scrollController;
 
   @override
@@ -223,7 +147,7 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
     super.dispose();
   }
 
-  String get _documentId => widget.marker.documentId;
+  String get _documentId => widget.documentId;
 
   void _onScroll() {
     final controller = widget.scrollController;
@@ -239,31 +163,25 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
     final marker = widget.marker;
     final locale = Localizations.localeOf(context).languageCode;
 
-    final detail = ref
-        .watch(springDetailProvider(_documentId, locale: locale))
-        .value;
+    final detailAsync = ref.watch(
+      springDetailProvider(_documentId, locale: locale),
+    );
+    final detail = detailAsync.value;
     final config = ref.watch(platformConfigControllerProvider);
     final reportsState = ref.watch(springReportsProvider(_documentId));
 
-    // Header renders from the marker immediately and is enriched by the detail.
-    final name = detail?.name ?? marker.name;
-    final position = detail?.position ?? marker.position;
-    final status = detail?.status ?? marker.status;
-    final statusUpdatedAt = detail?.statusUpdatedAt ?? marker.statusUpdatedAt;
-    final statusIcon = config.iconFor(status.wireValue, statusUpdatedAt);
+    // Header renders from the marker immediately (tap/search/favourites) and is
+    // enriched by the detail. On a deep link / QR scan there is no marker, so
+    // the header waits for the detail to resolve.
+    final name = detail?.name ?? marker?.name;
+    final position = detail?.position ?? marker?.position;
+    final status = detail?.status ?? marker?.status;
+    final statusUpdatedAt = detail?.statusUpdatedAt ?? marker?.statusUpdatedAt;
 
     final isFavorite = ref.watch(
       favoritesControllerProvider.select(
-        (favorites) => favorites.any((s) => s.documentId == marker.documentId),
+        (favorites) => favorites.any((s) => s.documentId == _documentId),
       ),
-    );
-    // Store the freshest summary available so the favourites list stays useful.
-    final favoriteEntity = SpringMarkerEntity(
-      documentId: marker.documentId,
-      name: name,
-      position: position,
-      status: status,
-      statusUpdatedAt: statusUpdatedAt,
     );
 
     // Current-state metrics: the spring's denormalised "last_*" values, falling
@@ -272,8 +190,6 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
     final latestReport = reportsState.reports.isEmpty
         ? null
         : reportsState.reports.first;
-    final flowScale = detail?.lastFlowScale ?? latestReport?.flowScale;
-    final flowRateLps = detail?.lastFlowRateLps ?? latestReport?.flowRateLps;
     final clarity = latestReport?.waterClarity;
     final maxFlowScale = config.maxFlowScale;
 
@@ -282,59 +198,88 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
         controller: widget.scrollController,
         slivers: [
           const SliverToBoxAdapter(child: _Grabber()),
-          if (detail?.photo != null)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(kRadiusControl),
-                  child: SpringPhotoView(photo: detail!.photo),
+          if (name == null || position == null || status == null)
+            // Deep-link entry without a marker: nothing to render until the
+            // detail resolves — show a spinner, or a graceful error (with retry)
+            // if the id is unknown.
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: detailAsync.hasError
+                  ? AppErrorWidget(
+                      error: detailAsync.error!,
+                      stackTrace: detailAsync.stackTrace ?? StackTrace.empty,
+                      onRefresh: () => ref.invalidate(
+                        springDetailProvider(_documentId, locale: locale),
+                      ),
+                    )
+                  : const AppProgressIndicator(),
+            )
+          else ...[
+            if (detail?.photo != null)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(kRadiusControl),
+                    child: SpringPhotoView(photo: detail!.photo),
+                  ),
                 ),
               ),
+            SliverToBoxAdapter(
+              child: SpringDetailHeader(
+                name: name,
+                statusIcon: config.iconFor(status.wireValue, statusUpdatedAt),
+                statusUpdatedAt: statusUpdatedAt,
+                position: position,
+                description: detail?.description,
+                flowScale: detail?.lastFlowScale ?? latestReport?.flowScale,
+                flowRateLps:
+                    detail?.lastFlowRateLps ?? latestReport?.flowRateLps,
+                clarity: clarity,
+                maxFlowScale: maxFlowScale,
+                onShare: () => _share(name, position),
+                onNavigate: () => _openInMap(name, position),
+                onCopyCoordinates: () => _copyCoordinates(position),
+                isFavorite: isFavorite,
+                onToggleFavorite: () {
+                  // Saving is the rewarding action (medium); un-saving is a
+                  // lighter tick.
+                  isFavorite ? Haptics.selection() : Haptics.toggle();
+                  ref
+                      .read(favoritesControllerProvider.notifier)
+                      // Store the freshest summary available so the favourites
+                      // list stays useful.
+                      .toggle(
+                        SpringMarkerEntity(
+                          documentId: _documentId,
+                          name: name,
+                          position: position,
+                          status: status,
+                          statusUpdatedAt: statusUpdatedAt,
+                        ),
+                      );
+                },
+              ),
             ),
-          SliverToBoxAdapter(
-            child: SpringDetailHeader(
-              name: name,
-              statusIcon: statusIcon,
-              statusUpdatedAt: statusUpdatedAt,
-              position: position,
-              description: detail?.description,
-              flowScale: flowScale,
-              flowRateLps: flowRateLps,
-              clarity: clarity,
+            ...buildReportHistorySlivers(
+              context,
+              state: reportsState,
               maxFlowScale: maxFlowScale,
-              onShare: () => _share(name, position),
-              onNavigate: () => _openInMap(name, position),
-              onCopyCoordinates: () => _copyCoordinates(position),
-              isFavorite: isFavorite,
-              onToggleFavorite: () {
-                // Saving is the rewarding action (medium); un-saving is a
-                // lighter tick.
-                isFavorite ? Haptics.selection() : Haptics.toggle();
-                ref
-                    .read(favoritesControllerProvider.notifier)
-                    .toggle(favoriteEntity);
-              },
+              onRetry: () => ref
+                  .read(springReportsProvider(_documentId).notifier)
+                  .retryInitial(),
+              onRetryLoadMore: () => ref
+                  .read(springReportsProvider(_documentId).notifier)
+                  .loadMore(),
             ),
-          ),
-          ...buildReportHistorySlivers(
-            context,
-            state: reportsState,
-            maxFlowScale: maxFlowScale,
-            onRetry: () => ref
-                .read(springReportsProvider(_documentId).notifier)
-                .retryInitial(),
-            onRetryLoadMore: () => ref
-                .read(springReportsProvider(_documentId).notifier)
-                .loadMore(),
-          ),
-          // Bottom breathing room + the home-indicator inset (the sheet is
-          // full-bleed, so it clears the bottom safe area itself).
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 24 + MediaQuery.viewPaddingOf(context).bottom,
+            // Bottom breathing room + the home-indicator inset (the sheet is
+            // full-bleed, so it clears the bottom safe area itself).
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 24 + MediaQuery.viewPaddingOf(context).bottom,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );

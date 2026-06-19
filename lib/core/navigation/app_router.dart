@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:studanky_flutter_app/core/navigation/app_route.dart';
 import 'package:studanky_flutter_app/core/widgets/error_widget.dart';
 import 'package:studanky_flutter_app/features/map_page/map_page.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/qr_scan_page.dart';
+import 'package:studanky_flutter_app/features/spring_detail/spring_detail_page.dart';
+import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
+
+part 'app_router.g.dart';
+
+/// Root navigator key — declared top-level (never inside a `build`) with a
+/// unique debug label, per go_router conventions. The single owner of the app's
+/// navigation stack.
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
 
 /// The single source of truth for app navigation.
 ///
-/// The MVP is effectively single-screen: the map is the home. The QR scan
-/// screen has a route and is ready, but is intentionally **not wired into any
-/// UI** yet — it will be linked from the map/detail in a later phase, so for now
-/// it is reachable only by an explicit navigation to its path.
+/// The map is the home. The spring detail overlays the map as a non-opaque,
+/// deep-linkable child route (`/map/spring/:documentId`); the QR scanner is a
+/// top-level route that, on a successful scan, navigates to that detail.
 final GoRouter appRouter = GoRouter(
-  initialLocation: AppRoutes.map.path,
-  routes: [
-    GoRoute(
-      path: AppRoutes.map.path,
-      name: AppRoutes.map.name,
-      builder: (context, state) => const MapPage(),
-    ),
-    GoRoute(
-      path: AppRoutes.scanner.path,
-      name: AppRoutes.scanner.name,
-      builder: (context, state) => const QrScanPage(),
-    ),
-  ],
+  navigatorKey: rootNavigatorKey,
+  initialLocation: const MapRoute().location,
+  routes: $appRoutes,
   // Graceful fallback for unknown locations (e.g. a stale deep link): show an
   // error screen that returns the user to the map.
   errorBuilder: (context, state) => Scaffold(
@@ -32,8 +31,51 @@ final GoRouter appRouter = GoRouter(
       child: AppErrorWidget(
         error: state.error ?? Exception('Unknown route: ${state.uri}'),
         stackTrace: StackTrace.empty,
-        onRefresh: () => context.go(AppRoutes.map.path),
+        onRefresh: () => const MapRoute().go(context),
       ),
     ),
   ),
 );
+
+/// `/map` — the home screen.
+@TypedGoRoute<MapRoute>(
+  path: '/map',
+  routes: [TypedGoRoute<SpringRoute>(path: 'spring/:documentId')],
+)
+class MapRoute extends GoRouteData with $MapRoute {
+  const MapRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const MapPage();
+}
+
+/// `/map/spring/:documentId` — spring detail, a non-opaque overlay above the
+/// map.
+///
+/// [documentId] is a path param so the detail is deep-linkable (e.g. a QR code
+/// at the spring). The optional [$extra] carries an already-loaded marker for an
+/// instant header; when absent (deep link / scan) the page falls back to
+/// fetching the spring by id.
+class SpringRoute extends GoRouteData with $SpringRoute {
+  const SpringRoute({required this.documentId, this.$extra});
+
+  final String documentId;
+  final SpringMarkerEntity? $extra;
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) =>
+      SpringDetailPage.page(
+        documentId: documentId,
+        marker: $extra,
+        state: state,
+      );
+}
+
+/// `/scanner` — full-screen QR scanner.
+@TypedGoRoute<ScannerRoute>(path: '/scanner')
+class ScannerRoute extends GoRouteData with $ScannerRoute {
+  const ScannerRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const QrScanPage();
+}
