@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
@@ -86,6 +87,7 @@ class MapSearchOverlay extends StatelessWidget {
               else if (focusNode.hasFocus || state.query.isNotEmpty)
                 InkResponse(
                   onTap: () {
+                    Haptics.selection();
                     if (state.query.isNotEmpty) {
                       onClear();
                     } else {

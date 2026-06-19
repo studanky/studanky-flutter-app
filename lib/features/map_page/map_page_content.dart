@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
+import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/widgets/app_progress_indicator.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
@@ -145,6 +146,10 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   _MapEmptyOverlayMode _mapEmptyOverlayMode = _MapEmptyOverlayMode.hidden;
   int _searchSelectionToken = 0;
 
+  /// Last integer zoom level a slider-drag haptic fired at, so the continuous
+  /// drag ticks once per crossed level (a detent) instead of every frame.
+  int? _lastZoomDetent;
+
   /// Live map orientation + centered state for the compass/location button.
   /// Kept in a [ValueNotifier] so map rotation repaints only the button, never
   /// the whole map.
@@ -223,6 +228,13 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// the current centre. The resulting map event refreshes the slider.
   void _onZoomChanged(double zoom) {
     final clamped = zoom.clamp(_minZoom, _maxZoom);
+    // Tick once each time the drag crosses an integer zoom level, so the slider
+    // notches like a physical detent instead of buzzing on every frame.
+    final detent = clamped.round();
+    if (detent != _lastZoomDetent) {
+      _lastZoomDetent = detent;
+      Haptics.selection();
+    }
     _mapController.move(_mapController.camera.center, clamped);
   }
 
@@ -358,6 +370,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     final fromNorth = rotation > 180 ? rotation - 360 : rotation;
 
     if (fromNorth.abs() > _northEpsilonDegrees) {
+      Haptics.selection();
       unawaited(_animator.animateTo(rotation: 0));
       return;
     }
@@ -369,6 +382,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// use) and falls back to a status message if the location is unavailable.
   Future<void> _recenterOnUser() async {
     if (_isLocating) return;
+    Haptics.tap();
 
     final notifier = ref.read(userLocationProvider.notifier);
 
@@ -402,6 +416,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   }
 
   void _onClusterTap(Cluster cluster) {
+    Haptics.selection();
     // [expansionZoom] is only the level at which the cluster *starts* to break
     // apart — landing exactly there leaves the points still cramped. Push a few
     // levels closer (clamped to the max) so the children spread out with room
@@ -414,6 +429,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   }
 
   void _onSpringTap(SpringMarkerEntity spring) {
+    Haptics.tap();
     _logger.fine('Spring tapped: ${spring.documentId} (${spring.name})');
     FocusScope.of(context).unfocus();
     unawaited(showSpringDetailSheet(context, marker: spring));
@@ -422,6 +438,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// Opens the favourites popup; if the user picks one, animate-centers the map
   /// on it and opens its detail.
   Future<void> _openFavorites() async {
+    Haptics.tap();
     FocusScope.of(context).unfocus();
     final selected = await showFavoritesDialog(context);
     if (selected == null || !mounted) return;
@@ -680,8 +697,10 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                             favoritesCount: favoritesCount,
                             onLocation: _onLocationButtonTap,
                             onFavorites: _openFavorites,
-                            onHelp: () =>
-                                unawaited(showAppAboutDialog(context)),
+                            onHelp: () {
+                              Haptics.tap();
+                              unawaited(showAppAboutDialog(context));
+                            },
                           ),
                         ),
                   ),
@@ -720,7 +739,10 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
               mainAxisSize: MainAxisSize.min,
               children: [
                 MapDisclaimer(
-                  onTap: () => unawaited(showDisclaimerDialog(context)),
+                  onTap: () {
+                    Haptics.tap();
+                    unawaited(showDisclaimerDialog(context));
+                  },
                 ),
                 const SizedBox(height: 2),
                 const MapAttribution(),

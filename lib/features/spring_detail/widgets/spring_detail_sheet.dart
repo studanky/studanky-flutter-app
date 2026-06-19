@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
@@ -137,10 +138,22 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
 
   bool _dismissing = false;
 
+  /// Tracks whether the sheet is currently resting at full height, so the snap
+  /// detent ticks once on arrival rather than repeatedly as the extent settles.
+  bool _atFull = false;
+
   bool _onNotification(DraggableScrollableNotification notification) {
     if (!_dismissing && notification.extent < _dismissThreshold) {
       _dismissing = true;
+      Haptics.selection();
       Navigator.of(context).maybePop();
+    }
+
+    // A subtle detent tick when the sheet lands at (or leaves) full height.
+    final atFull = notification.extent >= 0.999;
+    if (atFull != _atFull) {
+      _atFull = atFull;
+      if (atFull) Haptics.selection();
     }
     return false;
   }
@@ -294,9 +307,14 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
               onNavigate: () => _openInMap(name, position),
               onCopyCoordinates: () => _copyCoordinates(position),
               isFavorite: isFavorite,
-              onToggleFavorite: () => ref
-                  .read(favoritesControllerProvider.notifier)
-                  .toggle(favoriteEntity),
+              onToggleFavorite: () {
+                // Saving is the rewarding action (medium); un-saving is a
+                // lighter tick.
+                isFavorite ? Haptics.selection() : Haptics.toggle();
+                ref
+                    .read(favoritesControllerProvider.notifier)
+                    .toggle(favoriteEntity);
+              },
             ),
           ),
           ...buildReportHistorySlivers(
@@ -323,6 +341,7 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
   }
 
   Future<void> _share(String name, LatLng position) {
+    Haptics.tap();
     return SpringActions.share(context.l10n, name: name, position: position);
   }
 
@@ -330,6 +349,7 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
   /// Shows the picker only when there is a real choice: 0 installed → silent
   /// Mapy.cz web fallback, 1 → open it directly, 2+ → let the user pick.
   Future<void> _openInMap(String name, LatLng position) async {
+    Haptics.tap();
     final maps = await SpringActions.installedMaps();
     if (!mounted) return;
 
@@ -365,6 +385,7 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
   }
 
   Future<void> _copyCoordinates(LatLng position) async {
+    Haptics.tap();
     await SpringActions.copyCoordinates(position);
     if (!mounted) return;
     showGlassSnackBar(

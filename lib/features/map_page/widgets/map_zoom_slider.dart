@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
@@ -56,7 +56,7 @@ class MapZoomSlider extends StatelessWidget {
   }
 
   void _step(double delta) {
-    HapticFeedback.selectionClick();
+    Haptics.selection();
     onStep(delta);
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/entities/qr_scan_result.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/providers/qr_scan_controller_provider.dart';
 
@@ -43,6 +44,9 @@ class QrScanNotifier extends Notifier<QrScanState> {
     await _controller.stop();
 
     if (result == null) {
+      // The scan resolved but the payload was unreadable — a firm error buzz
+      // tells the user without their needing to read the overlay.
+      Haptics.error();
       state = state.copyWith(
         capture: AsyncValue<QrScanResult?>.error(
           const FormatException(),
@@ -52,6 +56,9 @@ class QrScanNotifier extends Notifier<QrScanState> {
       return;
     }
 
+    // A clean capture: the single most important haptic in the field flow, so
+    // the user knows it landed while looking at the spring, not the screen.
+    Haptics.success();
     state = state.copyWith(capture: AsyncValue.data(result));
   }
 

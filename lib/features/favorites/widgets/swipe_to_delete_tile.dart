@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 
@@ -31,10 +32,17 @@ class _SwipeToDeleteTileState extends State<SwipeToDeleteTile> {
   static const Duration _collapseDuration = Duration(milliseconds: 200);
   static const double _velocityDeleteThreshold = -700;
 
+  /// Fraction of the row width the drag must cross for a release to delete.
+  static const double _deleteThresholdFraction = 0.32;
+
   double _dragOffset = 0;
   bool _isDragging = false;
   bool _isDeleting = false;
   bool _isCollapsed = false;
+
+  /// True once the drag has crossed the delete threshold, so the "armed"
+  /// haptic fires only on the crossing — not on every drag frame past it.
+  bool _armed = false;
 
   double _maxReveal(double width) => math.min(112, width * 0.45);
 
@@ -47,13 +55,21 @@ class _SwipeToDeleteTileState extends State<SwipeToDeleteTile> {
         0.0,
       );
     });
+
+    // A medium "warning" tick the moment releasing would now delete the row,
+    // the way iOS Mail's full-swipe arms its destructive action.
+    final armed = _dragOffset.abs() >= width * _deleteThresholdFraction;
+    if (armed != _armed) {
+      _armed = armed;
+      if (armed) Haptics.warning();
+    }
   }
 
   void _onDragEnd(DragEndDetails details, double width) {
     if (_isDeleting) return;
 
     final shouldDelete =
-        _dragOffset.abs() >= width * 0.32 ||
+        _dragOffset.abs() >= width * _deleteThresholdFraction ||
         (details.primaryVelocity ?? 0) <= _velocityDeleteThreshold;
 
     if (shouldDelete) {
@@ -68,6 +84,9 @@ class _SwipeToDeleteTileState extends State<SwipeToDeleteTile> {
   }
 
   Future<void> _delete(double width) async {
+    // Confirms the commit — also the sole cue on a fast flick that deletes
+    // without ever crossing the position threshold (so [_armed] never fired).
+    Haptics.selection();
     setState(() {
       _isDragging = false;
       _isDeleting = true;
