@@ -125,7 +125,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get map_my_location => 'Moje poloha';
 
   @override
-  String get map_favorites => 'Oblíbené studánky';
+  String get map_favorites => 'Moje studánky';
 
   @override
   String get map_help => 'Nápověda';
@@ -226,17 +226,17 @@ class AppLocalizationsCs extends AppLocalizations {
   }
 
   @override
-  String get favorites_sheet_title => 'Oblíbené studánky';
+  String get favorites_sheet_title => 'Moje studánky';
 
   @override
-  String get favorites_empty_title => 'Zatím žádné oblíbené';
+  String get favorites_empty_title => 'Zatím žádné uložené studánky';
 
   @override
   String get favorites_empty_message =>
-      'Studánku přidáte do oblíbených tlačítkem v jejím detailu.';
+      'Studánku si uložíte tlačítkem záložky v jejím detailu.';
 
   @override
-  String get favorites_remove => 'Odebrat z oblíbených';
+  String get favorites_remove => 'Odebrat z mých studánek';
 
   @override
   String get qr_scan_camera_error =>
@@ -268,10 +268,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get qr_scan_invalid_data => 'QR kód neobsahuje platná data';
 
   @override
-  String get spring_detail_add_favorite => 'Přidat do oblíbených';
+  String get spring_detail_add_favorite => 'Přidat do mých studánek';
 
   @override
-  String get spring_detail_remove_favorite => 'Odebrat z oblíbených';
+  String get spring_detail_remove_favorite => 'Odebrat z mých studánek';
 
   @override
   String get common_yes => 'Ano';

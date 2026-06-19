@@ -56,11 +56,11 @@ class MapControlStack extends StatelessWidget {
         GlassIconButton(
           semanticLabel: l10n.map_favorites,
           onTap: onFavorites,
-          // A neutral glass tile like the others — the outline heart alone
-          // carries the "save / favourite" meaning (no red fill, no count
-          // badge), so the control stack stays calm and uniform.
+          // Entry to "Moje studánky" (my saved list). A neutral glass tile like
+          // the others — the outline bookmark alone carries the "saved list"
+          // meaning (no fill, no count badge), so the control stack stays calm.
           child: Icon(
-            Icons.favorite_border_rounded,
+            Icons.bookmark_border_rounded,
             size: 20,
             color: colors.neutral700,
           ),

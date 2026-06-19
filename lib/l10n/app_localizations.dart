@@ -301,7 +301,7 @@ abstract class AppLocalizations {
   /// No description provided for @map_favorites.
   ///
   /// In cs, this message translates to:
-  /// **'Oblíbené studánky'**
+  /// **'Moje studánky'**
   String get map_favorites;
 
   /// No description provided for @map_help.
@@ -487,25 +487,25 @@ abstract class AppLocalizations {
   /// No description provided for @favorites_sheet_title.
   ///
   /// In cs, this message translates to:
-  /// **'Oblíbené studánky'**
+  /// **'Moje studánky'**
   String get favorites_sheet_title;
 
   /// No description provided for @favorites_empty_title.
   ///
   /// In cs, this message translates to:
-  /// **'Zatím žádné oblíbené'**
+  /// **'Zatím žádné uložené studánky'**
   String get favorites_empty_title;
 
   /// No description provided for @favorites_empty_message.
   ///
   /// In cs, this message translates to:
-  /// **'Studánku přidáte do oblíbených tlačítkem v jejím detailu.'**
+  /// **'Studánku si uložíte tlačítkem záložky v jejím detailu.'**
   String get favorites_empty_message;
 
   /// No description provided for @favorites_remove.
   ///
   /// In cs, this message translates to:
-  /// **'Odebrat z oblíbených'**
+  /// **'Odebrat z mých studánek'**
   String get favorites_remove;
 
   /// No description provided for @qr_scan_camera_error.
@@ -565,13 +565,13 @@ abstract class AppLocalizations {
   /// No description provided for @spring_detail_add_favorite.
   ///
   /// In cs, this message translates to:
-  /// **'Přidat do oblíbených'**
+  /// **'Přidat do mých studánek'**
   String get spring_detail_add_favorite;
 
   /// No description provided for @spring_detail_remove_favorite.
   ///
   /// In cs, this message translates to:
-  /// **'Odebrat z oblíbených'**
+  /// **'Odebrat z mých studánek'**
   String get spring_detail_remove_favorite;
 
   /// No description provided for @common_yes.

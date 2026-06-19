@@ -36,8 +36,8 @@ class _FavoritesCard extends ConsumerWidget {
     );
 
     return AppDialogCard(
-      icon: Icons.favorite_border_rounded,
-      iconColor: colors.error,
+      icon: Icons.bookmark_rounded,
+      iconColor: colors.primaryMain,
       title: context.l10n.favorites_sheet_title,
       trailing: count == 0 ? null : _FavoritesCountBadge(count: count),
       dividerUnderHeader: true,
@@ -222,7 +222,7 @@ class _EmptyState extends StatelessWidget {
     final l10n = context.l10n;
 
     return AppStateView(
-      icon: Icons.favorite_border_rounded,
+      icon: Icons.bookmark_border_rounded,
       title: l10n.favorites_empty_title,
       message: l10n.favorites_empty_message,
     );

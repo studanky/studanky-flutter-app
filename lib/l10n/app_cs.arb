@@ -66,7 +66,7 @@
   "@location_action_settings": {},
   "map_my_location": "Moje poloha",
   "@map_my_location": {},
-  "map_favorites": "Oblíbené studánky",
+  "map_favorites": "Moje studánky",
   "@map_favorites": {},
   "map_help": "Nápověda",
   "@map_help": {},
@@ -136,13 +136,13 @@
     "placeholders": { "count": { "type": "int" } }
   },
 
-  "favorites_sheet_title": "Oblíbené studánky",
+  "favorites_sheet_title": "Moje studánky",
   "@favorites_sheet_title": {},
-  "favorites_empty_title": "Zatím žádné oblíbené",
+  "favorites_empty_title": "Zatím žádné uložené studánky",
   "@favorites_empty_title": {},
-  "favorites_empty_message": "Studánku přidáte do oblíbených tlačítkem v jejím detailu.",
+  "favorites_empty_message": "Studánku si uložíte tlačítkem záložky v jejím detailu.",
   "@favorites_empty_message": {},
-  "favorites_remove": "Odebrat z oblíbených",
+  "favorites_remove": "Odebrat z mých studánek",
   "@favorites_remove": {},
 
   "qr_scan_camera_error": "Kameru se nepodařilo otevřít. Zkontrolujte oprávnění a zkuste to znovu.",
@@ -164,9 +164,9 @@
   "qr_scan_invalid_data": "QR kód neobsahuje platná data",
   "@qr_scan_invalid_data": {},
 
-  "spring_detail_add_favorite": "Přidat do oblíbených",
+  "spring_detail_add_favorite": "Přidat do mých studánek",
   "@spring_detail_add_favorite": {},
-  "spring_detail_remove_favorite": "Odebrat z oblíbených",
+  "spring_detail_remove_favorite": "Odebrat z mých studánek",
   "@spring_detail_remove_favorite": {},
 
   "common_yes": "Ano",
