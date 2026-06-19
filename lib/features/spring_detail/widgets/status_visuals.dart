@@ -96,19 +96,30 @@ class StatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Styles.textStyles;
+    final colors = Styles.appColors;
+
+    // Tonal pill (Material-3 style): a soft wash of the status hue behind a
+    // *darkened* version of that hue. The vivid status colours (e.g. the
+    // flowing blue) are too light to read as label/icon over a pale tint — only
+    // ~2.6:1 — so the foreground is shifted toward the strongest text colour to
+    // clear WCAG AA (~4.8:1). Lerping toward [neutral900] is theme-correct: it
+    // darkens in light mode and lightens in dark mode.
+    final foreground = Color.lerp(visual.color, colors.neutral900, 0.4)!;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: visual.color.withValues(alpha: 0.12),
+        // Slightly stronger tint so the pill keeps a clear edge instead of
+        // bleeding into the sheet.
+        color: visual.color.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(kRadiusChip),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(visual.icon, color: visual.color, size: 18),
+          Icon(visual.icon, color: foreground, size: 18),
           const SizedBox(width: 6),
-          Text(visual.label, style: text.title2.copyWith(color: visual.color)),
+          Text(visual.label, style: text.title2.copyWith(color: foreground)),
         ],
       ),
     );

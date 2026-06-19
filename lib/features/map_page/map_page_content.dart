@@ -13,7 +13,6 @@ import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/navigation/app_router.dart';
 import 'package:studanky_flutter_app/core/widgets/app_progress_indicator.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
-import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
 import 'package:studanky_flutter_app/features/favorites/widgets/favorites_dialog.dart';
 import 'package:studanky_flutter_app/features/map_page/constants/map_page_constants.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
@@ -532,9 +531,6 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     final markerState = ref.watch(mapMarkerProvider);
     final config = ref.watch(platformConfigControllerProvider);
     final locationStatus = ref.watch(userLocationProvider).status;
-    final favoritesCount = ref.watch(
-      favoritesControllerProvider.select((favorites) => favorites.length),
-    );
     final l10n = context.l10n;
     final isMapEmptyOverlayVisible = _isMapEmptyOverlayVisible;
     final isMapEmptyOverlayRefreshing =
@@ -703,7 +699,6 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                             isLocating: _isLocating,
                             rotationRad: compass.rotationRad,
                             centered: compass.centered,
-                            favoritesCount: favoritesCount,
                             onLocation: _onLocationButtonTap,
                             onFavorites: _openFavorites,
                             onHelp: () {

@@ -7,7 +7,7 @@ import 'package:studanky_flutter_app/features/map_page/providers/user_location_p
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// Left vertical stack of floating glass controls over the map (zadání §7),
-/// ordered as compass/location, favourites, then help. The right edge is
+/// ordered as help, favourites, then compass/location. The right edge is
 /// reserved for the zoom slider.
 class MapControlStack extends StatelessWidget {
   const MapControlStack({
@@ -16,7 +16,6 @@ class MapControlStack extends StatelessWidget {
     required this.isLocating,
     required this.rotationRad,
     required this.centered,
-    required this.favoritesCount,
     required this.onLocation,
     required this.onFavorites,
     required this.onHelp,
@@ -26,7 +25,6 @@ class MapControlStack extends StatelessWidget {
   final bool isLocating;
   final double rotationRad;
   final bool centered;
-  final int favoritesCount;
   final VoidCallback onLocation;
   final VoidCallback onFavorites;
   final VoidCallback onHelp;
@@ -41,10 +39,33 @@ class MapControlStack extends StatelessWidget {
     // rotation is signalled by the rotating needle; being centred on the user
     // is signalled by the filled blue centre dot.
     //
-    // Top → bottom: location/compass · favourites · help.
+    // Top → bottom: help · favourites · location/compass.
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        GlassIconButton(
+          semanticLabel: l10n.map_help,
+          onTap: onHelp,
+          child: Icon(
+            Icons.help_outline_rounded,
+            size: 20,
+            color: colors.neutral700,
+          ),
+        ),
+        const SizedBox(height: 10),
+        GlassIconButton(
+          semanticLabel: l10n.map_favorites,
+          onTap: onFavorites,
+          // A neutral glass tile like the others — the outline heart alone
+          // carries the "save / favourite" meaning (no red fill, no count
+          // badge), so the control stack stays calm and uniform.
+          child: Icon(
+            Icons.favorite_border_rounded,
+            size: 20,
+            color: colors.neutral700,
+          ),
+        ),
+        const SizedBox(height: 10),
         GlassIconButton(
           semanticLabel: l10n.map_my_location,
           onTap: isLocating ? null : onLocation,
@@ -67,35 +88,6 @@ class MapControlStack extends StatelessWidget {
                     dotColor: centered ? colors.primaryMain : colors.neutral700,
                   ),
                 ),
-        ),
-        const SizedBox(height: 10),
-        GlassIconButton(
-          semanticLabel: l10n.map_favorites,
-          onTap: onFavorites,
-          // Outlined red heart — the familiar "save / favourite" affordance.
-          // The count badge is recoloured to the primary blue so it doesn't
-          // blend into the red icon (and the neutral "?" button stays distinct).
-          child: Badge(
-            isLabelVisible: favoritesCount > 0,
-            backgroundColor: colors.primaryMain,
-            textColor: colors.onPrimary,
-            label: Text('$favoritesCount'),
-            child: Icon(
-              Icons.favorite_border_rounded,
-              size: 20,
-              color: colors.error,
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        GlassIconButton(
-          semanticLabel: l10n.map_help,
-          onTap: onHelp,
-          child: Icon(
-            Icons.help_outline_rounded,
-            size: 20,
-            color: colors.neutral700,
-          ),
         ),
       ],
     );

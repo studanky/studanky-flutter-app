@@ -108,9 +108,13 @@ abstract final class AppTheme {
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
+        // Pairs with the filled primary button (e.g. Sdílet next to Navigovat):
+        // the label and the outline share the brand [primaryMain] so the button
+        // reads as the outlined sibling of the filled one — a single, unified
+        // blue rather than two shades.
         style: OutlinedButton.styleFrom(
-          foregroundColor: c.primary900,
-          side: BorderSide(color: c.neutral300),
+          foregroundColor: c.primaryMain,
+          side: BorderSide(color: c.primaryMain, width: 1.5),
           textStyle: buttonTextStyle,
           shape: buttonShape,
           padding: buttonPadding,

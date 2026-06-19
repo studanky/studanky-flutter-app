@@ -86,7 +86,7 @@ class _ReportTileState extends State<ReportTile> {
                           Icon(
                             Icons.verified_rounded,
                             size: 16,
-                            color: colors.primaryMain,
+                            color: colors.neutral700,
                           ),
                           const SizedBox(width: 4),
                           Text(
