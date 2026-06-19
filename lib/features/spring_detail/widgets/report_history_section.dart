@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_reports_provider.dart';
@@ -218,10 +217,7 @@ class _InlineError extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextButton(
-          onPressed: () {
-            Haptics.tap();
-            onRetry();
-          },
+          onPressed: onRetry,
           child: Text(context.l10n.error_widget_default_try_again),
         ),
       ],

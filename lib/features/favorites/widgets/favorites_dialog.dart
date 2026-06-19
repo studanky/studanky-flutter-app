@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
@@ -124,10 +123,7 @@ class _FavoriteTileSurface extends StatelessWidget {
       borderRadius: BorderRadius.circular(kRadiusControl),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () {
-          Haptics.tap();
-          Navigator.of(context).pop(spring);
-        },
+        onTap: () => Navigator.of(context).pop(spring),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
           child: Row(

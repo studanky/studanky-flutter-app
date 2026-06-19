@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/spring_detail/entities/report.dart';
 import 'package:studanky_flutter_app/features/spring_detail/entities/water_clarity.dart';
@@ -33,10 +32,7 @@ class ReportTile extends StatefulWidget {
 class _ReportTileState extends State<ReportTile> {
   late bool _expanded = widget.initiallyExpanded;
 
-  void _toggle() {
-    Haptics.selection();
-    setState(() => _expanded = !_expanded);
-  }
+  void _toggle() => setState(() => _expanded = !_expanded);
 
   @override
   Widget build(BuildContext context) {

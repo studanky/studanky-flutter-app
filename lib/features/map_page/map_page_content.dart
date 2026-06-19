@@ -227,9 +227,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// the current centre. The resulting map event refreshes the slider.
   void _onZoomChanged(double zoom) {
     final clamped = zoom.clamp(_minZoom, _maxZoom);
-    // Tick once each time the drag crosses an integer zoom level, so the slider
-    // notches like a physical detent instead of buzzing on every frame.
-    final detent = clamped.round();
+    // Tick on a fine grid (every half zoom level) so dragging the slider feels
+    // like a picker wheel ticking under the thumb — not clunking in whole-level
+    // jumps that lag behind how far the finger has actually moved.
+    const detentStep = 0.5;
+    final detent = (clamped / detentStep).round();
     if (detent != _lastZoomDetent) {
       _lastZoomDetent = detent;
       Haptics.selection();
@@ -369,7 +371,6 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     final fromNorth = rotation > 180 ? rotation - 360 : rotation;
 
     if (fromNorth.abs() > _northEpsilonDegrees) {
-      Haptics.selection();
       unawaited(_animator.animateTo(rotation: 0));
       return;
     }
@@ -381,7 +382,6 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// use) and falls back to a status message if the location is unavailable.
   Future<void> _recenterOnUser() async {
     if (_isLocating) return;
-    Haptics.tap();
 
     final notifier = ref.read(userLocationProvider.notifier);
 
@@ -415,7 +415,6 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   }
 
   void _onClusterTap(Cluster cluster) {
-    Haptics.selection();
     // [expansionZoom] is only the level at which the cluster *starts* to break
     // apart — landing exactly there leaves the points still cramped. Push a few
     // levels closer (clamped to the max) so the children spread out with room
@@ -428,7 +427,6 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   }
 
   void _onSpringTap(SpringMarkerEntity spring) {
-    Haptics.tap();
     _logger.fine('Spring tapped: ${spring.documentId} (${spring.name})');
     FocusScope.of(context).unfocus();
     unawaited(
@@ -439,7 +437,6 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// Opens the favourites popup; if the user picks one, animate-centers the map
   /// on it and opens its detail.
   Future<void> _openFavorites() async {
-    Haptics.tap();
     FocusScope.of(context).unfocus();
     final selected = await showFavoritesDialog(context);
     if (selected == null || !mounted) return;
@@ -701,10 +698,8 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                             centered: compass.centered,
                             onLocation: _onLocationButtonTap,
                             onFavorites: _openFavorites,
-                            onHelp: () {
-                              Haptics.tap();
-                              unawaited(showAppAboutDialog(context));
-                            },
+                            onHelp: () =>
+                                unawaited(showAppAboutDialog(context)),
                           ),
                         ),
                   ),
@@ -743,10 +738,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
               mainAxisSize: MainAxisSize.min,
               children: [
                 MapDisclaimer(
-                  onTap: () {
-                    Haptics.tap();
-                    unawaited(showDisclaimerDialog(context));
-                  },
+                  onTap: () => unawaited(showDisclaimerDialog(context)),
                 ),
                 const SizedBox(height: 2),
                 const MapAttribution(),

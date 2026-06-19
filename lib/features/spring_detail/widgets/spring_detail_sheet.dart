@@ -66,11 +66,12 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
   bool _onNotification(DraggableScrollableNotification notification) {
     if (!_dismissing && notification.extent < _dismissThreshold) {
       _dismissing = true;
-      Haptics.selection();
       context.pop();
     }
 
-    // A subtle detent tick when the sheet lands at (or leaves) full height.
+    // A single detent tick when the sheet locks into full height — the one
+    // satisfying "snapped into place" moment. Dismissing isn't ticked: the
+    // sheet visibly flying away is feedback enough.
     final atFull = notification.extent >= 0.999;
     if (atFull != _atFull) {
       _atFull = atFull;
@@ -286,7 +287,6 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
   }
 
   Future<void> _share(String name, LatLng position) {
-    Haptics.tap();
     return SpringActions.share(context.l10n, name: name, position: position);
   }
 
@@ -294,7 +294,6 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
   /// Shows the picker only when there is a real choice: 0 installed → silent
   /// Mapy.cz web fallback, 1 → open it directly, 2+ → let the user pick.
   Future<void> _openInMap(String name, LatLng position) async {
-    Haptics.tap();
     final maps = await SpringActions.installedMaps();
     if (!mounted) return;
 
@@ -330,7 +329,6 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
   }
 
   Future<void> _copyCoordinates(LatLng position) async {
-    Haptics.tap();
     await SpringActions.copyCoordinates(position);
     if (!mounted) return;
     showGlassSnackBar(

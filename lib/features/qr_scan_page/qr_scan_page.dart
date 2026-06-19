@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/navigation/app_router.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/providers/qr_scan_controller_provider.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/providers/qr_scan_provider.dart';
@@ -33,10 +32,7 @@ class QrScanPage extends ConsumerWidget {
         controller: controller,
         state: state,
         onDetect: notifier.handleDetection,
-        onRescan: () {
-          Haptics.tap();
-          return notifier.resumeScanning();
-        },
+        onRescan: notifier.resumeScanning,
       ),
     );
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_overlay.dart';
@@ -51,7 +50,6 @@ class _MapSearchWidgetState extends ConsumerState<MapSearchWidget> {
     MapSearchNotifier notifier,
     MapSearchResult result,
   ) {
-    Haptics.tap();
     notifier.select(result);
     widget.onResultSelected?.call(result);
     FocusScope.of(context).unfocus();

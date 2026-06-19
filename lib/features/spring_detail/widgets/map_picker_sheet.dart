@@ -3,7 +3,6 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:map_launcher/map_launcher.dart';
-import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
@@ -149,10 +148,7 @@ class _MapTile extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          Haptics.selection();
-          Navigator.of(context).pop(map);
-        },
+        onTap: () => Navigator.of(context).pop(map),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Row(
