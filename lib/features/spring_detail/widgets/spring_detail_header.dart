@@ -282,7 +282,7 @@ class _FavoriteButton extends StatelessWidget {
     final colors = Styles.appColors;
 
     // Apple-style "save to my list" (matching the map control): an outline
-    // bookmark that fills brand-blue once saved.
+    // bookmark that fills with the gold "saved" accent once saved.
     return IconButton(
       onPressed: onPressed,
       tooltip: isFavorite
@@ -290,7 +290,7 @@ class _FavoriteButton extends StatelessWidget {
           : l10n.spring_detail_add_favorite,
       icon: Icon(
         isFavorite ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-        color: isFavorite ? colors.primaryMain : colors.neutral700,
+        color: isFavorite ? colors.saved : colors.neutral700,
       ),
     );
   }

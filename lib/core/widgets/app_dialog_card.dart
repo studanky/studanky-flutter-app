@@ -55,7 +55,14 @@ class AppDialogCard extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 16, 8, 12),
                 child: Row(
                   children: [
-                    Icon(icon, color: iconColor ?? colors.primaryMain, size: 22),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Icon(
+                        icon,
+                        color: iconColor ?? colors.primaryMain,
+                        size: 22,
+                      ),
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(

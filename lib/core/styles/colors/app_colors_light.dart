@@ -93,6 +93,11 @@ class AppColorsLight extends AppColorsScheme {
   @override
   Color get verified => const Color(0xFF137A43);
 
+  // Vivid gold for the "saved to My Springs" state — the classic bookmark/star
+  // accent, distinct from the heavily-used brand blue.
+  @override
+  Color get saved => const Color(0xFFEAB308);
+
   // Spring status palette — distinct in hue *and* value so the marker reads at a
   // glance on a light map, with the glyph carrying the meaning for colour-blind
   // users. Stale is a cool desaturated slate (never the warm red of "not

@@ -95,6 +95,10 @@ class AppColorsDark extends AppColorsScheme {
   @override
   Color get verified => const Color(0xFF5FC97D);
 
+  // Vivid gold for the "saved to My Springs" state.
+  @override
+  Color get saved => const Color(0xFFFBBF24);
+
   // Spring status palette, brightened for the inverted dark map. Roles match the
   // light scheme: confident blue / warm red for flow, cool slate for stale and
   // neutral grey for the hollow unknown pin.

@@ -25,48 +25,20 @@ Future<SpringMarkerEntity?> showFavoritesDialog(BuildContext context) {
   );
 }
 
-class _FavoritesCard extends ConsumerWidget {
+class _FavoritesCard extends StatelessWidget {
   const _FavoritesCard();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Styles.appColors;
-    final count = ref.watch(
-      favoritesControllerProvider.select((f) => f.length),
-    );
-
-    return AppDialogCard(
-      icon: Icons.bookmark_rounded,
-      iconColor: colors.primaryMain,
-      title: context.l10n.favorites_sheet_title,
-      trailing: count == 0 ? null : _FavoritesCountBadge(count: count),
-      dividerUnderHeader: true,
-      maxHeightFactor: 0.66,
-      child: const _FavoritesBody(),
-    );
-  }
-}
-
-class _FavoritesCountBadge extends StatelessWidget {
-  const _FavoritesCountBadge({required this.count});
-
-  final int count;
 
   @override
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
-    final text = Styles.textStyles;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-      decoration: BoxDecoration(
-        color: colors.primaryMain.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(kRadiusPill),
-      ),
-      child: Text(
-        '$count',
-        style: text.title2.copyWith(color: colors.primaryMain),
-      ),
+    return AppDialogCard(
+      icon: Icons.bookmark_rounded,
+      iconColor: colors.saved,
+      title: context.l10n.favorites_sheet_title,
+      dividerUnderHeader: true,
+      maxHeightFactor: 0.66,
+      child: const _FavoritesBody(),
     );
   }
 }

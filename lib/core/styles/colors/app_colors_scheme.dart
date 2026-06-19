@@ -67,6 +67,12 @@ abstract class AppColorsScheme {
   /// blue so "verified" never blends with primary actions or links.
   Color get verified;
 
+  /// Accent for the "saved to My Springs" state — the filled bookmark in the
+  /// detail and the list dialog's header icon. A warm gold (the classic
+  /// "saved / bookmark / star" colour), kept distinct from the brand blue so
+  /// "saved/mine" reads as its own thing.
+  Color get saved;
+
   /// Spring status palette (zadání §6). Four legible, glyph-backed states:
   /// [statusFlowing] is the confident water-blue and [statusNotFlowing] the warm
   /// red, while [statusStale] (cool, desaturated slate) and [statusUnknown]
