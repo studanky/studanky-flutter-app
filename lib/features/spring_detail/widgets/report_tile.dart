@@ -76,7 +76,9 @@ class _ReportTileState extends State<ReportTile> {
                     ),
                   ),
                   // Provenance badge — a verified check + source name, the way
-                  // X / Meta mark a verified account.
+                  // X / Meta mark a verified account. The trust green (distinct
+                  // from the brand blue) carries "verified" on its own, so it
+                  // stays inline and minimal — no pill needed once it isn't grey.
                   if (report.isStationMeasurement)
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
@@ -86,14 +88,15 @@ class _ReportTileState extends State<ReportTile> {
                           Icon(
                             Icons.verified_rounded,
                             size: 16,
-                            color: colors.neutral700,
+                            color: colors.verified,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             l10n.spring_detail_station_record,
                             style: text.body2.copyWith(
                               fontSize: 12.5,
-                              color: colors.neutral700,
+                              fontWeight: FontWeight.w600,
+                              color: colors.verified,
                             ),
                           ),
                         ],

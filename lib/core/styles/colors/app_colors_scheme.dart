@@ -62,6 +62,11 @@ abstract class AppColorsScheme {
 
   Color get onSuccess;
 
+  /// Accent for an authoritative "verified provenance" badge (official ČHMÚ
+  /// station data). A trust green, kept deliberately distinct from the brand
+  /// blue so "verified" never blends with primary actions or links.
+  Color get verified;
+
   /// Spring status palette (zadání §6). Four legible, glyph-backed states:
   /// [statusFlowing] is the confident water-blue and [statusNotFlowing] the warm
   /// red, while [statusStale] (cool, desaturated slate) and [statusUnknown]

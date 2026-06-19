@@ -88,6 +88,11 @@ class AppColorsLight extends AppColorsScheme {
   @override
   Color get onSuccess => const Color(0xFFFFFFFF);
 
+  // Trust green for the "verified · ČHMÚ" provenance badge — distinct from the
+  // water-blue so official data reads as verified, not as a link/brand element.
+  @override
+  Color get verified => const Color(0xFF137A43);
+
   // Spring status palette — distinct in hue *and* value so the marker reads at a
   // glance on a light map, with the glyph carrying the meaning for colour-blind
   // users. Stale is a cool desaturated slate (never the warm red of "not
