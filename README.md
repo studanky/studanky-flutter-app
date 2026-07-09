@@ -14,7 +14,7 @@ When running or building manually, include `--dart-define-from-file=env_vars.jso
 
 Use the provided env file and include obfuscation with split debug info:
 
-- Android APK: `flutter build apk --verbose --obfuscate --split-debug-info=build/symbols --dart-define-from-file=env_vars.json`
+- Android AAB: `flutter build appbundle --verbose --obfuscate --split-debug-info=build/symbols --dart-define-from-file=env_vars.json`
 - iOS IPA: `flutter build ipa --verbose --obfuscate --split-debug-info=build/symbols --dart-define-from-file=env_vars.json`
 
 ## build runner
