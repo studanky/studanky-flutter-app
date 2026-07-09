@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:studanky_flutter_app/core/navigation/deep_links.dart';
 import 'package:studanky_flutter_app/features/spring_detail/utils/spring_formatters.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,21 +17,24 @@ class SpringActions {
 
   static final _logger = Logger('SpringActions');
 
-  /// A Mapy.cz web link to the spring, used in the share payload and as the
-  /// universal fallback when no maps app is installed.
+  /// A Mapy.cz web link to the spring, used as the universal fallback when no
+  /// maps app is installed for the "open on map" handoff.
   static String mapyUrl(LatLng position) =>
       'https://mapy.cz/zakladni?y=${position.latitude}&x=${position.longitude}&z=17';
 
-  /// Shares the spring's name, coordinates and a map link via the OS sheet.
+  /// Shares the spring's name, coordinates and a deep link to it via the OS
+  /// sheet. The link opens the app on this spring when installed, or routes to
+  /// the store when not.
   static Future<void> share(
     AppLocalizations l10n, {
+    required String documentId,
     required String name,
     required LatLng position,
   }) async {
     final text = l10n.spring_detail_share_text(
       name,
       SpringFormatters.coordinates(position),
-      mapyUrl(position),
+      DeepLinks.springShareUrl(documentId),
     );
     await SharePlus.instance.share(ShareParams(text: text, subject: name));
   }

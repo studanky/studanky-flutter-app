@@ -27,6 +27,28 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- App Links: claim https://studankyapp.cz/s/* so a shared spring
+                 link opens this app directly on the spring detail. autoVerify
+                 makes Android verify domain ownership against
+                 https://studankyapp.cz/.well-known/assetlinks.json, which
+                 suppresses the "open with" chooser. Path-scoped to /s/ so the
+                 marketing site on the same host is unaffected. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <!-- Both schemes per Android App Links guidance. Links we emit
+                     are always https (iOS Universal Links are https-only); http
+                     is defensive for links that arrive downgraded. -->
+                <data android:scheme="http"/>
+                <data android:scheme="https"/>
+                <data android:host="studankyapp.cz"/>
+                <data android:pathPrefix="/s/"/>
+            </intent-filter>
+            <!-- Hand the verified link to Flutter so go_router resolves it. -->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="true"/>
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

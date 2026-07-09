@@ -287,7 +287,12 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
   }
 
   Future<void> _share(String name, LatLng position) {
-    return SpringActions.share(context.l10n, name: name, position: position);
+    return SpringActions.share(
+      context.l10n,
+      documentId: _documentId,
+      name: name,
+      position: position,
+    );
   }
 
   /// Opens the spring as a pinned marker in a maps app the user actually has.

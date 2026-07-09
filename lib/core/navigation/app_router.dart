@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:studanky_flutter_app/core/navigation/deep_links.dart';
 import 'package:studanky_flutter_app/core/widgets/error_widget.dart';
 import 'package:studanky_flutter_app/features/map_page/map_page.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/qr_scan_page.dart';
@@ -69,6 +70,26 @@ class SpringRoute extends GoRouteData with $SpringRoute {
         marker: $extra,
         state: state,
       );
+}
+
+/// `/s/:documentId` — public share entry point and Universal/App Link target.
+///
+/// The shared URL is deliberately short and brand-friendly
+/// (`https://studankyapp.cz/s/{documentId}`, path-scoped so the marketing site
+/// stays untouched). This route maps that public link onto the canonical
+/// [SpringRoute], letting the two evolve independently. It is redirect-only and
+/// never builds a screen. The path pattern is owned by [DeepLinks] so the route
+/// matcher and the share-URL builder ([DeepLinks.springShareUrl]) share one
+/// definition.
+@TypedGoRoute<ShareRoute>(path: DeepLinks.springSharePattern)
+class ShareRoute extends GoRouteData with $ShareRoute {
+  const ShareRoute({required this.documentId});
+
+  final String documentId;
+
+  @override
+  String? redirect(BuildContext context, GoRouterState state) =>
+      SpringRoute(documentId: documentId).location;
 }
 
 /// `/scanner` — full-screen QR scanner.
