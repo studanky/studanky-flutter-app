@@ -5,10 +5,21 @@ import 'package:studanky_flutter_app/core/widgets/async_value_builder.dart';
 import 'package:studanky_flutter_app/core/widgets/error_widget.dart';
 import 'package:studanky_flutter_app/features/map_page/map_page_content.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/offline_placeholder.dart';
+import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 class MapPage extends ConsumerWidget {
-  const MapPage({super.key});
+  const MapPage({super.key, this.detailDocumentId, this.detailMarker});
+
+  /// When set, the map shows this spring's detail sheet (route
+  /// `/map/spring/:documentId`); null is the plain `/map` home. Both routes
+  /// resolve to this one page, so opening/closing the detail is a parameter
+  /// change on the live map, never a page swap.
+  final String? detailDocumentId;
+
+  /// Already-loaded marker for an instant sheet header; null on a deep link /
+  /// QR scan, where the sheet fetches by [detailDocumentId].
+  final SpringMarkerEntity? detailMarker;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,7 +43,10 @@ class MapPage extends ConsumerWidget {
           onRefresh: invalidateConnectivity,
         ),
         data: (online) => online
-            ? const MapPageContent()
+            ? MapPageContent(
+                detailDocumentId: detailDocumentId,
+                detailMarker: detailMarker,
+              )
             : OfflinePlaceholder(onRetry: invalidateConnectivity),
       ),
     );

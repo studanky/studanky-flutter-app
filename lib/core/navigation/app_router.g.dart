@@ -6,18 +6,15 @@ part of 'app_router.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [$mapRoute, $shareRoute, $scannerRoute];
+List<RouteBase> get $appRoutes => [
+  $mapRoute,
+  $springRoute,
+  $shareRoute,
+  $scannerRoute,
+];
 
-RouteBase get $mapRoute => GoRouteData.$route(
-  path: '/map',
-  factory: $MapRoute._fromState,
-  routes: [
-    GoRouteData.$route(
-      path: 'spring/:documentId',
-      factory: $SpringRoute._fromState,
-    ),
-  ],
-);
+RouteBase get $mapRoute =>
+    GoRouteData.$route(path: '/map', factory: $MapRoute._fromState);
 
 mixin $MapRoute on GoRouteData {
   static MapRoute _fromState(GoRouterState state) => const MapRoute();
@@ -38,6 +35,11 @@ mixin $MapRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
+
+RouteBase get $springRoute => GoRouteData.$route(
+  path: '/map/spring/:documentId',
+  factory: $SpringRoute._fromState,
+);
 
 mixin $SpringRoute on GoRouteData {
   static SpringRoute _fromState(GoRouterState state) => SpringRoute(

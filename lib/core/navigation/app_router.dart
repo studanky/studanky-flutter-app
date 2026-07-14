@@ -4,7 +4,6 @@ import 'package:studanky_flutter_app/core/navigation/deep_links.dart';
 import 'package:studanky_flutter_app/core/widgets/error_widget.dart';
 import 'package:studanky_flutter_app/features/map_page/map_page.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/qr_scan_page.dart';
-import 'package:studanky_flutter_app/features/spring_detail/spring_detail_page.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 
 part 'app_router.g.dart';
@@ -18,9 +17,14 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
 
 /// The single source of truth for app navigation.
 ///
-/// The map is the home. The spring detail overlays the map as a non-opaque,
-/// deep-linkable child route (`/map/spring/:documentId`); the QR scanner is a
-/// top-level route that, on a successful scan, navigates to that detail.
+/// The map is the home. The spring detail is deep-linkable
+/// (`/map/spring/:documentId`) but is **not** a separate screen: both routes
+/// resolve to the same [MapPage] page (same page key), so navigating between
+/// them swaps a parameter on the live map instead of pushing a modal route.
+/// The map keeps its camera and stays fully interactive under the half-open
+/// detail sheet — the Google/Apple Maps pattern — and tapping another marker
+/// switches the detail in one tap. The QR scanner is a top-level route that,
+/// on a successful scan, navigates to the detail.
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: const MapRoute().location,
@@ -38,25 +42,44 @@ final GoRouter appRouter = GoRouter(
   ),
 );
 
+/// Shared page identity for `/map` and `/map/spring/:id`: pages with the same
+/// key and type are *updated in place* by the Navigator, so switching between
+/// the two routes rebuilds the one live map page (state preserved) instead of
+/// pushing/popping. The detail sheet animates itself, so no page transition is
+/// wanted here.
+const ValueKey<String> _mapPageKey = ValueKey('map-page');
+
+Page<void> _mapPage({String? detailDocumentId, SpringMarkerEntity? marker}) =>
+    NoTransitionPage<void>(
+      key: _mapPageKey,
+      child: MapPage(
+        detailDocumentId: detailDocumentId,
+        detailMarker: marker,
+      ),
+    );
+
 /// `/map` — the home screen.
-@TypedGoRoute<MapRoute>(
-  path: '/map',
-  routes: [TypedGoRoute<SpringRoute>(path: 'spring/:documentId')],
-)
+@TypedGoRoute<MapRoute>(path: '/map')
 class MapRoute extends GoRouteData with $MapRoute {
   const MapRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const MapPage();
+  Page<void> buildPage(BuildContext context, GoRouterState state) => _mapPage();
 }
 
-/// `/map/spring/:documentId` — spring detail, a non-opaque overlay above the
-/// map.
+/// `/map/spring/:documentId` — the map with a spring's detail sheet open.
+///
+/// Declared as a *sibling* of [MapRoute] (not a child) on purpose: a child
+/// route would add a second page to the stack, turning the detail back into a
+/// modal overlay that blocks the map. As a sibling resolving to the same page
+/// key, opening/closing/switching the detail is just a parameter change on the
+/// live map page.
 ///
 /// [documentId] is a path param so the detail is deep-linkable (e.g. a QR code
-/// at the spring). The optional [$extra] carries an already-loaded marker for an
-/// instant header; when absent (deep link / scan) the page falls back to
+/// at the spring). The optional [$extra] carries an already-loaded marker for
+/// an instant header; when absent (deep link / scan) the sheet falls back to
 /// fetching the spring by id.
+@TypedGoRoute<SpringRoute>(path: '/map/spring/:documentId')
 class SpringRoute extends GoRouteData with $SpringRoute {
   const SpringRoute({required this.documentId, this.$extra});
 
@@ -65,11 +88,7 @@ class SpringRoute extends GoRouteData with $SpringRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) =>
-      SpringDetailPage.page(
-        documentId: documentId,
-        marker: $extra,
-        state: state,
-      );
+      _mapPage(detailDocumentId: documentId, marker: $extra);
 }
 
 /// `/s/:documentId` — public share entry point and Universal/App Link target.

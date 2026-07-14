@@ -58,11 +58,17 @@ void main() {
       expect(shareRoute.redirect, isNotNull);
     });
 
-    test('the spring detail is a child of /map (mirrors the UI hierarchy)', () {
+    test('the spring detail is a top-level sibling of /map (one live page)', () {
+      // Deliberately NOT a child of /map: a child route would add a second,
+      // modal page above the map. As a sibling resolving to the same page key,
+      // opening/closing/switching the detail is a parameter change on the live
+      // map page — the map stays interactive behind the half-open sheet and
+      // tapping another marker switches the detail in one tap.
+      final paths = topLevel().map((r) => r.path).toList();
+      expect(paths, contains('/map/spring/:documentId'));
+
       final mapRoute = topLevel().firstWhere((r) => r.path == '/map');
-      final childPaths =
-          mapRoute.routes.whereType<GoRoute>().map((r) => r.path).toList();
-      expect(childPaths, contains('spring/:documentId'));
+      expect(mapRoute.routes, isEmpty);
     });
 
     test('starts on the map', () {

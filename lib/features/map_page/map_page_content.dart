@@ -34,13 +34,24 @@ import 'package:studanky_flutter_app/features/map_search/entities/map_search_res
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
+import 'package:studanky_flutter_app/features/spring_detail/spring_detail_overlay.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 class MapPageContent extends ConsumerStatefulWidget {
-  const MapPageContent({super.key});
+  const MapPageContent({super.key, this.detailDocumentId, this.detailMarker});
+
+  /// Spring whose detail sheet is open (route `/map/spring/:documentId`), or
+  /// null on plain `/map`. The sheet lives inside this page's stack — the two
+  /// routes resolve to one live map page — so the map stays interactive under
+  /// the half-open detail and tapping another marker switches in one tap.
+  final String? detailDocumentId;
+
+  /// Already-loaded marker for an instant sheet header; null on a deep link /
+  /// QR scan.
+  final SpringMarkerEntity? detailMarker;
 
   @override
   ConsumerState<MapPageContent> createState() => _MapPageContentState();
@@ -145,11 +156,6 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   _MapEmptyOverlayMode _mapEmptyOverlayMode = _MapEmptyOverlayMode.hidden;
   int _searchSelectionToken = 0;
 
-  /// Spring whose detail sheet is currently open — its marker renders in the
-  /// selection green so it stands out among neighbouring pins. Null when no
-  /// detail is open.
-  String? _selectedSpringId;
-
   /// Last integer zoom level a slider-drag haptic fired at, so the continuous
   /// drag ticks once per crossed level (a detent) instead of every frame.
   int? _lastZoomDetent;
@@ -199,6 +205,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     }
     _cameraDebounceTimer?.cancel();
     _cameraDebounceTimer = Timer(_cameraDebounce, _emitCamera);
+  }
+
+  void _onMapTap() {
+    _dismissKeyboard();
+    if (widget.detailDocumentId != null) _closeSpringDetail();
   }
 
   /// Map-app convention (Google/Apple/Mapy.cz): any touch on the map ends text
@@ -463,27 +474,25 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     );
   }
 
-  /// Opens the routed detail sheet for [spring] and keeps its marker
-  /// highlighted (selection green) for exactly as long as the sheet is up —
-  /// the returned future of the route push completes on dismiss.
-  Future<void> _openSpringDetail(SpringMarkerEntity spring) async {
-    setState(() => _selectedSpringId = spring.documentId);
-    try {
-      await SpringRoute(
-        documentId: spring.documentId,
-        $extra: spring,
-      ).push<void>(context);
-    } finally {
-      if (mounted) setState(() => _selectedSpringId = null);
-    }
+  /// Opens (or switches) the detail sheet for [spring] by navigating to its
+  /// route — the sheet is part of this page, so this is a parameter change on
+  /// the live map, and the marker highlight (selection green) follows the
+  /// route param. Works both from a closed map and with another spring's
+  /// detail already open (the one-tap switch).
+  void _openSpringDetail(SpringMarkerEntity spring) {
+    SpringRoute(documentId: spring.documentId, $extra: spring).go(context);
   }
+
+  /// Closes an open detail sheet: back to plain `/map` (flips the param,
+  /// which plays the sheet's exit slide).
+  void _closeSpringDetail() => const MapRoute().go(context);
 
   void _onSpringTap(SpringMarkerEntity spring) {
     _logger.fine('Spring tapped: ${spring.documentId} (${spring.name})');
     FocusScope.of(context).unfocus();
     // Glide the marker into the visible upper strip while the sheet slides in.
     unawaited(_animator.animateTo(center: _detailFocusCenter(spring.position)));
-    unawaited(_openSpringDetail(spring));
+    _openSpringDetail(spring);
   }
 
   /// Opens the favourites popup; if the user picks one, animate-centers the map
@@ -499,7 +508,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
         zoom: _recenterMinZoom,
       ),
     );
-    unawaited(_openSpringDetail(selected));
+    _openSpringDetail(selected);
   }
 
   void _onSearchResultSelected(MapSearchResult result) {
@@ -521,7 +530,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
         zoom: _springSearchZoom,
       );
       if (!mounted || selectionToken != _searchSelectionToken) return;
-      unawaited(_openSpringDetail(spring));
+      _openSpringDetail(spring);
       return;
     }
 
@@ -593,7 +602,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
             spring,
             config.iconFor(spring.status.wireValue, spring.statusUpdatedAt),
             onTap: () => _onSpringTap(spring),
-            selected: spring.documentId == _selectedSpringId,
+            selected: spring.documentId == widget.detailDocumentId,
             semanticsLabel: l10n.map_marker_semantic(
               spring.name,
               _statusLabelFor(
@@ -632,8 +641,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                 onMapReady: _onMapReady,
                 onMapEvent: _onMapEvent,
                 // A bare tap on the map (no marker hit) dismisses the keyboard,
-                // like panning does — see [_dismissKeyboard].
-                onTap: (_, _) => _dismissKeyboard(),
+                // like panning does — and, map-app convention, closes an open
+                // detail sheet. Marker taps never reach here.
+                onTap: (_, _) => _onMapTap(),
                 interactionOptions: const InteractionOptions(
                   flags: _mapInteractionFlags,
                   enableMultiFingerGestureRace: true,
@@ -798,17 +808,36 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
               ],
             ),
           ),
+          // Spring detail — a widget in this stack, not a route, so the map
+          // stays interactive behind the half-open sheet and tapping another
+          // marker switches the detail in one tap. Last child: above every
+          // control on the Z axis.
+          SpringDetailOverlay(
+            documentId: widget.detailDocumentId,
+            marker: widget.detailMarker,
+            onDismissed: _closeSpringDetail,
+          ),
         ],
       ),
     );
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      // Status-bar glyphs read against the frosted scrim: dark glyphs over the
-      // light wash (light theme), light glyphs over the dark wash (dark theme).
-      value: isDarkMode
-          ? SystemUiOverlayStyle.light
-          : SystemUiOverlayStyle.dark,
-      child: content,
+    return PopScope(
+      // While a detail sheet is open, the system back gesture/button closes it
+      // instead of leaving the map (the page never pops — the route param
+      // flips and the sheet slides away).
+      canPop: widget.detailDocumentId == null,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _closeSpringDetail();
+      },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        // Status-bar glyphs read against the frosted scrim: dark glyphs over
+        // the light wash (light theme), light glyphs over the dark wash (dark
+        // theme).
+        value: isDarkMode
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
+        child: content,
+      ),
     );
   }
 }

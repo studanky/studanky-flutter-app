@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:studanky_flutter_app/core/haptics/haptics.dart';
@@ -23,11 +22,12 @@ import 'package:studanky_flutter_app/features/springs/entities/spring_marker_ent
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// The spring detail content: a draggable sheet that starts at half height and
-/// can be dragged to full screen. Hosted by `SpringDetailPage`, which provides
-/// the routed, non-opaque presentation (frosted backdrop + slide transition).
+/// can be dragged to full screen. Hosted by `SpringDetailOverlay`, which owns
+/// the in-map presentation (entrance slide + extent-driven frost).
 class SpringDetailSheet extends StatefulWidget {
   const SpringDetailSheet({
     required this.documentId,
+    required this.onDismissed,
     this.marker,
     super.key,
   });
@@ -38,6 +38,12 @@ class SpringDetailSheet extends StatefulWidget {
   /// Optional pre-loaded summary for an instant header; null on a deep link /
   /// QR scan, where the sheet falls back to fetching by [documentId].
   final SpringMarkerEntity? marker;
+
+  /// Invoked once when the sheet is dragged below its dismiss threshold. The
+  /// host closes the detail (navigates back to plain `/map`) and animates the
+  /// sheet away — the sheet is a widget in the map's stack, not a route, so it
+  /// cannot pop itself.
+  final VoidCallback onDismissed;
 
   /// Opening height as a fraction of the screen. Public because the map page
   /// derives from it where to park the camera so the tapped spring stays
@@ -71,7 +77,7 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
   bool _onNotification(DraggableScrollableNotification notification) {
     if (!_dismissing && notification.extent < _dismissThreshold) {
       _dismissing = true;
-      context.pop();
+      widget.onDismissed();
     }
 
     // A single detent tick when the sheet locks into full height — the one
