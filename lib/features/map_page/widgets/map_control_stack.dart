@@ -1,4 +1,4 @@
-import 'dart:ui' as ui;
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
@@ -34,10 +34,11 @@ class MapControlStack extends StatelessWidget {
     final colors = Styles.appColors;
     final l10n = context.l10n;
 
-    // Each control is a neutral glass tile in every state so the red north
-    // needle keeps strong contrast (an orange/amber fill washed it out). Map
-    // rotation is signalled by the rotating needle; being centred on the user
-    // is signalled by the filled blue centre dot.
+    // The location/compass control has one job at a time. Rotation wins: if
+    // north is not up, the red outlined navigation arrow means "tap to reset
+    // north" regardless of location centering. With north already up, the same
+    // glyph becomes a location state: filled blue when centered, neutral
+    // outline when not.
     //
     // Top → bottom: help · favourites · location/compass.
     return Column(
@@ -72,7 +73,7 @@ class MapControlStack extends StatelessWidget {
           child: isLocating
               // primaryInteractive over the glass tile: the brand blue only
               // reached ~2.8:1 there, under the 3:1 floor for meaningful
-              // graphics (same for the "centered" dot below).
+              // graphics in the active centered state.
               ? SizedBox(
                   width: 20,
                   height: 20,
@@ -81,19 +82,9 @@ class MapControlStack extends StatelessWidget {
                     color: colors.primaryInteractive,
                   ),
                 )
-              : CustomPaint(
-                  size: const Size.square(24),
-                  painter: CompassPainter(
-                    rotationRad: rotationRad,
-                    centered: centered,
-                    northColor: colors.error,
-                    // The arms carry orientation (meaningful, needs ≥3:1 on the
-                    // glass) — neutral500 faded to ~1.8:1 over pale tiles.
-                    armColor: colors.neutral700,
-                    dotColor: centered
-                        ? colors.primaryInteractive
-                        : colors.neutral700,
-                  ),
+              : _NavigationCompassIcon(
+                  rotationRad: rotationRad,
+                  centered: centered,
                 ),
         ),
       ],
@@ -137,78 +128,49 @@ class GlassIconButton extends StatelessWidget {
   }
 }
 
-/// A small compass: a red arrow always pointing to true north (rotates with
-/// the map), neutral S/E/W arms, and a centre dot that fills when the map is
-/// centred on the user. Mirrors the mapy.com-style location/orient control.
-class CompassPainter extends CustomPainter {
-  CompassPainter({
+class _NavigationCompassIcon extends StatelessWidget {
+  const _NavigationCompassIcon({
     required this.rotationRad,
     required this.centered,
-    required this.northColor,
-    required this.armColor,
-    required this.dotColor,
   });
 
   final double rotationRad;
   final bool centered;
-  final Color northColor;
-  final Color armColor;
-  final Color dotColor;
+
+  static const double _size = 24;
+  static const double _northEpsilonRad = math.pi / 180;
 
   @override
-  void paint(Canvas canvas, Size size) {
-    final center = size.center(Offset.zero);
-    final arm = size.width / 2;
+  Widget build(BuildContext context) {
+    final colors = Styles.appColors;
+    final rotation = _signedRotation(rotationRad);
+    final northUp = rotation.abs() <= _northEpsilonRad;
 
-    canvas
-      ..save()
-      ..translate(center.dx, center.dy)
-      ..rotate(rotationRad);
+    final IconData icon;
+    final Color color;
 
-    final armPaint = Paint()
-      ..color = armColor
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-
-    canvas
-      ..drawLine(Offset.zero, Offset(0, arm), armPaint)
-      ..drawLine(Offset.zero, Offset(arm, 0), armPaint)
-      ..drawLine(Offset.zero, Offset(-arm, 0), armPaint);
-
-    final northPaint = Paint()
-      ..color = northColor
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(Offset.zero, Offset(0, -arm + 3), northPaint);
-
-    final tip = ui.Path()
-      ..moveTo(0, -arm - 1)
-      ..lineTo(-3.5, -arm + 5)
-      ..lineTo(3.5, -arm + 5)
-      ..close();
-    canvas
-      ..drawPath(tip, Paint()..color = northColor)
-      ..restore();
-
-    if (centered) {
-      canvas.drawCircle(center, 3.2, Paint()..color = dotColor);
+    if (!northUp) {
+      icon = Icons.navigation_outlined;
+      color = colors.errorText;
+    } else if (centered) {
+      icon = Icons.navigation_rounded;
+      color = colors.primaryInteractive;
     } else {
-      canvas.drawCircle(
-        center,
-        3,
-        Paint()
-          ..color = dotColor
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2,
-      );
+      icon = Icons.navigation_outlined;
+      color = colors.neutral700;
     }
+
+    return Transform.rotate(
+      angle: northUp ? 0 : rotation,
+      child: Icon(icon, size: _size, color: color),
+    );
   }
 
-  @override
-  bool shouldRepaint(CompassPainter old) =>
-      old.rotationRad != rotationRad ||
-      old.centered != centered ||
-      old.northColor != northColor ||
-      old.armColor != armColor ||
-      old.dotColor != dotColor;
+  double _signedRotation(double radians) {
+    const fullTurn = math.pi * 2;
+    final normalized = radians % fullTurn;
+    if (normalized > math.pi) return normalized - fullTurn;
+    if (normalized < -math.pi) return normalized + fullTurn;
+    return normalized;
+  }
 }
