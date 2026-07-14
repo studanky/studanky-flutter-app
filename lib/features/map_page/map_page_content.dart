@@ -165,6 +165,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// drag ticks once per crossed level (a detent) instead of every frame.
   int? _lastZoomDetent;
 
+  /// Last reported detail-sheet extent. Kept outside Flutter state because it
+  /// only affects future camera calculations; rebuilding the map on every drag
+  /// frame would be wasteful.
+  double _detailSheetExtent = SpringDetailSheet.initialSize;
+
   /// Live map orientation + centered state for the compass/location button.
   /// Kept in a [ValueNotifier] so map rotation repaints only the button, never
   /// the whole map.
@@ -441,42 +446,57 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     // [expansionZoom] is only the level at which the cluster *starts* to break
     // apart — landing exactly there leaves the points still cramped. Push a few
     // levels closer (clamped to the max) so the children spread out with room
-    // to read them, centred on the cluster.
-    final targetZoom = (cluster.expansionZoom + _clusterExpandZoomBoost).clamp(
-      _minZoom,
-      _maxZoom,
-    );
-    unawaited(_animator.animateTo(center: cluster.position, zoom: targetZoom));
+    // to read them. With detail open, target the currently visible map strip,
+    // not the centre of the obscured full viewport.
+    final targetZoom = (cluster.expansionZoom + _clusterExpandZoomBoost)
+        .clamp(_minZoom, _maxZoom)
+        .toDouble();
+    final targetCenter = widget.detailDocumentId == null
+        ? cluster.position
+        : _detailFocusCenter(
+            cluster.position,
+            zoom: targetZoom,
+            sheetExtent: _detailSheetExtent,
+          );
+    unawaited(_animator.animateTo(center: targetCenter, zoom: targetZoom));
   }
 
-  /// Camera centre that parks [spring] in the middle of the map strip left
+  /// Camera centre that parks [target] in the middle of the map strip left
   /// visible above the half-open detail sheet — so opening the detail shows
-  /// the spring *and its surroundings* instead of burying it under the sheet.
+  /// the selected point *and its surroundings* instead of burying it under the
+  /// sheet.
   ///
   /// The strip is measured in *safe-area* terms: the detail page insets the
   /// sheet below the status bar, so the sheet's pixel height is
-  /// `initialSize · (viewport − topInset)`, and the marker belongs at the
-  /// midpoint between the safe-area top and the sheet's top edge:
+  /// `extent · (viewport − topInset)`, and the target belongs at the midpoint
+  /// between the safe-area top and the sheet's top edge:
   ///
   ///   sheetTop = h − (h − topInset)·s
-  ///   markerY  = (topInset + sheetTop) / 2
-  ///   shift    = h/2 − markerY = ((h − topInset)·s − topInset) / 2
+  ///   targetY  = (topInset + sheetTop) / 2
+  ///   shift    = h/2 − targetY = ((h − topInset)·s − topInset) / 2
   ///
   /// [MapCamera.screenOffsetToLatLng] works in screen space, so map rotation
   /// is accounted for.
-  LatLng _detailFocusCenter(LatLng spring, {double? zoom}) {
-    final onSpring = _mapController.camera.withPosition(
-      center: spring,
+  LatLng _detailFocusCenter(
+    LatLng target, {
+    double? zoom,
+    double sheetExtent = SpringDetailSheet.initialSize,
+  }) {
+    final onTarget = _mapController.camera.withPosition(
+      center: target,
       zoom: zoom,
     );
-    final size = onSpring.nonRotatedSize;
+    final size = onTarget.nonRotatedSize;
     final topInset = MediaQuery.viewPaddingOf(context).top;
-    final shift =
-        ((size.height - topInset) * SpringDetailSheet.initialSize - topInset) /
-        2;
-    return onSpring.screenOffsetToLatLng(
+    final extent = sheetExtent.clamp(0.0, 1.0).toDouble();
+    final shift = ((size.height - topInset) * extent - topInset) / 2;
+    return onTarget.screenOffsetToLatLng(
       size.center(Offset.zero) + Offset(0, shift),
     );
+  }
+
+  void _onDetailSheetExtentChanged(double extent) {
+    _detailSheetExtent = extent.clamp(0.0, 1.0).toDouble();
   }
 
   /// Opens (or switches) the detail sheet for [spring] by navigating to its
@@ -808,7 +828,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                               child: ConstrainedBox(
                                 // Don't stretch the search field across wide
                                 // screens.
-                                constraints: const BoxConstraints(maxWidth: 600),
+                                constraints: const BoxConstraints(
+                                  maxWidth: 600,
+                                ),
                                 child: MapSearchWidget(
                                   hintText: l10n.map_search_hint,
                                   originProvider: _searchOrigin,
@@ -853,6 +875,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
             documentId: widget.detailDocumentId,
             marker: widget.detailMarker,
             onDismissed: _closeSpringDetail,
+            onExtentChanged: _onDetailSheetExtentChanged,
           ),
         ],
       ),

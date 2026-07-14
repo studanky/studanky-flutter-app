@@ -27,6 +27,7 @@ class SpringDetailOverlay extends StatefulWidget {
     required this.documentId,
     required this.marker,
     required this.onDismissed,
+    this.onExtentChanged,
   });
 
   /// Spring to show; null plays the exit slide and then renders nothing.
@@ -40,6 +41,10 @@ class SpringDetailOverlay extends StatefulWidget {
   /// navigates back to plain `/map`, which flips [documentId] to null and
   /// plays the exit slide.
   final VoidCallback onDismissed;
+
+  /// Reports the live [DraggableScrollableSheet] extent to the map host so
+  /// camera moves can target the currently visible map area.
+  final ValueChanged<double>? onExtentChanged;
 
   @override
   State<SpringDetailOverlay> createState() => _SpringDetailOverlayState();
@@ -73,6 +78,7 @@ class _SpringDetailOverlayState extends State<SpringDetailOverlay>
     final id = widget.documentId;
     if (id != null) {
       _visible = (documentId: id, marker: widget.marker);
+      _setSheetExtent(_sheetExtent.value);
       _entrance.forward();
     }
   }
@@ -84,6 +90,7 @@ class _SpringDetailOverlayState extends State<SpringDetailOverlay>
 
     if (id == null) {
       if (_visible == null) return;
+      widget.onExtentChanged?.call(SpringDetailSheet.initialSize);
       // Slide out, then drop the content. A forward() supersedes the reverse
       // ticker (its future never completes), so a reopen mid-exit is safe; the
       // guard covers the notification-driven dismiss navigating first.
@@ -98,9 +105,9 @@ class _SpringDetailOverlayState extends State<SpringDetailOverlay>
     if (_visible?.documentId != id) {
       setState(() {
         _visible = (documentId: id, marker: widget.marker);
-        // A different spring starts back at the half-open detent.
-        _sheetExtent.value = SpringDetailSheet.initialSize;
       });
+      // A different spring starts back at the half-open detent.
+      _setSheetExtent(SpringDetailSheet.initialSize);
     }
     _entrance.forward();
   }
@@ -113,8 +120,13 @@ class _SpringDetailOverlayState extends State<SpringDetailOverlay>
   }
 
   bool _onSheetNotification(DraggableScrollableNotification notification) {
-    _sheetExtent.value = notification.extent;
+    _setSheetExtent(notification.extent);
     return false;
+  }
+
+  void _setSheetExtent(double extent) {
+    _sheetExtent.value = extent;
+    widget.onExtentChanged?.call(extent);
   }
 
   @override
