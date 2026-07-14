@@ -57,9 +57,14 @@ class _ClusterBadge extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
+          // Deliberately the same water blue as the "flowing" marker so the map
+          // canvas speaks a single blue; the count qualifies as WCAG large text
+          // (≥18.66px bold), where the brand blue's 3.3:1 with [onPrimary]
+          // clears the 3:1 large-text/graphics floor. The ring is the shared
+          // [markerRing] so it stays white in both themes.
           color: colors.primaryMain,
           shape: BoxShape.circle,
-          border: Border.all(color: colors.onPrimary, width: 2),
+          border: Border.all(color: colors.markerRing, width: 2),
           boxShadow: [
             BoxShadow(
               color: colors.primaryMain.withValues(alpha: isDark ? 0.55 : 0.4),
@@ -78,7 +83,11 @@ class _ClusterBadge extends StatelessWidget {
           label,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
             color: colors.onPrimary,
-            fontWeight: FontWeight.bold,
+            // Large-text size (with bold) — both for the AA floor above and for
+            // at-a-glance counts; Google-style clusters use big numerals too.
+            fontSize: 19,
+            height: 1,
+            fontWeight: FontWeight.w800,
           ),
         ),
       ),

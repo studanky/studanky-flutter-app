@@ -388,6 +388,18 @@ abstract class AppLocalizations {
   /// **'Vyhledávání teď není dostupné.'**
   String get map_search_error;
 
+  /// No description provided for @map_search_clear.
+  ///
+  /// In cs, this message translates to:
+  /// **'Vymazat hledání'**
+  String get map_search_clear;
+
+  /// No description provided for @map_search_close.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zavřít vyhledávání'**
+  String get map_search_close;
+
   /// No description provided for @map_search_type_spring.
   ///
   /// In cs, this message translates to:

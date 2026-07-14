@@ -39,13 +39,18 @@ class SpringDetailSheet extends StatefulWidget {
   /// QR scan, where the sheet falls back to fetching by [documentId].
   final SpringMarkerEntity? marker;
 
+  /// Opening height as a fraction of the screen. Public because the map page
+  /// derives from it where to park the camera so the tapped spring stays
+  /// centred in the strip left visible above the half-open sheet.
+  static const double initialSize = 0.55;
+
   @override
   State<SpringDetailSheet> createState() => _SpringDetailSheetState();
 }
 
 class _SpringDetailSheetState extends State<SpringDetailSheet> {
   /// Opening height (half screen).
-  static const double _initialSize = 0.55;
+  static const double _initialSize = SpringDetailSheet.initialSize;
 
   /// Lets the sheet be dragged well below half so a downward swipe can cross
   /// the dismiss threshold (it never rests this low — it pops first).

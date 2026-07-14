@@ -282,16 +282,46 @@ class _FavoriteButton extends StatelessWidget {
     final colors = Styles.appColors;
 
     // Apple-style "save to my list" (matching the map control): an outline
-    // bookmark that fills with the gold "saved" accent once saved.
+    // bookmark that fills with the gold "saved" accent once saved. The filled
+    // state gets a soft golden halo — the glow is a reward cue, while the
+    // filled-vs-outline glyph is what actually carries the state.
+    final icon = Icon(
+      isFavorite ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+      color: isFavorite ? colors.saved : colors.neutral700,
+      shadows: isFavorite
+          ? [
+              Shadow(
+                color: colors.saved.withValues(alpha: 0.55),
+                blurRadius: 10,
+              ),
+              Shadow(
+                color: colors.saved.withValues(alpha: 0.30),
+                blurRadius: 22,
+              ),
+            ]
+          : null,
+    );
+
+    // Saving pops in with a slight overshoot (the familiar like/save reward
+    // moment); un-saving swaps back without ceremony. Skipped entirely when
+    // the user asks the OS to reduce motion.
+    final animate = isFavorite && !MediaQuery.disableAnimationsOf(context);
+
     return IconButton(
       onPressed: onPressed,
       tooltip: isFavorite
           ? l10n.spring_detail_remove_favorite
           : l10n.spring_detail_add_favorite,
-      icon: Icon(
-        isFavorite ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-        color: isFavorite ? colors.saved : colors.neutral700,
-      ),
+      icon: animate
+          ? TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.6, end: 1),
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeOutBack,
+              builder: (context, scale, child) =>
+                  Transform.scale(scale: scale, child: child),
+              child: icon,
+            )
+          : icon,
     );
   }
 }
@@ -309,30 +339,41 @@ class _HeroCoordinates extends StatelessWidget {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
 
+    // The row keeps its small, quiet visual — but the tappable area is grown
+    // to the 44px minimum (Apple HIG); the old padded text was a ~22px target.
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 10, 16, 0),
+      padding: const EdgeInsets.fromLTRB(12, 2, 16, 0),
       child: Align(
         alignment: Alignment.centerLeft,
         child: InkWell(
           onTap: onCopy,
           borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.place_outlined, size: 14, color: colors.neutral500),
-                const SizedBox(width: 5),
-                Text(
-                  SpringFormatters.coordinates(position),
-                  style: text.body2.copyWith(
-                    fontSize: 12.5,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // neutral700, not neutral500: the copy glyph signals the
+                  // interaction, so it needs icon-grade contrast (≥3:1).
+                  Icon(
+                    Icons.place_outlined,
+                    size: 14,
                     color: colors.neutral700,
                   ),
-                ),
-                const SizedBox(width: 6),
-                Icon(Icons.copy_rounded, size: 13, color: colors.neutral500),
-              ],
+                  const SizedBox(width: 5),
+                  Text(
+                    SpringFormatters.coordinates(position),
+                    style: text.body2.copyWith(
+                      fontSize: 12.5,
+                      color: colors.neutral700,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(Icons.copy_rounded, size: 13, color: colors.neutral700),
+                ],
+              ),
             ),
           ),
         ),

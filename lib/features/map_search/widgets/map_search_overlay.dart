@@ -35,30 +35,42 @@ class MapSearchOverlay extends StatelessWidget {
     final errorMessage = searchResults.hasError
         ? context.l10n.map_search_error
         : null;
+    // Map-app convention (Google/Apple/Mapy.cz): suggestions belong to active
+    // text entry. Touching the map unfocuses the field, which hides the
+    // dropdown/error but keeps the typed query as context — refocusing the
+    // field brings the cached suggestions straight back.
+    final showOverlays = focusNode.hasFocus;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Frosted-glass search pill (zadání §5).
+        // Frosted-glass search pill (zadání §5). The field is the app's primary
+        // input, so it uses the full 16px body size (M3 search-bar scale) and
+        // the AA-safe [textHint] for the placeholder — neutral500 washed out to
+        // ~1.8:1 over the glass on pale map tiles.
         GlassSurface(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          padding: const EdgeInsets.only(left: 14, right: 4),
           child: Row(
             children: [
-              Icon(Icons.search_rounded, size: 20, color: colors.primaryMain),
+              Icon(
+                Icons.search_rounded,
+                size: 20,
+                color: colors.primaryInteractive,
+              ),
               Expanded(
                 child: TextField(
                   controller: controller,
                   focusNode: focusNode,
                   onChanged: onQueryChanged,
                   textInputAction: TextInputAction.search,
-                  style: Styles.textStyles.body2.copyWith(
+                  style: Styles.textStyles.body1.copyWith(
                     color: colors.neutral900,
                   ),
                   cursorColor: colors.primaryMain,
                   decoration: InputDecoration(
                     hintText: hintText,
-                    hintStyle: Styles.textStyles.body2.copyWith(
-                      color: colors.neutral500,
+                    hintStyle: Styles.textStyles.body1.copyWith(
+                      color: colors.textHint,
                     ),
                     border: InputBorder.none,
                     isCollapsed: true,
@@ -75,39 +87,76 @@ class MapSearchOverlay extends StatelessWidget {
               // tapping it clears the text, or — when already empty — closes
               // the keyboard. This replaces the former tap-outside dismissal.
               if (searchResults.isLoading)
-                SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator.adaptive(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation(colors.neutral500),
+                Padding(
+                  padding: const EdgeInsets.only(right: 13),
+                  child: SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator.adaptive(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation(colors.textHint),
+                    ),
                   ),
                 )
               else if (focusNode.hasFocus || state.query.isNotEmpty)
-                InkResponse(
-                  onTap: () {
-                    if (state.query.isNotEmpty) {
-                      onClear();
-                    } else {
-                      focusNode.unfocus();
-                    }
-                  },
-                  radius: 18,
-                  child: Icon(
-                    Icons.close_rounded,
-                    size: 18,
-                    color: colors.neutral500,
+                // Full 44×44 hit target (Apple HIG minimum; the glyph alone was
+                // an 18px target) with an explicit label for screen readers,
+                // since the glyph's meaning flips between clear and dismiss.
+                Semantics(
+                  button: true,
+                  label: state.query.isNotEmpty
+                      ? context.l10n.map_search_clear
+                      : context.l10n.map_search_close,
+                  child: InkResponse(
+                    onTap: () {
+                      if (state.query.isNotEmpty) {
+                        onClear();
+                      } else {
+                        focusNode.unfocus();
+                      }
+                    },
+                    radius: 22,
+                    child: SizedBox.square(
+                      dimension: 44,
+                      child: Icon(
+                        Icons.close_rounded,
+                        size: 18,
+                        color: colors.textHint,
+                      ),
+                    ),
                   ),
                 ),
             ],
           ),
         ),
-        if (errorMessage != null)
+        if (errorMessage != null && showOverlays)
           Padding(
             padding: const EdgeInsets.only(top: 8),
-            child: Text(errorMessage, style: Styles.textStyles.body1),
+            // Same glass family as the results dropdown — the bare text used to
+            // sit straight on the map tiles and disappeared over dark forest.
+            child: GlassSurface(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.error_outline_rounded,
+                    size: 18,
+                    color: colors.errorText,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      errorMessage,
+                      style: Styles.textStyles.body2.copyWith(
+                        color: colors.neutral900,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        if (results.isNotEmpty)
+        if (results.isNotEmpty && showOverlays)
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: MapSearchResultList(results: results, onTap: onResultTap),

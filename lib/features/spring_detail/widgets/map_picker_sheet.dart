@@ -171,10 +171,12 @@ class _MapTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
+              // neutral700: the arrow signals "opens externally" — meaningful,
+              // so it needs icon-grade contrast (≥3:1).
               Icon(
                 Icons.arrow_outward_rounded,
                 size: 18,
-                color: colors.neutral500,
+                color: colors.neutral700,
               ),
             ],
           ),

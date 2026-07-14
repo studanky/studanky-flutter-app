@@ -31,10 +31,10 @@ import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/status_bar_scrim.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
-import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
+import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
@@ -109,8 +109,8 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   static const double _rotationGestureThresholdDegrees = 20.0;
 
   /// Map event sources that mean the *user* moved the map (vs. our own
-  /// programmatic [MapEventSource.mapController] animations). Used to clear the
-  /// search once the user takes over the camera.
+  /// programmatic [MapEventSource.mapController] animations). Used to dismiss
+  /// the keyboard once the user takes over the camera.
   static const Set<MapEventSource> _userMoveSources = {
     MapEventSource.dragStart,
     MapEventSource.onDrag,
@@ -144,6 +144,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   bool _isMapReady = false;
   _MapEmptyOverlayMode _mapEmptyOverlayMode = _MapEmptyOverlayMode.hidden;
   int _searchSelectionToken = 0;
+
+  /// Spring whose detail sheet is currently open — its marker renders in the
+  /// selection green so it stands out among neighbouring pins. Null when no
+  /// detail is open.
+  String? _selectedSpringId;
 
   /// Last integer zoom level a slider-drag haptic fired at, so the continuous
   /// drag ticks once per crossed level (a detent) instead of every frame.
@@ -190,21 +195,23 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     _updateCompass();
     _markMapEmptyStateRefreshing();
     if (_userMoveSources.contains(event.source)) {
-      _clearSearchOnUserMove();
+      _dismissKeyboard();
     }
     _cameraDebounceTimer?.cancel();
     _cameraDebounceTimer = Timer(_cameraDebounce, _emitCamera);
   }
 
-  /// Once the user moves the map themselves (e.g. after we animated to a search
-  /// result), the stale search query/results are cleared. Programmatic camera
-  /// changes use [MapEventSource.mapController] and are intentionally excluded.
-  void _clearSearchOnUserMove() {
-    final provider = mapSearchProvider(
-      Localizations.localeOf(context).languageCode,
-    );
-    if (ref.read(provider).query.isEmpty) return;
-    ref.read(provider.notifier).clear();
+  /// Map-app convention (Google/Apple/Mapy.cz): any touch on the map ends text
+  /// entry — the keyboard and the suggestions get out of the way — but the
+  /// typed query itself stays in the field as context; only the field's ✕
+  /// clears it. Programmatic camera moves ([MapEventSource.mapController]) are
+  /// excluded so animating to a search result doesn't close anything.
+  void _dismissKeyboard() {
+    final focus = FocusManager.instance.primaryFocus;
+    // Only a real focused widget (the search field) — unfocusing the idle
+    // page-level scope node would be pointless churn on every map gesture.
+    if (focus is FocusScopeNode) return;
+    focus?.unfocus();
   }
 
   void _updateCompass() {
@@ -426,12 +433,57 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     unawaited(_animator.animateTo(center: cluster.position, zoom: targetZoom));
   }
 
+  /// Camera centre that parks [spring] in the middle of the map strip left
+  /// visible above the half-open detail sheet — so opening the detail shows
+  /// the spring *and its surroundings* instead of burying it under the sheet.
+  ///
+  /// The strip is measured in *safe-area* terms: the detail page insets the
+  /// sheet below the status bar, so the sheet's pixel height is
+  /// `initialSize · (viewport − topInset)`, and the marker belongs at the
+  /// midpoint between the safe-area top and the sheet's top edge:
+  ///
+  ///   sheetTop = h − (h − topInset)·s
+  ///   markerY  = (topInset + sheetTop) / 2
+  ///   shift    = h/2 − markerY = ((h − topInset)·s − topInset) / 2
+  ///
+  /// [MapCamera.screenOffsetToLatLng] works in screen space, so map rotation
+  /// is accounted for.
+  LatLng _detailFocusCenter(LatLng spring, {double? zoom}) {
+    final onSpring = _mapController.camera.withPosition(
+      center: spring,
+      zoom: zoom,
+    );
+    final size = onSpring.nonRotatedSize;
+    final topInset = MediaQuery.viewPaddingOf(context).top;
+    final shift =
+        ((size.height - topInset) * SpringDetailSheet.initialSize - topInset) /
+        2;
+    return onSpring.screenOffsetToLatLng(
+      size.center(Offset.zero) + Offset(0, shift),
+    );
+  }
+
+  /// Opens the routed detail sheet for [spring] and keeps its marker
+  /// highlighted (selection green) for exactly as long as the sheet is up —
+  /// the returned future of the route push completes on dismiss.
+  Future<void> _openSpringDetail(SpringMarkerEntity spring) async {
+    setState(() => _selectedSpringId = spring.documentId);
+    try {
+      await SpringRoute(
+        documentId: spring.documentId,
+        $extra: spring,
+      ).push<void>(context);
+    } finally {
+      if (mounted) setState(() => _selectedSpringId = null);
+    }
+  }
+
   void _onSpringTap(SpringMarkerEntity spring) {
     _logger.fine('Spring tapped: ${spring.documentId} (${spring.name})');
     FocusScope.of(context).unfocus();
-    unawaited(
-      SpringRoute(documentId: spring.documentId, $extra: spring).push(context),
-    );
+    // Glide the marker into the visible upper strip while the sheet slides in.
+    unawaited(_animator.animateTo(center: _detailFocusCenter(spring.position)));
+    unawaited(_openSpringDetail(spring));
   }
 
   /// Opens the favourites popup; if the user picks one, animate-centers the map
@@ -442,14 +494,12 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     if (selected == null || !mounted) return;
 
     unawaited(
-      _animator.animateTo(center: selected.position, zoom: _recenterMinZoom),
+      _animator.animateTo(
+        center: _detailFocusCenter(selected.position, zoom: _recenterMinZoom),
+        zoom: _recenterMinZoom,
+      ),
     );
-    unawaited(
-      SpringRoute(
-        documentId: selected.documentId,
-        $extra: selected,
-      ).push(context),
-    );
+    unawaited(_openSpringDetail(selected));
   }
 
   void _onSearchResultSelected(MapSearchResult result) {
@@ -467,13 +517,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
         'Spring search selected: ${spring.documentId} (${spring.name})',
       );
       await _animator.animateTo(
-        center: spring.position,
+        center: _detailFocusCenter(spring.position, zoom: _springSearchZoom),
         zoom: _springSearchZoom,
       );
       if (!mounted || selectionToken != _searchSelectionToken) return;
-      unawaited(
-        SpringRoute(documentId: spring.documentId, $extra: spring).push(context),
-      );
+      unawaited(_openSpringDetail(spring));
       return;
     }
 
@@ -545,6 +593,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
             spring,
             config.iconFor(spring.status.wireValue, spring.statusUpdatedAt),
             onTap: () => _onSpringTap(spring),
+            selected: spring.documentId == _selectedSpringId,
             semanticsLabel: l10n.map_marker_semantic(
               spring.name,
               _statusLabelFor(
@@ -582,6 +631,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                 maxZoom: _maxZoom,
                 onMapReady: _onMapReady,
                 onMapEvent: _onMapEvent,
+                // A bare tap on the map (no marker hit) dismisses the keyboard,
+                // like panning does — see [_dismissKeyboard].
+                onTap: (_, _) => _dismissKeyboard(),
                 interactionOptions: const InteractionOptions(
                   flags: _mapInteractionFlags,
                   enableMultiFingerGestureRace: true,
@@ -742,7 +794,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                 ),
                 const SizedBox(height: 2),
                 const MapAttribution(),
-                const SizedBox(height: 2),
+                const SizedBox(height: 8),
               ],
             ),
           ),

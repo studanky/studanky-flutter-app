@@ -104,9 +104,11 @@ class _ReportTileState extends State<ReportTile> {
                       child: AnimatedRotation(
                         turns: _expanded ? 0.5 : 0,
                         duration: const Duration(milliseconds: 180),
+                        // neutral700: the chevron is the only expandability
+                        // affordance, so it needs icon-grade contrast.
                         child: Icon(
                           Icons.keyboard_arrow_down_rounded,
-                          color: colors.neutral500,
+                          color: colors.neutral700,
                         ),
                       ),
                     ),

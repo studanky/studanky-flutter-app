@@ -22,30 +22,37 @@ class MapDisclaimer extends StatelessWidget {
       label: l10n.map_potability_disclaimer_semantic,
       child: GestureDetector(
         onTap: onTap,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: colors.onNeutral.withValues(alpha: 0.85),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.warning_amber_rounded,
-                  size: 13,
-                  color: colors.secondaryVariant1,
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  l10n.map_potability_disclaimer_title,
-                  style: text.body2.copyWith(
-                    fontSize: 11,
-                    color: colors.neutral700,
+        // Translucent so the invisible padding counts as tap area: the visible
+        // pill is ~24px tall, the padding grows the target to the 44px minimum
+        // without changing the understated visual.
+        behavior: HitTestBehavior.translucent,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: colors.onNeutral.withValues(alpha: 0.85),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    size: 13,
+                    color: colors.secondaryVariant1,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 5),
+                  Text(
+                    l10n.map_potability_disclaimer_title,
+                    style: text.body2.copyWith(
+                      fontSize: 11,
+                      color: colors.neutral700,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

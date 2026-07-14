@@ -33,6 +33,11 @@ class AppColorsDark extends AppColorsScheme {
   @override
   Color get neutral500 => const Color(0xFF647E99);
 
+  // On dark surfaces the readable-hint role lands on the same value as
+  // [neutral700]; kept as its own token so call sites stay semantic.
+  @override
+  Color get textHint => const Color(0xFF93A9C0);
+
   @override
   Color get neutral300 => const Color(0xFF24385A);
 
@@ -50,25 +55,21 @@ class AppColorsDark extends AppColorsScheme {
   Color get primaryMain => const Color(0xFF38BDF8);
 
   @override
-  Color get primary500 => const Color(0xFF60C1EE);
-
-  @override
-  Color get primary200 => const Color(0xFF2A5170);
-
-  @override
   Color get primary100 => const Color(0xFF173049);
 
+  // Deep navy (the scaffold background), *not* white: the dark theme's primary
+  // is a light sky blue, and white on it only reaches 2.1:1. Dark-on-light
+  // primary is the Material 3 dark-scheme pattern; measured 8.5:1.
   @override
-  Color get primary50 => const Color(0xFF0F2236);
+  Color get onPrimary => const Color(0xFF0A1628);
 
+  // The light primary already clears AA for text on dark surfaces, so the
+  // interactive role needs no deeper step here.
   @override
-  Color get onPrimary => const Color(0xFFFFFFFF);
+  Color get primaryInteractive => const Color(0xFF38BDF8);
 
   @override
   Color get secondaryVariant1 => const Color(0xFFD9851A);
-
-  @override
-  Color get secondaryVariant2 => const Color(0xFF5A3A1E);
 
   @override
   Color get secondaryBeige => const Color(0xFF2A2113);
@@ -77,19 +78,14 @@ class AppColorsDark extends AppColorsScheme {
   Color get onSecondary => const Color(0xFFFFFFFF);
 
   @override
-  Color get terciaryPurple => const Color(0xFF2A2138);
-
-  @override
   Color get error => const Color(0xFFFF6B4A);
+
+  // Already 5.9:1 on the dark card surface — text role matches the fill.
+  @override
+  Color get errorText => const Color(0xFFFF6B4A);
 
   @override
   Color get onError => const Color(0xFFFFFFFF);
-
-  @override
-  Color get success => const Color(0xFF5FA85A);
-
-  @override
-  Color get onSuccess => const Color(0xFFFFFFFF);
 
   // Trust green for the "verified · ČHMÚ" badge, brightened for dark surfaces.
   @override
@@ -105,12 +101,14 @@ class AppColorsDark extends AppColorsScheme {
   @override
   Color get statusFlowing => const Color(0xFF38BDF8);
 
+  // Stays white on the inverted dark map — see the scheme doc: the ring
+  // separates pins from tiles and must not follow the navy [onPrimary].
+  @override
+  Color get markerRing => const Color(0xFFFFFFFF);
+
   @override
   Color get statusNotFlowing => const Color(0xFFFF6B4A);
 
   @override
   Color get statusStale => const Color(0xFF7E93AD);
-
-  @override
-  Color get statusUnknown => const Color(0xFF93A9C0);
 }

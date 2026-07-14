@@ -29,8 +29,10 @@ abstract final class AppTheme {
       onSecondary: c.onSecondary,
       secondaryContainer: c.secondaryBeige,
       onSecondaryContainer: c.secondaryVariant1,
-      tertiary: c.terciaryPurple,
-      onTertiary: c.neutral900,
+      // Nothing in the app uses the tertiary slot; fill it from the primary
+      // family instead of keeping a dedicated (off-brand purple) token alive.
+      tertiary: c.primary100,
+      onTertiary: c.primary900,
       error: c.error,
       onError: c.onError,
       surface: c.onNeutral,
@@ -86,9 +88,12 @@ abstract final class AppTheme {
         thickness: 1,
         space: 1,
       ),
+      // Buttons run on [primaryInteractive], not the brand [primaryMain]: the
+      // brand blue is an accent-grade colour (3.3:1 with white in the light
+      // theme) while button labels are 14px text and need WCAG AA (4.5:1).
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: c.primaryMain,
+          backgroundColor: c.primaryInteractive,
           foregroundColor: c.onPrimary,
           textStyle: buttonTextStyle,
           shape: buttonShape,
@@ -98,7 +103,7 @@ abstract final class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: c.primaryMain,
+          backgroundColor: c.primaryInteractive,
           foregroundColor: c.onPrimary,
           elevation: 0,
           textStyle: buttonTextStyle,
@@ -109,12 +114,12 @@ abstract final class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         // Pairs with the filled primary button (e.g. Sdílet next to Navigovat):
-        // the label and the outline share the brand [primaryMain] so the button
+        // the label and the outline share [primaryInteractive] so the button
         // reads as the outlined sibling of the filled one — a single, unified
         // blue rather than two shades.
         style: OutlinedButton.styleFrom(
-          foregroundColor: c.primaryMain,
-          side: BorderSide(color: c.primaryMain, width: 1.5),
+          foregroundColor: c.primaryInteractive,
+          side: BorderSide(color: c.primaryInteractive, width: 1.5),
           textStyle: buttonTextStyle,
           shape: buttonShape,
           padding: buttonPadding,
@@ -123,7 +128,7 @@ abstract final class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: c.primaryMain,
+          foregroundColor: c.primaryInteractive,
           textStyle: buttonTextStyle,
           shape: buttonShape,
         ),

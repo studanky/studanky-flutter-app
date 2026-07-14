@@ -174,6 +174,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get map_search_error => 'Vyhledávání teď není dostupné.';
 
   @override
+  String get map_search_clear => 'Vymazat hledání';
+
+  @override
+  String get map_search_close => 'Zavřít vyhledávání';
+
+  @override
   String get map_search_type_spring => 'Studánka';
 
   @override

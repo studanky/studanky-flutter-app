@@ -74,7 +74,11 @@ class _ResultRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         child: Row(
           children: [
-            Icon(_iconFor(result.type), size: 20, color: colors.primaryMain),
+            Icon(
+              _iconFor(result.type),
+              size: 20,
+              color: colors.primaryInteractive,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -93,7 +97,7 @@ class _ResultRow extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: text.body2.copyWith(
                       fontSize: 12,
-                      color: colors.neutral500,
+                      color: colors.textHint,
                     ),
                   ),
                 ],

@@ -34,13 +34,15 @@ class DetailSection extends StatelessWidget {
           if (title != null)
             Padding(
               padding: const EdgeInsets.only(left: 6, bottom: 8),
+              // textHint: muted like an iOS grouped caption, but still
+              // readable text (neutral500 sat at ~2.2:1 on the sheet).
               child: Text(
                 title!.toUpperCase(),
                 style: text.body2.copyWith(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.6,
-                  color: colors.neutral500,
+                  color: colors.textHint,
                 ),
               ),
             ),

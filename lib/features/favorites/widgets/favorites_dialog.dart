@@ -142,13 +142,15 @@ class _FavoriteTileSurface extends StatelessWidget {
                       style: text.title2.copyWith(color: colors.neutral900),
                     ),
                     const SizedBox(height: 3),
+                    // neutral700: the status + age is the app's key data point
+                    // (spec §3 — data freshness); neutral500 read at ~2.2:1.
                     Text(
                       subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: text.body2.copyWith(
                         fontSize: 12,
-                        color: colors.neutral500,
+                        color: colors.neutral700,
                       ),
                     ),
                   ],

@@ -112,13 +112,14 @@ class _SectionTitle extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(22, 18, 16, 8),
+      // textHint — matches DetailSection's caption for the same reason.
       child: Text(
         total > 0 ? '$title ($total)' : title,
         style: text.body2.copyWith(
           fontSize: 12,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.6,
-          color: colors.neutral500,
+          color: colors.textHint,
         ),
       ),
     );

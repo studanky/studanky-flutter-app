@@ -31,6 +31,12 @@ class AppColorsLight extends AppColorsScheme {
   @override
   Color get neutral500 => const Color(0xFFAAB2B4);
 
+  // Darkest "light grey" that still clears WCAG AA (4.5:1+) on white *and* on
+  // the 55% glass over the palest Mapy.cz tiles (measured 5.1:1 over forest
+  // green, the worst case).
+  @override
+  Color get textHint => const Color(0xFF5A6468);
+
   @override
   Color get neutral300 => const Color(0xFFE4E9EA);
 
@@ -47,25 +53,19 @@ class AppColorsLight extends AppColorsScheme {
   Color get primaryMain => const Color(0xFF0B97D2);
 
   @override
-  Color get primary500 => const Color(0xFF60C1EE);
-
-  @override
-  Color get primary200 => const Color(0xFF94D4EF);
-
-  @override
   Color get primary100 => const Color(0xFFCCE6F1);
-
-  @override
-  Color get primary50 => const Color(0xFFEAF6FC);
 
   @override
   Color get onPrimary => const Color(0xFFFFFFFF);
 
+  // One step deeper than the brand blue: white button labels on the brand
+  // #0B97D2 only reach 3.3:1, this fill lifts them to 4.9:1 (WCAG AA for the
+  // 14px button text) while staying unmistakably the same water blue.
   @override
-  Color get secondaryVariant1 => const Color(0xFFD1750A);
+  Color get primaryInteractive => const Color(0xFF0077B0);
 
   @override
-  Color get secondaryVariant2 => const Color(0xFFFFD4B1);
+  Color get secondaryVariant1 => const Color(0xFFD1750A);
 
   @override
   Color get secondaryBeige => const Color(0xFFFFF5E6);
@@ -74,29 +74,29 @@ class AppColorsLight extends AppColorsScheme {
   Color get onSecondary => const Color(0xFFFFFFFF);
 
   @override
-  Color get terciaryPurple => const Color(0xFFF7E7FF);
-
-  @override
   Color get error => const Color(0xFFEE5521);
+
+  // The error hue as *text*: #EE5521 is icon-grade only (3.5:1 on white);
+  // this deeper step reads at 5.1:1.
+  @override
+  Color get errorText => const Color(0xFFC93A10);
 
   @override
   Color get onError => const Color(0xFFFFFFFF);
-
-  @override
-  Color get success => const Color(0xFF477F42);
-
-  @override
-  Color get onSuccess => const Color(0xFFFFFFFF);
 
   // Trust green for the "verified · ČHMÚ" provenance badge — distinct from the
   // water-blue so official data reads as verified, not as a link/brand element.
   @override
   Color get verified => const Color(0xFF137A43);
 
-  // Vivid gold for the "saved to My Springs" state — the classic bookmark/star
-  // accent, distinct from the heavily-used brand blue.
+  // Vivid gold for the "saved to My Springs" state — the conventional
+  // "saved/starred" accent (Google's rating gold, Apple's favourites amber).
+  // Deliberately below the 3:1 icon floor (~2.2:1 on white): the state is
+  // carried by the glyph itself (filled vs. outline bookmark), so the colour
+  // is a redundant enhancement — WCAG 1.4.11-safe. The deepest gold that
+  // still reads "zářivá" rather than brown.
   @override
-  Color get saved => const Color(0xFFEAB308);
+  Color get saved => const Color(0xFFF59E0B);
 
   // Spring status palette — distinct in hue *and* value so the marker reads at a
   // glance on a light map, with the glyph carrying the meaning for colour-blind
@@ -105,12 +105,14 @@ class AppColorsLight extends AppColorsScheme {
   @override
   Color get statusFlowing => const Color(0xFF0B97D2);
 
+  // White in both themes — the ring separates pins from map tiles and must not
+  // follow [onPrimary] (which is navy in dark mode).
+  @override
+  Color get markerRing => const Color(0xFFFFFFFF);
+
   @override
   Color get statusNotFlowing => const Color(0xFFEE5521);
 
   @override
   Color get statusStale => const Color(0xFF5F6B7A);
-
-  @override
-  Color get statusUnknown => const Color(0xFF646767);
 }

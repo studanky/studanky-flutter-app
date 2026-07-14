@@ -28,14 +28,21 @@ class MapAttribution extends StatelessWidget {
     }
   }
 
+  /// Watermark strength. Legible enough to satisfy the attribution terms, dim
+  /// enough that it never competes with real UI.
+  static const double _watermarkOpacity = 0.6;
+
   @override
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
     final isDark = colors.brightness == Brightness.dark;
 
-    // No background pill — a minimal watermark directly on the map. A soft
-    // shadow keeps the logo and text legible over any map background.
+    // A deliberate *watermark*, not a control: no pill (a pill reads as a
+    // button/chip), reduced opacity, just a soft shadow for worst-case
+    // legibility. It must stay visually junior to the potability disclaimer
+    // above it — legal presence, not an interaction target. The logo and text
+    // still open the required pages, but nothing advertises tappability.
     final shadows = [
       Shadow(
         blurRadius: 4,
@@ -43,31 +50,36 @@ class MapAttribution extends StatelessWidget {
       ),
     ];
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        GestureDetector(
-          onTap: () => unawaited(_open(_mapyUrl)),
-          child: SvgPicture.network(
-            _logoUrl,
-            height: 14,
-            placeholderBuilder: (context) =>
-                const SizedBox(width: 40, height: 14),
-          ),
-        ),
-        const SizedBox(width: 6),
-        GestureDetector(
-          onTap: () => unawaited(_open(_copyrightUrl)),
-          child: Text(
-            _copyrightText,
-            style: text.body2.copyWith(
-              fontSize: 10,
-              color: colors.neutral700,
-              shadows: shadows,
+    return Opacity(
+      opacity: _watermarkOpacity,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () => unawaited(_open(_mapyUrl)),
+            behavior: HitTestBehavior.translucent,
+            child: SvgPicture.network(
+              _logoUrl,
+              height: 14,
+              placeholderBuilder: (context) =>
+                  const SizedBox(width: 40, height: 14),
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 6),
+          GestureDetector(
+            onTap: () => unawaited(_open(_copyrightUrl)),
+            behavior: HitTestBehavior.translucent,
+            child: Text(
+              _copyrightText,
+              style: text.body2.copyWith(
+                fontSize: 10,
+                color: colors.neutral700,
+                shadows: shadows,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

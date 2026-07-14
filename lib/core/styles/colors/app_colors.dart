@@ -56,31 +56,25 @@ class AppColors implements AppColorsScheme {
   Color get onNeutral => _currentScheme.onNeutral;
 
   @override
+  Color get textHint => _currentScheme.textHint;
+
+  @override
   Color get primary900 => _currentScheme.primary900;
 
   @override
   Color get primaryMain => _currentScheme.primaryMain;
 
   @override
-  Color get primary500 => _currentScheme.primary500;
-
-  @override
-  Color get primary200 => _currentScheme.primary200;
-
-  @override
   Color get primary100 => _currentScheme.primary100;
-
-  @override
-  Color get primary50 => _currentScheme.primary50;
 
   @override
   Color get onPrimary => _currentScheme.onPrimary;
 
   @override
-  Color get secondaryVariant1 => _currentScheme.secondaryVariant1;
+  Color get primaryInteractive => _currentScheme.primaryInteractive;
 
   @override
-  Color get secondaryVariant2 => _currentScheme.secondaryVariant2;
+  Color get secondaryVariant1 => _currentScheme.secondaryVariant1;
 
   @override
   Color get secondaryBeige => _currentScheme.secondaryBeige;
@@ -89,19 +83,13 @@ class AppColors implements AppColorsScheme {
   Color get onSecondary => _currentScheme.onSecondary;
 
   @override
-  Color get terciaryPurple => _currentScheme.terciaryPurple;
-
-  @override
   Color get error => _currentScheme.error;
 
   @override
+  Color get errorText => _currentScheme.errorText;
+
+  @override
   Color get onError => _currentScheme.onError;
-
-  @override
-  Color get success => _currentScheme.success;
-
-  @override
-  Color get onSuccess => _currentScheme.onSuccess;
 
   @override
   Color get verified => _currentScheme.verified;
@@ -111,6 +99,9 @@ class AppColors implements AppColorsScheme {
 
   @override
   Color get statusFlowing => _currentScheme.statusFlowing;
+
+  @override
+  Color get markerRing => _currentScheme.markerRing;
 
   @override
   Color get statusNotFlowing => _currentScheme.statusNotFlowing;

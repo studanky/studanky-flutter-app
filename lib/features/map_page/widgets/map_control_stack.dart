@@ -70,12 +70,15 @@ class MapControlStack extends StatelessWidget {
           semanticLabel: l10n.map_my_location,
           onTap: isLocating ? null : onLocation,
           child: isLocating
+              // primaryInteractive over the glass tile: the brand blue only
+              // reached ~2.8:1 there, under the 3:1 floor for meaningful
+              // graphics (same for the "centered" dot below).
               ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.4,
-                    color: colors.primaryMain,
+                    color: colors.primaryInteractive,
                   ),
                 )
               : CustomPaint(
@@ -84,8 +87,12 @@ class MapControlStack extends StatelessWidget {
                     rotationRad: rotationRad,
                     centered: centered,
                     northColor: colors.error,
-                    armColor: colors.neutral500,
-                    dotColor: centered ? colors.primaryMain : colors.neutral700,
+                    // The arms carry orientation (meaningful, needs ≥3:1 on the
+                    // glass) — neutral500 faded to ~1.8:1 over pale tiles.
+                    armColor: colors.neutral700,
+                    dotColor: centered
+                        ? colors.primaryInteractive
+                        : colors.neutral700,
                   ),
                 ),
         ),
