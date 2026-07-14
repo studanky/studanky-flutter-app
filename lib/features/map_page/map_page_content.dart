@@ -145,6 +145,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   static const Duration _emptyStateRevealDelay = Duration(milliseconds: 450);
   static const Duration _emptyStateFadeDuration = Duration(milliseconds: 240);
 
+  /// Fade/slide of the search bar as the detail sheet takes over — slightly
+  /// quicker than the sheet's 300ms entrance so the bar is out of the way by
+  /// the time the sheet settles.
+  static const Duration _searchBarHideDuration = Duration(milliseconds: 220);
+
   final MapController _mapController = MapController();
   final Logger _logger = Logger('MapPageContent');
   Timer? _cameraDebounceTimer;
@@ -586,6 +591,12 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     final config = ref.watch(platformConfigControllerProvider);
     final locationStatus = ref.watch(userLocationProvider).status;
     final l10n = context.l10n;
+    final isDetailOpen = widget.detailDocumentId != null;
+    // Honour the OS reduce-motion setting: the bar still disappears, just
+    // without the transition.
+    final searchBarHideDuration = MediaQuery.disableAnimationsOf(context)
+        ? Duration.zero
+        : _searchBarHideDuration;
     final isMapEmptyOverlayVisible = _isMapEmptyOverlayVisible;
     final isMapEmptyOverlayRefreshing =
         _mapEmptyOverlayMode == _MapEmptyOverlayMode.refreshing;
@@ -767,19 +778,45 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                   ),
                   // Top glass search bar — kept last so the field and its
                   // results dropdown sit above every map control on the Z axis.
+                  //
+                  // While a spring detail is open the bar fades (and nudges) out
+                  // of the way — map-app convention: the place sheet owns the
+                  // screen, and a live search bar would fight it (its dropdown
+                  // and keyboard would land on top of the sheet). It stays
+                  // mounted so the typed query survives the round trip, but is
+                  // inert to touch and invisible to screen readers meanwhile.
                   Positioned(
                     left: 16,
                     right: 16,
                     top: 12,
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: ConstrainedBox(
-                        // Don't stretch the search field across wide screens.
-                        constraints: const BoxConstraints(maxWidth: 600),
-                        child: MapSearchWidget(
-                          hintText: l10n.map_search_hint,
-                          originProvider: _searchOrigin,
-                          onResultSelected: _onSearchResultSelected,
+                    child: IgnorePointer(
+                      ignoring: isDetailOpen,
+                      child: ExcludeSemantics(
+                        excluding: isDetailOpen,
+                        child: AnimatedSlide(
+                          offset: isDetailOpen
+                              ? const Offset(0, -0.4)
+                              : Offset.zero,
+                          duration: searchBarHideDuration,
+                          curve: Curves.easeOutCubic,
+                          child: AnimatedOpacity(
+                            opacity: isDetailOpen ? 0 : 1,
+                            duration: searchBarHideDuration,
+                            curve: Curves.easeOutCubic,
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: ConstrainedBox(
+                                // Don't stretch the search field across wide
+                                // screens.
+                                constraints: const BoxConstraints(maxWidth: 600),
+                                child: MapSearchWidget(
+                                  hintText: l10n.map_search_hint,
+                                  originProvider: _searchOrigin,
+                                  onResultSelected: _onSearchResultSelected,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
