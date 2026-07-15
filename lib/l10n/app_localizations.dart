@@ -343,7 +343,7 @@ abstract class AppLocalizations {
   /// No description provided for @about_dialog_body.
   ///
   /// In cs, this message translates to:
-  /// **'Aplikace na mapě ukazuje, zda ve studánce hlášeně teče voda a jak čerstvá je informace. Trasu si naplánujte ve své mapové aplikaci přes tlačítko Navigovat v detailu studánky.'**
+  /// **'Studánky jsou komunitní mapa míst v přírodě, kde lidé sdílí informace o tom, jestli voda teče. Pomáhají plánovat cestu podle aktuálnosti hlášení, nést méně vody na zádech a zbytečně neplnit přírodu jednorázovými lahvemi. Trasu si naplánujete ve své mapové aplikaci přes tlačítko Navigovat v detailu studánky.'**
   String get about_dialog_body;
 
   /// No description provided for @about_dialog_legend_title.
@@ -375,6 +375,216 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Neznámý stav'**
   String get about_dialog_legend_unknown;
+
+  /// No description provided for @about_project_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'O aplikaci'**
+  String get about_project_title;
+
+  /// No description provided for @legal_link_terms.
+  ///
+  /// In cs, this message translates to:
+  /// **'Podmínky užití'**
+  String get legal_link_terms;
+
+  /// No description provided for @legal_link_privacy.
+  ///
+  /// In cs, this message translates to:
+  /// **'Ochrana osobních údajů'**
+  String get legal_link_privacy;
+
+  /// No description provided for @legal_link_data_sources.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zdroje dat'**
+  String get legal_link_data_sources;
+
+  /// No description provided for @legal_onboarding_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Vítejte ve Studánkách'**
+  String get legal_onboarding_title;
+
+  /// No description provided for @legal_onboarding_back.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zpět'**
+  String get legal_onboarding_back;
+
+  /// No description provided for @legal_onboarding_next.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pokračovat'**
+  String get legal_onboarding_next;
+
+  /// No description provided for @legal_onboarding_finish.
+  ///
+  /// In cs, this message translates to:
+  /// **'Jít na mapu'**
+  String get legal_onboarding_finish;
+
+  /// No description provided for @legal_onboarding_website_link.
+  ///
+  /// In cs, this message translates to:
+  /// **'studankyapp.cz'**
+  String get legal_onboarding_website_link;
+
+  /// No description provided for @legal_onboarding_step_welcome_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Studánky na cestách přírodou'**
+  String get legal_onboarding_step_welcome_title;
+
+  /// No description provided for @legal_onboarding_step_welcome_body.
+  ///
+  /// In cs, this message translates to:
+  /// **'Studánky vznikají jako komunitní projekt od lidí pro lidi. Pomáhají zjistit, kde je hlášený průtok vody, abyste mohli cestu plánovat s větším respektem k přírodě.'**
+  String get legal_onboarding_step_welcome_body;
+
+  /// No description provided for @legal_onboarding_step_welcome_bullet_community.
+  ///
+  /// In cs, this message translates to:
+  /// **'Méně vody tahat na zádech, méně jednorázových lahví v batohu i v přírodě.'**
+  String get legal_onboarding_step_welcome_bullet_community;
+
+  /// No description provided for @legal_onboarding_step_welcome_bullet_feedback.
+  ///
+  /// In cs, this message translates to:
+  /// **'Když narazíte na chybu nebo máte nápad, budeme rádi za zpětnou vazbu.'**
+  String get legal_onboarding_step_welcome_bullet_feedback;
+
+  /// No description provided for @legal_onboarding_step_water_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Tekoucí voda nemusí být pitná'**
+  String get legal_onboarding_step_water_title;
+
+  /// No description provided for @legal_onboarding_step_water_body.
+  ///
+  /// In cs, this message translates to:
+  /// **'Studánky ukazují hlavně to, jestli je ve zdroji hlášený průtok. Neověřujeme kvalitu, pitnost ani zdravotní nezávadnost vody.'**
+  String get legal_onboarding_step_water_body;
+
+  /// No description provided for @legal_onboarding_step_water_bullet_flow.
+  ///
+  /// In cs, this message translates to:
+  /// **'To, že voda teče, není potvrzení, že je bezpečná k pití.'**
+  String get legal_onboarding_step_water_bullet_flow;
+
+  /// No description provided for @legal_onboarding_step_water_bullet_marked.
+  ///
+  /// In cs, this message translates to:
+  /// **'Ani značená studánka nemusí mít aktuálně ověřenou pitnost.'**
+  String get legal_onboarding_step_water_bullet_marked;
+
+  /// No description provided for @legal_onboarding_step_water_bullet_quality.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pokud zdroj není výslovně a aktuálně označen jako pitný, berte vodu jako rizikovou.'**
+  String get legal_onboarding_step_water_bullet_quality;
+
+  /// No description provided for @about_legal_info_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Aplikace a provozovatel'**
+  String get about_legal_info_title;
+
+  /// No description provided for @about_legal_version_label.
+  ///
+  /// In cs, this message translates to:
+  /// **'Verze'**
+  String get about_legal_version_label;
+
+  /// No description provided for @about_legal_version_loading.
+  ///
+  /// In cs, this message translates to:
+  /// **'načítám'**
+  String get about_legal_version_loading;
+
+  /// No description provided for @about_legal_operator_label.
+  ///
+  /// In cs, this message translates to:
+  /// **'Provozovatel'**
+  String get about_legal_operator_label;
+
+  /// No description provided for @about_legal_operator_value.
+  ///
+  /// In cs, this message translates to:
+  /// **'{name}, IČO {ico}'**
+  String about_legal_operator_value(String name, String ico);
+
+  /// No description provided for @about_legal_contact_label.
+  ///
+  /// In cs, this message translates to:
+  /// **'Kontakt'**
+  String get about_legal_contact_label;
+
+  /// No description provided for @about_legal_data_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zdroje dat'**
+  String get about_legal_data_title;
+
+  /// No description provided for @about_legal_chmu_body.
+  ///
+  /// In cs, this message translates to:
+  /// **'Data o vydatnosti pramenů pochází z otevřených dat Českého hydrometeorologického ústavu (ČHMÚ) pod licencí Creative Commons BY 4.0. Data byla pro účely aplikace upravena a interpretována do stavů teče / neteče. ČHMÚ aplikaci neprovozuje ani nezaštiťuje.'**
+  String get about_legal_chmu_body;
+
+  /// No description provided for @about_legal_cc_by_link.
+  ///
+  /// In cs, this message translates to:
+  /// **'Licence Creative Commons BY 4.0'**
+  String get about_legal_cc_by_link;
+
+  /// No description provided for @about_legal_mapy_body.
+  ///
+  /// In cs, this message translates to:
+  /// **'Mapové podklady a mapové služby poskytuje Seznam.cz, a.s. prostřednictvím Mapy.com.'**
+  String get about_legal_mapy_body;
+
+  /// No description provided for @about_legal_mapy_link.
+  ///
+  /// In cs, this message translates to:
+  /// **'Copyright a atribuce Mapy.com'**
+  String get about_legal_mapy_link;
+
+  /// No description provided for @about_legal_privacy_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Soukromí'**
+  String get about_legal_privacy_title;
+
+  /// No description provided for @about_legal_privacy_body.
+  ///
+  /// In cs, this message translates to:
+  /// **'Aplikace nevyžaduje účet, nepoužívá reklamu, analytiku ani tracking. Poloha slouží k zobrazení pozice na mapě, kamera ke skenování QR kódů a Moje studánky se ukládají lokálně v zařízení.'**
+  String get about_legal_privacy_body;
+
+  /// No description provided for @about_legal_documents_title.
+  ///
+  /// In cs, this message translates to:
+  /// **'Další informace'**
+  String get about_legal_documents_title;
+
+  /// No description provided for @about_legal_documents_body.
+  ///
+  /// In cs, this message translates to:
+  /// **'Právní informace, soukromí, kontakt a úplné zdroje dat najdete na webu.'**
+  String get about_legal_documents_body;
+
+  /// No description provided for @about_legal_open_source_licenses.
+  ///
+  /// In cs, this message translates to:
+  /// **'Licence open-source knihoven'**
+  String get about_legal_open_source_licenses;
+
+  /// No description provided for @about_legal_version_line.
+  ///
+  /// In cs, this message translates to:
+  /// **'Verze aplikace {version}'**
+  String about_legal_version_line(String version);
 
   /// No description provided for @map_search_hint.
   ///

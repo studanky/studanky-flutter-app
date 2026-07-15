@@ -150,7 +150,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get about_dialog_body =>
-      'Aplikace na mapě ukazuje, zda ve studánce hlášeně teče voda a jak čerstvá je informace. Trasu si naplánujte ve své mapové aplikaci přes tlačítko Navigovat v detailu studánky.';
+      'Studánky jsou komunitní mapa míst v přírodě, kde lidé sdílí informace o tom, jestli voda teče. Pomáhají plánovat cestu podle aktuálnosti hlášení, nést méně vody na zádech a zbytečně neplnit přírodu jednorázovými lahvemi. Trasu si naplánujete ve své mapové aplikaci přes tlačítko Navigovat v detailu studánky.';
 
   @override
   String get about_dialog_legend_title => 'Význam značek';
@@ -166,6 +166,128 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get about_dialog_legend_unknown => 'Neznámý stav';
+
+  @override
+  String get about_project_title => 'O aplikaci';
+
+  @override
+  String get legal_link_terms => 'Podmínky užití';
+
+  @override
+  String get legal_link_privacy => 'Ochrana osobních údajů';
+
+  @override
+  String get legal_link_data_sources => 'Zdroje dat';
+
+  @override
+  String get legal_onboarding_title => 'Vítejte ve Studánkách';
+
+  @override
+  String get legal_onboarding_back => 'Zpět';
+
+  @override
+  String get legal_onboarding_next => 'Pokračovat';
+
+  @override
+  String get legal_onboarding_finish => 'Jít na mapu';
+
+  @override
+  String get legal_onboarding_website_link => 'studankyapp.cz';
+
+  @override
+  String get legal_onboarding_step_welcome_title =>
+      'Studánky na cestách přírodou';
+
+  @override
+  String get legal_onboarding_step_welcome_body =>
+      'Studánky vznikají jako komunitní projekt od lidí pro lidi. Pomáhají zjistit, kde je hlášený průtok vody, abyste mohli cestu plánovat s větším respektem k přírodě.';
+
+  @override
+  String get legal_onboarding_step_welcome_bullet_community =>
+      'Méně vody tahat na zádech, méně jednorázových lahví v batohu i v přírodě.';
+
+  @override
+  String get legal_onboarding_step_welcome_bullet_feedback =>
+      'Když narazíte na chybu nebo máte nápad, budeme rádi za zpětnou vazbu.';
+
+  @override
+  String get legal_onboarding_step_water_title =>
+      'Tekoucí voda nemusí být pitná';
+
+  @override
+  String get legal_onboarding_step_water_body =>
+      'Studánky ukazují hlavně to, jestli je ve zdroji hlášený průtok. Neověřujeme kvalitu, pitnost ani zdravotní nezávadnost vody.';
+
+  @override
+  String get legal_onboarding_step_water_bullet_flow =>
+      'To, že voda teče, není potvrzení, že je bezpečná k pití.';
+
+  @override
+  String get legal_onboarding_step_water_bullet_marked =>
+      'Ani značená studánka nemusí mít aktuálně ověřenou pitnost.';
+
+  @override
+  String get legal_onboarding_step_water_bullet_quality =>
+      'Pokud zdroj není výslovně a aktuálně označen jako pitný, berte vodu jako rizikovou.';
+
+  @override
+  String get about_legal_info_title => 'Aplikace a provozovatel';
+
+  @override
+  String get about_legal_version_label => 'Verze';
+
+  @override
+  String get about_legal_version_loading => 'načítám';
+
+  @override
+  String get about_legal_operator_label => 'Provozovatel';
+
+  @override
+  String about_legal_operator_value(String name, String ico) {
+    return '$name, IČO $ico';
+  }
+
+  @override
+  String get about_legal_contact_label => 'Kontakt';
+
+  @override
+  String get about_legal_data_title => 'Zdroje dat';
+
+  @override
+  String get about_legal_chmu_body =>
+      'Data o vydatnosti pramenů pochází z otevřených dat Českého hydrometeorologického ústavu (ČHMÚ) pod licencí Creative Commons BY 4.0. Data byla pro účely aplikace upravena a interpretována do stavů teče / neteče. ČHMÚ aplikaci neprovozuje ani nezaštiťuje.';
+
+  @override
+  String get about_legal_cc_by_link => 'Licence Creative Commons BY 4.0';
+
+  @override
+  String get about_legal_mapy_body =>
+      'Mapové podklady a mapové služby poskytuje Seznam.cz, a.s. prostřednictvím Mapy.com.';
+
+  @override
+  String get about_legal_mapy_link => 'Copyright a atribuce Mapy.com';
+
+  @override
+  String get about_legal_privacy_title => 'Soukromí';
+
+  @override
+  String get about_legal_privacy_body =>
+      'Aplikace nevyžaduje účet, nepoužívá reklamu, analytiku ani tracking. Poloha slouží k zobrazení pozice na mapě, kamera ke skenování QR kódů a Moje studánky se ukládají lokálně v zařízení.';
+
+  @override
+  String get about_legal_documents_title => 'Další informace';
+
+  @override
+  String get about_legal_documents_body =>
+      'Právní informace, soukromí, kontakt a úplné zdroje dat najdete na webu.';
+
+  @override
+  String get about_legal_open_source_licenses => 'Licence open-source knihoven';
+
+  @override
+  String about_legal_version_line(String version) {
+    return 'Verze aplikace $version';
+  }
 
   @override
   String get map_search_hint => 'Hledejte studánky, obce, adresy…';

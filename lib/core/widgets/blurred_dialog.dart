@@ -12,10 +12,11 @@ import 'package:studanky_flutter_app/core/styles/dimens.dart';
 Future<T?> showBlurredDialog<T>({
   required BuildContext context,
   required Widget child,
+  bool barrierDismissible = true,
 }) {
   return showGeneralDialog<T>(
     context: context,
-    barrierDismissible: true,
+    barrierDismissible: barrierDismissible,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
     barrierColor: Colors.transparent,
     transitionDuration: const Duration(milliseconds: 240),
@@ -24,17 +25,26 @@ Future<T?> showBlurredDialog<T>({
       final t = Curves.easeOutCubic.transform(animation.value);
       return Material(
         type: MaterialType.transparency,
-        child: _BlurredDialogLayout(t: t, child: child),
+        child: _BlurredDialogLayout(
+          t: t,
+          barrierDismissible: barrierDismissible,
+          child: child,
+        ),
       );
     },
   );
 }
 
 class _BlurredDialogLayout extends StatelessWidget {
-  const _BlurredDialogLayout({required this.t, required this.child});
+  const _BlurredDialogLayout({
+    required this.t,
+    required this.barrierDismissible,
+    required this.child,
+  });
 
   /// Eased animation progress, 0 → 1.
   final double t;
+  final bool barrierDismissible;
   final Widget child;
 
   @override
@@ -46,7 +56,9 @@ class _BlurredDialogLayout extends StatelessWidget {
         Positioned.fill(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => Navigator.of(context).maybePop(),
+            onTap: barrierDismissible
+                ? () => Navigator.of(context).maybePop()
+                : null,
             child: BackdropFilter(
               filter: ImageFilter.blur(
                 sigmaX: kBackdropBlurSigma * t,

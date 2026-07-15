@@ -7,6 +7,8 @@ import 'package:studanky_flutter_app/core/providers/shared_preferences_provider.
 import 'package:studanky_flutter_app/core/styles/colors/app_colors.dart';
 import 'package:studanky_flutter_app/core/styles/theme/app_theme.dart';
 import 'package:studanky_flutter_app/core/styles/theme/theme_mode_provider.dart';
+import 'package:studanky_flutter_app/features/legal/providers/legal_onboarding_provider.dart';
+import 'package:studanky_flutter_app/features/legal/widgets/legal_onboarding_dialog.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
@@ -41,12 +43,17 @@ class MainApp extends ConsumerStatefulWidget {
   ConsumerState<MainApp> createState() => _MainAppState();
 }
 
-class _MainAppState extends ConsumerState<MainApp>
-    with WidgetsBindingObserver {
+class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
+  bool _legalOnboardingScheduled = false;
+  bool _legalOnboardingVisible = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scheduleLegalOnboardingIfNeeded();
+    });
   }
 
   @override
@@ -61,12 +68,45 @@ class _MainAppState extends ConsumerState<MainApp>
   @override
   void didChangePlatformBrightness() => setState(() {});
 
+  void _scheduleLegalOnboardingIfNeeded() {
+    if (!mounted ||
+        _legalOnboardingScheduled ||
+        _legalOnboardingVisible ||
+        ref.read(legalOnboardingProvider)) {
+      return;
+    }
+
+    _legalOnboardingScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _legalOnboardingScheduled = false;
+      if (!mounted ||
+          _legalOnboardingVisible ||
+          ref.read(legalOnboardingProvider)) {
+        return;
+      }
+
+      final navigatorContext = rootNavigatorKey.currentContext;
+      if (navigatorContext == null) {
+        _scheduleLegalOnboardingIfNeeded();
+        return;
+      }
+
+      _legalOnboardingVisible = true;
+      await showLegalOnboardingDialog(navigatorContext);
+      _legalOnboardingVisible = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Warm up the platform config right after startup so its background refresh
     // begins immediately, independent of which screen is shown first. The
     // provider is keepAlive, so it stays initialised for the app's lifetime.
-    ref.watch(platformConfigControllerProvider);
+    ref
+      ..watch(platformConfigControllerProvider)
+      ..listen<bool>(legalOnboardingProvider, (_, acknowledged) {
+        if (!acknowledged) _scheduleLegalOnboardingIfNeeded();
+      });
 
     final themeMode = ref.watch(themeModeProvider);
 

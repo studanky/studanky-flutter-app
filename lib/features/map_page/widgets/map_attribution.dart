@@ -28,9 +28,9 @@ class MapAttribution extends StatelessWidget {
     }
   }
 
-  /// Watermark strength. Legible enough to satisfy the attribution terms, dim
-  /// enough that it never competes with real UI.
-  static const double _watermarkOpacity = 0.6;
+  /// Kept fully opaque so the contractual map attribution stays clearly
+  /// visible over every tile.
+  static const double _watermarkOpacity = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +38,9 @@ class MapAttribution extends StatelessWidget {
     final text = Styles.textStyles;
     final isDark = colors.brightness == Brightness.dark;
 
-    // A deliberate *watermark*, not a control: no pill (a pill reads as a
-    // button/chip), reduced opacity, just a soft shadow for worst-case
-    // legibility. It must stay visually junior to the potability disclaimer
-    // above it — legal presence, not an interaction target. The logo and text
-    // still open the required pages, but nothing advertises tappability.
+    // A deliberate attribution strip, not a control: no pill (a pill reads as a
+    // button/chip), just a soft shadow for worst-case legibility. The logo and
+    // text still open the required pages, but nothing advertises tappability.
     final shadows = [
       Shadow(
         blurRadius: 4,
@@ -60,9 +58,9 @@ class MapAttribution extends StatelessWidget {
             behavior: HitTestBehavior.translucent,
             child: SvgPicture.network(
               _logoUrl,
-              height: 14,
+              height: 30,
               placeholderBuilder: (context) =>
-                  const SizedBox(width: 40, height: 14),
+                  const SizedBox(width: 86, height: 30),
             ),
           ),
           const SizedBox(width: 6),

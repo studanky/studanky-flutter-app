@@ -264,7 +264,10 @@ class _ScaleValue extends StatelessWidget {
       children: [
         scale,
         const SizedBox(width: 10),
-        Text(label, style: Styles.textStyles.title2.copyWith(color: labelColor)),
+        Text(
+          label,
+          style: Styles.textStyles.title2.copyWith(color: labelColor),
+        ),
       ],
     );
   }

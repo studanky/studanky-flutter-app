@@ -18,6 +18,8 @@ class AppDialogCard extends StatelessWidget {
     this.dividerUnderHeader = false,
     this.maxWidth = 460,
     this.maxHeightFactor = 0.8,
+    this.showHeader = true,
+    this.showCloseButton = true,
   });
 
   final IconData icon;
@@ -36,6 +38,8 @@ class AppDialogCard extends StatelessWidget {
   final bool dividerUnderHeader;
   final double maxWidth;
   final double maxHeightFactor;
+  final bool showHeader;
+  final bool showCloseButton;
 
   @override
   Widget build(BuildContext context) {
@@ -51,37 +55,42 @@ class AppDialogCard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 8, 12),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Icon(
-                        icon,
-                        color: iconColor ?? colors.primaryMain,
-                        size: 22,
+              if (showHeader)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 8, 12),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Icon(
+                          icon,
+                          color: iconColor ?? colors.primaryMain,
+                          size: 22,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: text.h5.copyWith(color: colors.neutral900),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: text.h5.copyWith(color: colors.neutral900),
+                        ),
                       ),
-                    ),
-                    if (trailing != null) ...[
-                      const SizedBox(width: 8),
-                      trailing!,
+                      if (trailing != null) ...[
+                        const SizedBox(width: 8),
+                        trailing!,
+                      ],
+                      if (showCloseButton)
+                        IconButton(
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: colors.neutral700,
+                          ),
+                          onPressed: () => Navigator.of(context).maybePop(),
+                        ),
                     ],
-                    IconButton(
-                      icon: Icon(Icons.close_rounded, color: colors.neutral700),
-                      onPressed: () => Navigator.of(context).maybePop(),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-              if (dividerUnderHeader) const Divider(height: 1),
+              if (showHeader && dividerUnderHeader) const Divider(height: 1),
               Flexible(child: child),
             ],
           ),
