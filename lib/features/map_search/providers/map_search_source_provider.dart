@@ -38,7 +38,10 @@ MapSuggestApi mapSuggestApi(Ref ref) =>
     MapSuggestApi(ref.watch(mapSuggestDioProvider));
 
 /// Provides the active search backend. Requires the Mapy.com suggest API.
-@riverpod
+///
+/// Kept alive so the first-party result cache survives between debounced
+/// keystrokes instead of being rebuilt on every `ref.read`.
+@Riverpod(keepAlive: true)
 MapSearchSource mapSearchSource(Ref ref, String languageCode) {
   const apiKey = Env.mapyComApiKey;
   if (apiKey.isEmpty) {

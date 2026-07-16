@@ -104,24 +104,33 @@ final class MapSuggestApiProvider
 String _$mapSuggestApiHash() => r'642c31670c276c2fccab321a4fd8031ce082f76c';
 
 /// Provides the active search backend. Requires the Mapy.com suggest API.
+///
+/// Kept alive so the first-party result cache survives between debounced
+/// keystrokes instead of being rebuilt on every `ref.read`.
 
 @ProviderFor(mapSearchSource)
 final mapSearchSourceProvider = MapSearchSourceFamily._();
 
 /// Provides the active search backend. Requires the Mapy.com suggest API.
+///
+/// Kept alive so the first-party result cache survives between debounced
+/// keystrokes instead of being rebuilt on every `ref.read`.
 
 final class MapSearchSourceProvider
     extends
         $FunctionalProvider<MapSearchSource, MapSearchSource, MapSearchSource>
     with $Provider<MapSearchSource> {
   /// Provides the active search backend. Requires the Mapy.com suggest API.
+  ///
+  /// Kept alive so the first-party result cache survives between debounced
+  /// keystrokes instead of being rebuilt on every `ref.read`.
   MapSearchSourceProvider._({
     required MapSearchSourceFamily super.from,
     required String super.argument,
   }) : super(
          retry: null,
          name: r'mapSearchSourceProvider',
-         isAutoDispose: true,
+         isAutoDispose: false,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
@@ -166,9 +175,12 @@ final class MapSearchSourceProvider
   }
 }
 
-String _$mapSearchSourceHash() => r'1c62b26e060cbaee1f0b62152b1426f5c2dcb0b2';
+String _$mapSearchSourceHash() => r'5e8eafb972dd7b3fff259a81c1915c470cc9bd74';
 
 /// Provides the active search backend. Requires the Mapy.com suggest API.
+///
+/// Kept alive so the first-party result cache survives between debounced
+/// keystrokes instead of being rebuilt on every `ref.read`.
 
 final class MapSearchSourceFamily extends $Family
     with $FunctionalFamilyOverride<MapSearchSource, String> {
@@ -178,10 +190,13 @@ final class MapSearchSourceFamily extends $Family
         name: r'mapSearchSourceProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
-        isAutoDispose: true,
+        isAutoDispose: false,
       );
 
   /// Provides the active search backend. Requires the Mapy.com suggest API.
+  ///
+  /// Kept alive so the first-party result cache survives between debounced
+  /// keystrokes instead of being rebuilt on every `ref.read`.
 
   MapSearchSourceProvider call(String languageCode) =>
       MapSearchSourceProvider._(argument: languageCode, from: this);

@@ -11,6 +11,8 @@ class MapySuggestQueryDto {
     required this.language,
     required this.limit,
     required this.types,
+    this.preferNear,
+    this.preferNearPrecision,
   });
 
   /// User-entered text.
@@ -26,6 +28,17 @@ class MapySuggestQueryDto {
   /// Mapy.cz expects `type=a,b,c` instead of an array.
   @JsonKey(name: 'type', toJson: _typesToCsv)
   final List<MapSuggestTypeDto> types;
+
+  /// Soft location bias as `"{lon},{lat}"` (longitude first — Mapy.com's
+  /// `preferNear`): ranks suggestions by proximity to where the user is
+  /// looking, without hard-excluding matches elsewhere. Null → no bias.
+  @JsonKey(name: 'preferNear', includeIfNull: false)
+  final String? preferNear;
+
+  /// Radius in metres of the [preferNear] preference circle (Mapy.com's
+  /// `preferNearPrecision`). Null → let the API decide.
+  @JsonKey(name: 'preferNearPrecision', includeIfNull: false)
+  final int? preferNearPrecision;
 
   Map<String, dynamic> toJson() => _$MapySuggestQueryDtoToJson(this);
 

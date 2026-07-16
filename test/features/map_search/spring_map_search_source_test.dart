@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:studanky_flutter_app/core/api/exceptions/api_exceptions.dart';
 import 'package:studanky_flutter_app/core/api/utils/api_result.dart';
 import 'package:studanky_flutter_app/features/map_search/data/spring_map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
@@ -39,6 +40,27 @@ class _FakeSpringRepository implements SpringRepository {
     lastLimit = limit;
     lastLocale = locale;
     return ApiResult.success(searchResults);
+  }
+}
+
+class _FailingSpringRepository implements SpringRepository {
+  @override
+  Future<ApiResult<List<SpringMarkerEntity>>> fetchMapMarkers(
+    SpringBounds bounds,
+  ) async {
+    return const ApiResult.success([]);
+  }
+
+  @override
+  Future<ApiResult<List<SpringSearchResult>>> searchByName({
+    required String query,
+    LatLng? origin,
+    int limit = 5,
+    String? locale,
+  }) async {
+    return const ApiResult<List<SpringSearchResult>>.failure(
+      NetworkException(message: 'offline'),
+    );
   }
 }
 
@@ -94,4 +116,14 @@ void main() {
       expect(results.single.spring, spring);
     },
   );
+
+  test('propagates repository failures so the UI can show an error', () async {
+    final source = SpringMapSearchSource(
+      repository: _FailingSpringRepository(),
+      languageCode: 'cs',
+      springLabel: 'Studánka',
+    );
+
+    await expectLater(source.search('ostr'), throwsA(isA<NetworkException>()));
+  });
 }

@@ -12,6 +12,7 @@ abstract class MapSuggestApi {
 
   @GET(MapSearchConstants.suggestPath)
   Future<MapSuggestResponseDto> suggest(
-    @Queries() Map<String, dynamic> queries,
-  );
+    @Queries() Map<String, dynamic> queries, {
+    @CancelRequest() CancelToken? cancelToken,
+  });
 }

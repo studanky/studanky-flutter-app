@@ -13,4 +13,6 @@ Map<String, dynamic> _$MapySuggestQueryDtoToJson(
   'lang': instance.language.toJson(),
   'limit': instance.limit,
   'type': MapySuggestQueryDto._typesToCsv(instance.types),
+  'preferNear': ?instance.preferNear,
+  'preferNearPrecision': ?instance.preferNearPrecision,
 };

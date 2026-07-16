@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/features/map_search/data/composite_map_search_source.dart';
@@ -19,7 +20,11 @@ class _FakeSearchSource implements MapSearchSource {
   LatLng? lastOrigin;
 
   @override
-  Future<List<MapSearchResult>> search(String query, {LatLng? origin}) async {
+  Future<List<MapSearchResult>> search(
+    String query, {
+    LatLng? origin,
+    CancelToken? cancelToken,
+  }) async {
     lastQuery = query;
     lastOrigin = origin;
     return results;
@@ -28,7 +33,11 @@ class _FakeSearchSource implements MapSearchSource {
 
 class _ThrowingSearchSource implements MapSearchSource {
   @override
-  Future<List<MapSearchResult>> search(String query, {LatLng? origin}) {
+  Future<List<MapSearchResult>> search(
+    String query, {
+    LatLng? origin,
+    CancelToken? cancelToken,
+  }) {
     throw StateError('boom');
   }
 }
@@ -57,5 +66,14 @@ void main() {
     final results = await source.search('ostr');
 
     expect(results.map((result) => result.label), ['mapy']);
+  });
+
+  test('rethrows when every source fails so the UI can show an error', () async {
+    final source = CompositeMapSearchSource([
+      _ThrowingSearchSource(),
+      _ThrowingSearchSource(),
+    ]);
+
+    await expectLater(source.search('ostr'), throwsA(isA<StateError>()));
   });
 }

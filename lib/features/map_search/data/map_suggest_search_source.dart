@@ -10,7 +10,15 @@ import 'package:studanky_flutter_app/features/map_search/dtos/map_suggest_type_d
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
 
-/// Remote autocomplete backed by the Mapy.cz suggest API.
+/// Remote autocomplete backed by the Mapy.com suggest API.
+///
+/// Deliberately holds **no result cache**: Mapy.com's terms of use forbid
+/// storing or caching API function results (§4.6.2). Relevance and fewer
+/// requests come instead from location biasing ([_formatPreferNear]), a
+/// minimum query length, and upstream debouncing. Superseded in-flight
+/// requests are additionally cancelled so the client stops waiting for
+/// outdated results — the caller supplies the `cancelToken`, so a single owner
+/// can also abort on backspace-to-short, clear, and selection.
 class MapSuggestSearchSource implements MapSearchSource {
   MapSuggestSearchSource({
     required this.api,
@@ -24,6 +32,15 @@ class MapSuggestSearchSource implements MapSearchSource {
   final String languageCode;
   final int limit;
 
+  /// Skip single-character queries: too broad to be useful and a needless
+  /// request. Matches `SpringMapSearchSource`'s threshold.
+  static const int _minQueryLength = 2;
+
+  /// Radius in metres of the `preferNear` preference circle around the map
+  /// centre — wide enough to cover the visible region without hard-excluding a
+  /// named place just outside it (the bias is a soft ranking hint). Tunable.
+  static const int _preferNearPrecisionMeters = 10000;
+
   static const List<MapSuggestTypeDto> types = <MapSuggestTypeDto>[
     MapSuggestTypeDto.regionalMunicipality,
     MapSuggestTypeDto.regionalRegion,
@@ -32,29 +49,31 @@ class MapSuggestSearchSource implements MapSearchSource {
   ];
 
   final _logger = Logger('MapSuggestSearchSource');
-  final Map<String, List<MapSearchResult>> _cache = {};
 
   @override
-  Future<List<MapSearchResult>> search(String query, {LatLng? origin}) async {
+  Future<List<MapSearchResult>> search(
+    String query, {
+    LatLng? origin,
+    CancelToken? cancelToken,
+  }) async {
     final trimmed = query.trim();
-    if (trimmed.isEmpty) return const [];
-
-    final cacheKey = trimmed.toLowerCase();
-    final cached = _cache[cacheKey];
-    if (cached != null) {
-      return cached;
-    }
+    if (trimmed.length < _minQueryLength) return const [];
 
     try {
-      final query = MapySuggestQueryDto(
+      final suggestQuery = MapySuggestQueryDto(
         query: trimmed,
         language: MapSuggestLanguageDto.fromCode(languageCode),
         limit: limit,
         types: types,
+        preferNear: origin == null ? null : _formatPreferNear(origin),
+        preferNearPrecision: origin == null ? null : _preferNearPrecisionMeters,
       );
-      final suggest = await api.suggest(query.toQueryParameters(apiKey));
+      final suggest = await api.suggest(
+        suggestQuery.toQueryParameters(apiKey),
+        cancelToken: cancelToken,
+      );
 
-      final results = suggest.items
+      return suggest.items
           .map((MapSuggestItemDto item) {
             final name = item.name.trim();
             final lat = item.position.lat;
@@ -75,18 +94,26 @@ class MapSuggestSearchSource implements MapSearchSource {
           })
           .whereType<MapSearchResult>()
           .toList(growable: false);
-
-      _cache[cacheKey] = results;
-      return results;
     } on DioException catch (error, stackTrace) {
-      _logger.shout(
+      // A superseded request cancelled on purpose isn't a failure — the newer
+      // request will deliver results, so stay quiet and yield nothing.
+      if (CancelToken.isCancel(error)) return const [];
+      _logger.warning(
         'Mapy suggest request failed for "$trimmed"',
         error,
         stackTrace,
       );
-      return const [];
+      // Surface real failures so the composite/UI can show an error state
+      // instead of a misleading "no results".
+      rethrow;
     }
   }
+
+  /// Mapy.com's `preferNear` expects `"{lon},{lat}"` (longitude first). Six
+  /// decimals is ~0.1 m — far finer than needed and keeps the URL short.
+  static String _formatPreferNear(LatLng origin) =>
+      '${origin.longitude.toStringAsFixed(6)},'
+      '${origin.latitude.toStringAsFixed(6)}';
 
   /// Converts the suggest `[minLon, minLat, maxLon, maxLat]` bbox into
   /// south-west / north-east corners; returns null when absent or malformed.

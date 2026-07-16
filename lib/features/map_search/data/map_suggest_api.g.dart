@@ -18,10 +18,14 @@ class _MapSuggestApi implements MapSuggestApi {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<MapSuggestResponseDto> suggest(Map<String, dynamic> queries) async {
+  Future<MapSuggestResponseDto> suggest(
+    Map<String, dynamic> queries, {
+    CancelToken? cancelToken,
+  }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.addAll(queries);
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MapSuggestResponseDto>(
@@ -31,6 +35,7 @@ class _MapSuggestApi implements MapSuggestApi {
             '/v1/suggest',
             queryParameters: queryParameters,
             data: _data,
+            cancelToken: cancelToken,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
