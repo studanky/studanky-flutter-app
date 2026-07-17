@@ -19,6 +19,9 @@ dependencies:
   flutter_riverpod: ^3.0.3
   flutter_secure_storage: ^10.3.1
   flutter_svg: ^2.2.1
+  # Prerelease is required, not accidental: stable freezed (<=3.2.5) pins
+  # analyzer <11, but riverpod_generator/json_serializable need analyzer ^12.
+  # 3.2.6-dev.1 is the only freezed compatible with analyzer 12. Do not downgrade.
   freezed: ^3.2.3
   freezed_annotation: ^3.1.0
   geolocator: ^14.0.2
