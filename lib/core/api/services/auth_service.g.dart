@@ -47,7 +47,7 @@ abstract class _$AuthService extends $Notifier<AuthenticationState> {
   AuthenticationState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AuthenticationState, AuthenticationState>;
     final element =
         ref.element
@@ -57,7 +57,7 @@ abstract class _$AuthService extends $Notifier<AuthenticationState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 

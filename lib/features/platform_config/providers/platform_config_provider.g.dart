@@ -130,7 +130,7 @@ abstract class _$PlatformConfigController extends $Notifier<PlatformConfig> {
   PlatformConfig build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<PlatformConfig, PlatformConfig>;
     final element =
         ref.element
@@ -140,6 +140,6 @@ abstract class _$PlatformConfigController extends $Notifier<PlatformConfig> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

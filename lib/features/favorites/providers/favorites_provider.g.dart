@@ -70,7 +70,7 @@ abstract class _$FavoritesController
   List<SpringMarkerEntity> build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref =
         this.ref as $Ref<List<SpringMarkerEntity>, List<SpringMarkerEntity>>;
     final element =
@@ -81,6 +81,6 @@ abstract class _$FavoritesController
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

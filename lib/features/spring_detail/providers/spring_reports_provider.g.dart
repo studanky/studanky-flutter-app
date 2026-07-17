@@ -107,7 +107,7 @@ abstract class _$SpringReports extends $Notifier<SpringReportsState> {
   SpringReportsState build(String documentId);
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SpringReportsState, SpringReportsState>;
     final element =
         ref.element
@@ -117,6 +117,6 @@ abstract class _$SpringReports extends $Notifier<SpringReportsState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(_$args));
+    return element.handleCreate(ref, () => build(_$args));
   }
 }
