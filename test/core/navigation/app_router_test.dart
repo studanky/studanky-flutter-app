@@ -10,10 +10,6 @@ void main() {
       expect(const MapRoute().location, '/map');
     });
 
-    test('scanner is a top-level location', () {
-      expect(const ScannerRoute().location, '/scanner');
-    });
-
     test('spring detail nests under map and carries the document id', () {
       expect(
         const SpringRoute(documentId: 'abc123').location,
@@ -39,9 +35,18 @@ void main() {
     List<GoRoute> topLevel() =>
         appRouter.configuration.routes.whereType<GoRoute>().toList();
 
-    test('exposes /map and /scanner as top-level routes', () {
+    test('exposes /map as a top-level route', () {
       final paths = topLevel().map((r) => r.path).toList();
-      expect(paths, containsAll(<String>['/map', '/scanner']));
+      expect(paths, contains('/map'));
+    });
+
+    test('the QR scanner route is disabled for the MVP (no camera permission)', () {
+      // The MVP ships without the camera permission, so the /scanner route is
+      // intentionally unregistered — nothing must expose a reachable camera
+      // screen. Re-enable ScannerRoute (and this route) when QR scanning and
+      // the camera permission come back.
+      final paths = topLevel().map((r) => r.path).toList();
+      expect(paths, isNot(contains('/scanner')));
     });
 
     test('exposes the public share route at the top level', () {

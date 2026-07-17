@@ -6,12 +6,7 @@ part of 'app_router.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [
-  $mapRoute,
-  $springRoute,
-  $shareRoute,
-  $scannerRoute,
-];
+List<RouteBase> get $appRoutes => [$mapRoute, $springRoute, $shareRoute];
 
 RouteBase get $mapRoute =>
     GoRouteData.$route(path: '/map', factory: $MapRoute._fromState);
@@ -82,29 +77,6 @@ mixin $ShareRoute on GoRouteData {
   @override
   String get location =>
       GoRouteData.$location('/s/${Uri.encodeComponent(_self.documentId)}');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $scannerRoute =>
-    GoRouteData.$route(path: '/scanner', factory: $ScannerRoute._fromState);
-
-mixin $ScannerRoute on GoRouteData {
-  static ScannerRoute _fromState(GoRouterState state) => const ScannerRoute();
-
-  @override
-  String get location => GoRouteData.$location('/scanner');
 
   @override
   void go(BuildContext context) => context.go(location);

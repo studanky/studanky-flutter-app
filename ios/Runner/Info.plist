@@ -56,8 +56,10 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>Aplikace potřebuje přístup ke kameře pro skenování QR kódů studánek.</string>
+	<!-- NSCameraUsageDescription intentionally omitted for the MVP: the QR
+	     scanner (/scanner) is disabled and no camera is accessed, so no camera
+	     permission is declared and none appears in App Store review. Restore
+	     this key when re-enabling QR scanning. -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Aplikace potřebuje přístup k poloze, aby ji mohla zobrazit na mapě studánek.</string>
 	<key>UIApplicationSceneManifest</key>
