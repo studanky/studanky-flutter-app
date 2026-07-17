@@ -11,6 +11,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/navigation/app_router.dart';
+import 'package:studanky_flutter_app/core/providers/connectivity_status_provider.dart';
 import 'package:studanky_flutter_app/core/widgets/app_progress_indicator.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/features/favorites/widgets/favorites_dialog.dart';
@@ -28,6 +29,7 @@ import 'package:studanky_flutter_app/features/map_page/widgets/map_disclaimer.da
 import 'package:studanky_flutter_app/features/map_page/widgets/map_empty_state.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_zoom_slider.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
+import 'package:studanky_flutter_app/features/map_page/widgets/offline_banner.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/status_bar_scrim.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
@@ -187,14 +189,37 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
 
   MapMarkerNotifier get _markerNotifier => ref.read(mapMarkerProvider.notifier);
 
+  late final AppLifecycleListener _lifecycleListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycleListener = AppLifecycleListener(onResume: _onAppResumed);
+  }
+
   @override
   void dispose() {
+    _lifecycleListener.dispose();
     _cameraDebounceTimer?.cancel();
     _emptyStateRevealTimer?.cancel();
     _animator.dispose();
     _compass.dispose();
     _zoom.dispose();
     super.dispose();
+  }
+
+  /// On resume, re-verify connectivity with a real request: the outcome updates
+  /// the offline banner via `ConnectivityInterceptor`. connectivity_plus
+  /// delivers no interface-change event to a backgrounded app (Android O+), so
+  /// nothing else refreshes the state across a background stint.
+  ///
+  /// The fetch is *forced* past the marker cache because the app may resume on
+  /// the same camera — a cache-short-circuited fetch would never touch the
+  /// network and the banner would stay stuck at whatever it was before
+  /// backgrounding: falsely online if the network broke while away, falsely
+  /// offline if it recovered. Forcing it re-verifies both directions.
+  void _onAppResumed() {
+    if (_isMapReady) unawaited(_markerNotifier.refreshVisible());
   }
 
   void _onMapReady() {
@@ -603,20 +628,42 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<MapMarkerState>(mapMarkerProvider, (_, next) {
-      _syncMapEmptyState(next);
-    });
+    ref
+      ..listen<MapMarkerState>(mapMarkerProvider, (_, next) {
+        _syncMapEmptyState(next);
+      })
+      // Reconnected after being offline → refetch markers for the current
+      // camera so an idle map recovers on its own, without the user panning.
+      ..listen<ConnectivityStatus>(connectivityStatusProvider, (previous, next) {
+        if (previous == ConnectivityStatus.offline &&
+            next == ConnectivityStatus.online &&
+            _isMapReady) {
+          _emitCamera();
+        }
+      });
 
     final markerState = ref.watch(mapMarkerProvider);
     final config = ref.watch(platformConfigControllerProvider);
     final locationStatus = ref.watch(userLocationProvider).status;
+    // Advisory only, optimistic by default: the offline banner takes the shared
+    // top-center status slot ahead of the empty state once the network layer
+    // confirms the backend is unreachable.
+    final isOffline = ref.watch(
+      connectivityStatusProvider.select((status) => status.isOffline),
+    );
     final l10n = context.l10n;
     final isDetailOpen = widget.detailDocumentId != null;
     // Honour the OS reduce-motion setting: the bar still disappears, just
     // without the transition.
-    final searchBarHideDuration = MediaQuery.disableAnimationsOf(context)
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final searchBarHideDuration = reduceMotion
         ? Duration.zero
         : _searchBarHideDuration;
+    // The top-center status slot (offline banner / empty state) still swaps
+    // instantly under reduce-motion, just without the slide+fade.
+    final statusOverlayDuration = reduceMotion
+        ? Duration.zero
+        : _emptyStateFadeDuration;
     final isMapEmptyOverlayVisible = _isMapEmptyOverlayVisible;
     final isMapEmptyOverlayRefreshing =
         _mapEmptyOverlayMode == _MapEmptyOverlayMode.refreshing;
@@ -743,7 +790,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
             child: SafeArea(
               child: Stack(
                 children: [
-                  if (markerState.status.isLoading && !isMapEmptyOverlayVisible)
+                  if (markerState.status.isLoading &&
+                      !isMapEmptyOverlayVisible &&
+                      !isOffline)
                     const Positioned(
                       top: 84,
                       left: 0,
@@ -757,13 +806,29 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: AnimatedSwitcher(
-                        duration: _emptyStateFadeDuration,
-                        reverseDuration: _emptyStateFadeDuration,
+                        duration: statusOverlayDuration,
+                        reverseDuration: statusOverlayDuration,
                         switchInCurve: Curves.easeOutCubic,
                         switchOutCurve: Curves.easeInCubic,
-                        transitionBuilder: (child, animation) =>
-                            FadeTransition(opacity: animation, child: child),
-                        child: isMapEmptyOverlayVisible
+                        transitionBuilder: (child, animation) => FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(0, -0.12),
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: child,
+                          ),
+                        ),
+                        // Precedence for the shared top-center slot:
+                        // offline (the specific reason a map is empty) wins over
+                        // the generic "no springs here" empty state, which wins
+                        // over nothing. Distinct keys drive the crossfade.
+                        child: isOffline
+                            ? const OfflineBanner(
+                                key: ValueKey('offline-banner'),
+                              )
+                            : isMapEmptyOverlayVisible
                             ? MapEmptyState(
                                 key: const ValueKey('map-empty-state'),
                                 refreshing: isMapEmptyOverlayRefreshing,

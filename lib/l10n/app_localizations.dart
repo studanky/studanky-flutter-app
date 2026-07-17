@@ -244,29 +244,17 @@ abstract class AppLocalizations {
   /// **'Zkusit znovu'**
   String get error_widget_default_try_again;
 
-  /// No description provided for @offline_placeholder_title.
+  /// No description provided for @offline_banner_title.
   ///
   /// In cs, this message translates to:
   /// **'Jste offline'**
-  String get offline_placeholder_title;
+  String get offline_banner_title;
 
-  /// No description provided for @offline_placeholder_message_offline.
+  /// No description provided for @offline_banner_message.
   ///
   /// In cs, this message translates to:
-  /// **'Nemáte připojení k internetu. Mapová data vyžadují online připojení.'**
-  String get offline_placeholder_message_offline;
-
-  /// No description provided for @error_connectivity_status_title.
-  ///
-  /// In cs, this message translates to:
-  /// **'Chyba vyhodnocení stavu připojení'**
-  String get error_connectivity_status_title;
-
-  /// No description provided for @error_connectivity_status_subtitle.
-  ///
-  /// In cs, this message translates to:
-  /// **'Zkuste to prosím znovu'**
-  String get error_connectivity_status_subtitle;
+  /// **'Mapová data se nemusí načíst celá.'**
+  String get offline_banner_message;
 
   /// No description provided for @location_permission_denied.
   ///

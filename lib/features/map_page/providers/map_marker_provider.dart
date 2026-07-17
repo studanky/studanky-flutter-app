@@ -130,10 +130,20 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
     return (cluster.highestZoom + 1).clamp(0, _clusterMaxZoom);
   }
 
-  Future<void> _maybeFetch(LatLngBounds visibleBounds) async {
+  /// Re-fetches the current visible bounds even if they're already cached.
+  /// Used on app resume to re-verify connectivity through a real request (the
+  /// outcome drives the offline banner), which the cache short-circuit would
+  /// otherwise skip. No-op until the first camera has been reported.
+  Future<void> refreshVisible() async {
+    final bounds = _lastVisibleBounds;
+    if (bounds == null) return;
+    await _maybeFetch(bounds, force: true);
+  }
+
+  Future<void> _maybeFetch(LatLngBounds visibleBounds, {bool force = false}) async {
     final requestBounds = _expandBounds(visibleBounds);
     final cached = _cachedBounds;
-    if (cached != null && cached.containsBounds(requestBounds)) {
+    if (!force && cached != null && cached.containsBounds(requestBounds)) {
       return;
     }
 

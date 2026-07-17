@@ -43,10 +43,15 @@ class _FakeSpringRepository implements SpringRepository {
 
   final List<SpringMarkerEntity> _springs;
 
+  /// Number of times the map-markers endpoint was hit — lets a test assert the
+  /// cache short-circuit (and its forced bypass) actually control fetching.
+  int fetchCount = 0;
+
   @override
   Future<ApiResult<List<SpringMarkerEntity>>> fetchMapMarkers(
     SpringBounds bounds,
   ) async {
+    fetchCount++;
     final inBounds = _springs
         .where(
           (spring) => bounds.containsPosition(
@@ -136,4 +141,37 @@ void main() {
       expect(state.visibleBoundsLoaded, isTrue);
     },
   );
+
+  test('refreshVisible forces a re-fetch of the current bounds past the cache', () async {
+    final repository = _FakeSpringRepository([_prague]);
+    final container = ProviderContainer(
+      overrides: [springRepositoryProvider.overrideWithValue(repository)],
+    );
+    addTearDown(container.dispose);
+    final notifier = container.read(mapMarkerProvider.notifier);
+
+    await notifier.onCameraChanged(_pragueBounds, 18);
+    expect(repository.fetchCount, 1);
+
+    // Re-reporting the same (cached) camera must NOT hit the network.
+    await notifier.onCameraChanged(_pragueBounds, 18);
+    expect(repository.fetchCount, 1);
+
+    // refreshVisible bypasses the cache and re-verifies via a real request —
+    // the recovery path used on app resume while offline.
+    await notifier.refreshVisible();
+    expect(repository.fetchCount, 2);
+  });
+
+  test('refreshVisible is a no-op before the first camera is reported', () async {
+    final repository = _FakeSpringRepository([_prague]);
+    final container = ProviderContainer(
+      overrides: [springRepositoryProvider.overrideWithValue(repository)],
+    );
+    addTearDown(container.dispose);
+    final notifier = container.read(mapMarkerProvider.notifier);
+
+    await notifier.refreshVisible();
+    expect(repository.fetchCount, 0);
+  });
 }

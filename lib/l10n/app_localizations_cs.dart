@@ -94,18 +94,10 @@ class AppLocalizationsCs extends AppLocalizations {
   String get error_widget_default_try_again => 'Zkusit znovu';
 
   @override
-  String get offline_placeholder_title => 'Jste offline';
+  String get offline_banner_title => 'Jste offline';
 
   @override
-  String get offline_placeholder_message_offline =>
-      'Nemáte připojení k internetu. Mapová data vyžadují online připojení.';
-
-  @override
-  String get error_connectivity_status_title =>
-      'Chyba vyhodnocení stavu připojení';
-
-  @override
-  String get error_connectivity_status_subtitle => 'Zkuste to prosím znovu';
+  String get offline_banner_message => 'Mapová data se nemusí načíst celá.';
 
   @override
   String get location_permission_denied =>

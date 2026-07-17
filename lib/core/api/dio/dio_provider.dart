@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:studanky_flutter_app/core/api/config/api_config.dart';
 import 'package:studanky_flutter_app/core/api/interceptors/auth_interceptor.dart';
 import 'package:studanky_flutter_app/core/api/interceptors/bearer_token_interceptor.dart';
+import 'package:studanky_flutter_app/core/api/interceptors/connectivity_interceptor.dart';
 import 'package:studanky_flutter_app/core/api/interceptors/logging_interceptor.dart';
 
 part 'dio_provider.g.dart';
@@ -35,6 +36,10 @@ Dio dio(Ref ref) {
   dio.interceptors.addAll([
     AuthInterceptor(dio: dio, ref: ref),
     _retryInterceptor(dio),
+    // After retries (so it sees the final outcome), before logging (Dio
+    // convention keeps the log interceptor last): reports the request outcome
+    // to the connectivity signal that drives the offline banner.
+    ConnectivityInterceptor(ref),
     LoggingInterceptor(),
   ]);
 
@@ -58,6 +63,7 @@ Dio authDio(Ref ref) {
   dio.interceptors.addAll([
     BearerTokenInterceptor(ref),
     _retryInterceptor(dio),
+    ConnectivityInterceptor(ref),
     LoggingInterceptor(),
   ]);
 

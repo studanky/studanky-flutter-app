@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:studanky_flutter_app/core/api/interceptors/connectivity_interceptor.dart';
 import 'package:studanky_flutter_app/core/api/interceptors/logging_interceptor.dart';
 import 'package:studanky_flutter_app/core/env.dart';
 import 'package:studanky_flutter_app/features/map_search/constants/map_search_constants.dart';
@@ -27,7 +28,13 @@ Dio mapSuggestDio(Ref ref) {
       receiveTimeout: const Duration(seconds: 10),
       sendTimeout: const Duration(seconds: 10),
     ),
-  )..interceptors.add(LoggingInterceptor());
+  )..interceptors.addAll([
+    // Broadens the offline signal to the Mapy.com host too. Cancelled suggest
+    // requests (search debounce) classify as inconclusive, so typing never
+    // flips connectivity. Connectivity before logging (Dio keeps logging last).
+    ConnectivityInterceptor(ref),
+    LoggingInterceptor(),
+  ]);
 
   ref.onDispose(dio.close);
   return dio;
