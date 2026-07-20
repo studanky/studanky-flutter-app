@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
@@ -93,9 +92,10 @@ class MapControlStack extends StatelessWidget {
   }
 }
 
-/// 44×44 frosted-glass square button built on the shared [GlassSurface] so it
-/// matches the search bar and zoom slider exactly (same blur, edge, shadow and
-/// corner radius). A neutral glass tile in every state.
+/// 44×44 **circular** frosted-glass button built on the shared [GlassSurface]
+/// (same blur, edge and shadow as the search bar and zoom slider). Round rather
+/// than the squircle tile the other surfaces use — the map controls read as
+/// classic floating map buttons. A neutral glass tile in every state.
 class GlassIconButton extends StatelessWidget {
   const GlassIconButton({
     super.key,
@@ -103,6 +103,8 @@ class GlassIconButton extends StatelessWidget {
     required this.semanticLabel,
     this.onTap,
   });
+
+  static const double _diameter = 44;
 
   final Widget child;
   final String semanticLabel;
@@ -114,12 +116,16 @@ class GlassIconButton extends StatelessWidget {
       button: true,
       label: semanticLabel,
       child: GlassSurface(
+        borderRadius: const BorderRadius.all(Radius.circular(_diameter / 2)),
         child: Material(
           type: MaterialType.transparency,
           child: InkWell(
             onTap: onTap,
-            customBorder: squircleBorder(kGlassRadius),
-            child: SizedBox(width: 44, height: 44, child: Center(child: child)),
+            customBorder: const CircleBorder(),
+            child: SizedBox.square(
+              dimension: _diameter,
+              child: Center(child: child),
+            ),
           ),
         ),
       ),

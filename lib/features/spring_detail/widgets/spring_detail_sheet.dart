@@ -68,12 +68,6 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
   /// — a single downward swipe from full screen closes it (never stops at half).
   static const double _dismissThreshold = 0.45;
 
-  /// Side/bottom gutter that lets the sheet read as a *floating* squircle card
-  /// over the map (the mockup's inset look) rather than a full-bleed panel.
-  /// Purely visual — applied inside the sheet's builder, so it leaves the
-  /// extent/snap/dismiss maths and the map's camera-parking untouched.
-  static const double _sheetInset = 8;
-
   bool _dismissing = false;
 
   /// Tracks whether the sheet is currently resting at full height, so the snap
@@ -111,28 +105,24 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
         snapSizes: const [1.0],
         expand: false,
         builder: (context, scrollController) {
-          return Padding(
-            // Float the card off the side and bottom edges. The bottom gutter
-            // includes the home-indicator inset, so the card clears it instead
-            // of the scroll content padding out behind it.
-            padding: EdgeInsets.only(
-              left: _sheetInset,
-              right: _sheetInset,
-              bottom: _sheetInset + MediaQuery.viewPaddingOf(context).bottom,
+          // Solid, opaque sheet pulled flush to the phone's bottom edge — the
+          // home-indicator inset is handled by the content's own bottom padding,
+          // not a gap under the sheet. Deliberately not glass: the dense
+          // freshness data (status, ages, history) must read cleanly over the
+          // map, so the sheet stays a solid surface — legibility over effect.
+          return ClipRSuperellipse(
+            // Squircle top corners only; the bottom runs off the screen edge.
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(kRadiusCard),
             ),
-            // Squircle on all four corners now that the card floats; the coin's
-            // corner curve matches every other surface in the app.
-            child: ClipRSuperellipse(
-              borderRadius: const BorderRadius.all(Radius.circular(kRadiusCard)),
-              // The grouped background (lighter than the section cards) so the
-              // iOS-style inset sections read as cards floating on the sheet.
-              child: Material(
-                color: colors.background,
-                child: _SpringDetailBody(
-                  documentId: widget.documentId,
-                  marker: widget.marker,
-                  scrollController: scrollController,
-                ),
+            // The grouped background (lighter than the section cards) so the
+            // iOS-style inset sections read as cards floating on the sheet.
+            child: Material(
+              color: colors.background,
+              child: _SpringDetailBody(
+                documentId: widget.documentId,
+                marker: widget.marker,
+                scrollController: scrollController,
               ),
             ),
           );
@@ -300,10 +290,14 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
                   .read(springReportsProvider(_documentId).notifier)
                   .loadMore(),
             ),
-            // Bottom breathing room. The home-indicator inset is handled by the
-            // sheet's bottom gutter (it floats above the safe area), so the
-            // content only needs its own padding here.
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            // Bottom breathing room + the home-indicator inset: the glass sheet
+            // runs flush to the bottom edge, so the content clears the safe area
+            // itself.
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 24 + MediaQuery.viewPaddingOf(context).bottom,
+              ),
+            ),
           ],
         ],
       ),

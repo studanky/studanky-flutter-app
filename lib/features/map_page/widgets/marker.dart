@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors.dart';
@@ -11,11 +13,15 @@ const double _springMarkerSize = 40;
 /// alongside the colour change.
 const double _springMarkerSizeSelected = 46;
 
-/// How far the pointer tail extends *below* the round coin, as a fraction of
-/// the coin diameter. The tail's apex is the marker's exact geographic point,
-/// so the pin reads like a classic map pin: the coin floats, the tip pricks the
-/// spot (the mockup's "šipička" that points precisely at the spring).
-const double _pointerDropRatio = 0.34;
+/// Side of the pointer tail (a rounded square rotated 45° into a diamond, like
+/// the mockup) as a fraction of the coin diameter. The diamond is centred on
+/// the coin's bottom edge, so its lower half shows as a short, blunt point whose
+/// bottom vertex is the marker's exact geographic spot.
+const double _tailSideRatio = 0.3;
+
+/// Vertical drop of the tail's tip below the coin = half the diamond's diagonal
+/// (the diamond straddles the coin's bottom edge).
+const double _tailDropRatio = _tailSideRatio * math.sqrt2 / 2;
 
 /// Builds a single spring marker, coloured **and shaped** by its three-state
 /// [icon] (spec §4.1, §6). Each state carries a distinct glyph as well as a
@@ -35,17 +41,20 @@ Marker buildSpringMarker(
   bool selected = false,
 }) {
   final coinSize = selected ? _springMarkerSizeSelected : _springMarkerSize;
-  final drop = coinSize * _pointerDropRatio;
+  final drop = coinSize * _tailDropRatio;
 
   return Marker(
     key: ValueKey('spring-${spring.documentId}'),
     point: spring.position,
     width: coinSize,
     height: coinSize + drop,
-    // Bottom-centre: flutter_map anchors the point at `0.5·height·(y+1)` down
-    // the child, so `bottomCenter` puts the geographic point at the tail's
-    // apex — the pin sits *above* the spot, tip touching it.
-    alignment: Alignment.bottomCenter,
+    // Anchor the geographic point at the tail's tip (box bottom), so the pin
+    // sits *above* the spot and its point pricks it. flutter_map places the
+    // point `0.5·h·(1 − alignment.y)` up from the box bottom, so `topCenter`
+    // (y = −1) lands it exactly at the bottom edge. (Counter-intuitively named,
+    // but that is flutter_map's convention.) The rotate anchor is the opposite
+    // corner — bottom-centre — so a rotating map spins the pin around its tip.
+    alignment: Alignment.topCenter,
     // Keep upright when the map is rotated.
     rotate: true,
     child: _SpringMarkerPin(
@@ -111,7 +120,7 @@ class _SpringMarkerPin extends StatelessWidget {
     final filled = visual.filled || selected;
     final color = selected ? colors.verified : visual.color;
     final coinSize = selected ? _springMarkerSizeSelected : _springMarkerSize;
-    final drop = coinSize * _pointerDropRatio;
+    final drop = coinSize * _tailDropRatio;
 
     return Semantics(
       button: true,
@@ -127,12 +136,11 @@ class _SpringMarkerPin extends StatelessWidget {
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              // Tail behind the coin: its apex is the marker's exact point.
+              // Tail behind the coin: its bottom vertex is the exact point.
               Positioned.fill(
                 child: CustomPaint(
                   painter: _PinPointerPainter(
                     color: color,
-                    ringColor: colors.markerRing,
                     surface: colors.onNeutral,
                     filled: filled,
                     coinSize: coinSize,
@@ -157,14 +165,15 @@ class _SpringMarkerPin extends StatelessWidget {
   }
 }
 
-/// Paints the downward tail beneath a spring pin's coin: an isoceles triangle
-/// whose base tucks behind the coin and whose apex is the marker's exact
-/// geographic point. Coloured (and ringed) to match the coin so the two read as
-/// one map pin, with a soft grounding shadow under the tip.
+/// Paints the pin's tail: a small rounded square rotated 45° into a diamond
+/// (the mockup's tail), straddling the coin's bottom edge so only its short,
+/// blunt lower point shows — the bottom vertex is the marker's exact spot.
+/// Solid status colour on confident pins; a surface diamond with a coloured
+/// edge on the hollow "unknown" pin, matching its coin. Soft grounding shadow
+/// under the tip (the coin carries its own drop shadow).
 class _PinPointerPainter extends CustomPainter {
   const _PinPointerPainter({
     required this.color,
-    required this.ringColor,
     required this.surface,
     required this.filled,
     required this.coinSize,
@@ -172,7 +181,6 @@ class _PinPointerPainter extends CustomPainter {
   });
 
   final Color color;
-  final Color ringColor;
   final Color surface;
   final bool filled;
   final double coinSize;
@@ -180,43 +188,46 @@ class _PinPointerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    // Base sits well up inside the coin (hidden behind it); only the lower tip
-    // shows below the coin's bottom edge.
-    final baseHalf = coinSize * 0.24;
-    final baseY = coinSize * 0.58;
-    final path = Path()
-      ..moveTo(cx - baseHalf, baseY)
-      ..lineTo(cx + baseHalf, baseY)
-      ..lineTo(cx, size.height)
-      ..close();
+    final side = coinSize * _tailSideRatio;
+    // Diamond centred on the coin's bottom edge: its bottom vertex reaches the
+    // very bottom of the box (the geographic point), its top half hides behind
+    // the coin.
+    final center = Offset(size.width / 2, size.height - side * math.sqrt2 / 2);
+    final square = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: Offset.zero, width: side, height: side),
+      const Radius.circular(2.5),
+    );
 
-    // Grounding shadow beneath the tip (the coin carries its own drop shadow).
     final shadowPaint = Paint()
       ..color = Colors.black.withValues(alpha: isDark ? 0.45 : 0.22)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
-    // Fill — status colour for confident pins, surface for the hollow unknown.
     final fillPaint = Paint()
       ..style = PaintingStyle.fill
       ..color = filled ? color : surface;
-    // Edge that continues the coin's ring: white on filled pins, the status
-    // colour on the hollow one.
+    // Hollow pins keep a coloured edge so the tail reads hollow like the coin;
+    // confident pins are solid (the coin's white ring crosses the overlap).
     final strokePaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeJoin = StrokeJoin.round
-      ..strokeWidth = filled ? 2 : 2.5
-      ..color = filled ? ringColor : color;
+      ..strokeWidth = 2.5
+      ..color = color;
 
-    canvas
-      ..drawPath(path.shift(const Offset(0, 1.5)), shadowPaint)
-      ..drawPath(path, fillPaint)
-      ..drawPath(path, strokePaint);
+    void drawDiamond(Offset at, Paint paint) {
+      canvas
+        ..save()
+        ..translate(at.dx, at.dy)
+        ..rotate(math.pi / 4)
+        ..drawRRect(square, paint)
+        ..restore();
+    }
+
+    drawDiamond(center.translate(0, 1.5), shadowPaint);
+    drawDiamond(center, fillPaint);
+    if (!filled) drawDiamond(center, strokePaint);
   }
 
   @override
   bool shouldRepaint(covariant _PinPointerPainter old) =>
       old.color != color ||
-      old.ringColor != ringColor ||
       old.surface != surface ||
       old.filled != filled ||
       old.coinSize != coinSize ||
