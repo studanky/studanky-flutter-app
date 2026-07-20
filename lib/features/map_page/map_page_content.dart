@@ -152,6 +152,10 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// the time the sheet settles.
   static const Duration _searchBarHideDuration = Duration(milliseconds: 220);
 
+  /// Minimum breathing room below the legal strip on devices without a bottom
+  /// safe-area inset.
+  static const double _bottomLegalStripMinimumGap = 8;
+
   final MapController _mapController = MapController();
   final Logger _logger = Logger('MapPageContent');
   Timer? _cameraDebounceTimer;
@@ -589,9 +593,14 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
       // Fit the whole locality in view, leaving room for the overlay controls
       // (search bar on top, buttons + attribution at the bottom), then animate
       // to the resulting camera.
+      final bottomSafeArea = MediaQuery.viewPaddingOf(context).bottom;
+      final bottomOverlayLift = math.max(
+        0.0,
+        bottomSafeArea - _bottomLegalStripMinimumGap,
+      );
       final fitted = CameraFit.bounds(
         bounds: LatLngBounds(bounds.southWest, bounds.northEast),
-        padding: const EdgeInsets.fromLTRB(48, 110, 48, 96),
+        padding: EdgeInsets.fromLTRB(48, 110, 48, 96 + bottomOverlayLift),
         maxZoom: _searchMaxFitZoom,
       ).fit(_mapController.camera);
       unawaited(_animator.animateTo(center: fitted.center, zoom: fitted.zoom));
@@ -634,7 +643,10 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
       })
       // Reconnected after being offline → refetch markers for the current
       // camera so an idle map recovers on its own, without the user panning.
-      ..listen<ConnectivityStatus>(connectivityStatusProvider, (previous, next) {
+      ..listen<ConnectivityStatus>(connectivityStatusProvider, (
+        previous,
+        next,
+      ) {
         if (previous == ConnectivityStatus.offline &&
             next == ConnectivityStatus.online &&
             _isMapReady) {
@@ -912,24 +924,29 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
               ),
             ),
           ),
-          // Bottom strip — intentionally OUTSIDE SafeArea so it sits flush with
-          // the very bottom edge and is covered (not pushed up) by the keyboard.
-          // The minimal potability disclaimer sits just above the mandatory
-          // Mapy.com attribution.
+          // Bottom legal strip lives inside SafeArea while the map remains
+          // full-bleed underneath. maintainBottomViewPadding keeps the strip
+          // anchored to the device safe inset when the keyboard appears; the
+          // keyboard still overlays it because the Scaffold does not resize.
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                MapDisclaimer(
-                  onTap: () => unawaited(showDisclaimerDialog(context)),
-                ),
-                const SizedBox(height: 2),
-                const MapAttribution(),
-                const SizedBox(height: 8),
-              ],
+            child: SafeArea(
+              top: false,
+              maintainBottomViewPadding: true,
+              minimum: const EdgeInsets.only(
+                bottom: _bottomLegalStripMinimumGap,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MapDisclaimer(
+                    onTap: () => unawaited(showDisclaimerDialog(context)),
+                  ),
+                  const MapAttribution(),
+                ],
+              ),
             ),
           ),
           // Spring detail — a widget in this stack, not a route, so the map
