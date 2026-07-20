@@ -81,7 +81,7 @@ class MapSearchOverlay extends StatelessWidget {
                       Icon(
                         Icons.search_rounded,
                         size: 20,
-                        color: colors.primaryInteractive,
+                        color: colors.neutral700,
                       ),
                       Expanded(
                         child: TextField(
