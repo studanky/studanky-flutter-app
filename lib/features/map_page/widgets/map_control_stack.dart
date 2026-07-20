@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
@@ -117,9 +118,7 @@ class GlassIconButton extends StatelessWidget {
           type: MaterialType.transparency,
           child: InkWell(
             onTap: onTap,
-            customBorder: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(kGlassRadius)),
-            ),
+            customBorder: squircleBorder(kGlassRadius),
             child: SizedBox(width: 44, height: 44, child: Center(child: child)),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
+import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
 import 'package:studanky_flutter_app/features/spring_detail/entities/water_clarity.dart';
@@ -108,11 +109,11 @@ class StatusChip extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         // Slightly stronger tint so the pill keeps a clear edge instead of
         // bleeding into the sheet.
         color: visual.color.withValues(alpha: 0.16),
-        borderRadius: BorderRadius.circular(kRadiusChip),
+        shape: squircleBorder(kRadiusChip),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

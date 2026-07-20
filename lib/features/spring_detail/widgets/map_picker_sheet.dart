@@ -100,7 +100,7 @@ class _MapPickerSheet extends StatelessWidget {
     final colors = Styles.appColors;
     final text = Styles.textStyles;
 
-    return ClipRRect(
+    return ClipRSuperellipse(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(kRadiusCard)),
       child: Material(
         color: colors.background,
@@ -153,7 +153,7 @@ class _MapTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Row(
             children: [
-              ClipRRect(
+              ClipRSuperellipse(
                 borderRadius: BorderRadius.circular(kRadiusChip),
                 child: SvgPicture.asset(
                   map.icon,

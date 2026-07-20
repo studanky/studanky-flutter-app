@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
+import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_reports_provider.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/detail_section.dart';
@@ -74,10 +75,12 @@ Widget _historyContent(
   return SliverPadding(
     padding: const EdgeInsets.symmetric(horizontal: 16),
     sliver: DecoratedSliver(
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colors.onNeutral,
-        borderRadius: BorderRadius.circular(kRadiusControl),
-        border: Border.all(color: colors.neutral200),
+        shape: squircleBorder(
+          kRadiusControl,
+          side: BorderSide(color: colors.neutral200),
+        ),
       ),
       sliver: SliverPadding(
         padding: const EdgeInsets.symmetric(vertical: 4),

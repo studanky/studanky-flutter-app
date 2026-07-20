@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
+import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 
 /// Shared visual tokens for the app's frosted-glass surfaces, so every floating
@@ -30,7 +31,9 @@ List<BoxShadow> glassShadows(bool isDark) => [
 /// Frosted-glass surface used by every floating map control. Renders a backdrop
 /// blur behind a translucent fill, a subtle top sheen highlight, a hairline edge
 /// (painted above the sheen so it stays crisp) and the shared drop shadow — the
-/// design's glassmorphism look, theme-aware via `Styles.appColors`.
+/// design's glassmorphism look, theme-aware via `Styles.appColors`. Corners are
+/// squircles ([ClipRSuperellipse] + [squircleBorderFrom]) so the clip, the
+/// hairline and the shape read as one continuous curve.
 class GlassSurface extends StatelessWidget {
   const GlassSurface({
     super.key,
@@ -39,7 +42,6 @@ class GlassSurface extends StatelessWidget {
     this.padding,
     this.blurSigma = kGlassBlurSigma,
     this.fill,
-    this.border,
     this.sheen = true,
   });
 
@@ -52,10 +54,6 @@ class GlassSurface extends StatelessWidget {
 
   /// Optional fill override; defaults to the theme's glass token.
   final Color? fill;
-
-  /// Optional edge override; lets a caller drop a side (e.g. the edge-flush zoom
-  /// pill) instead of the default full hairline.
-  final BoxBorder? border;
 
   /// Subtle top highlight that gives the glass its premium sheen. Disable for
   /// tiny surfaces where it would read as a smudge.
@@ -71,7 +69,7 @@ class GlassSurface extends StatelessWidget {
         borderRadius: borderRadius,
         boxShadow: glassShadows(isDark),
       ),
-      child: ClipRRect(
+      child: ClipRSuperellipse(
         borderRadius: borderRadius,
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
@@ -102,14 +100,14 @@ class GlassSurface extends StatelessWidget {
               Positioned.fill(
                 child: IgnorePointer(
                   child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: borderRadius,
-                      border:
-                          border ??
-                          Border.all(
-                            color: colors.glassBorder,
-                            width: kGlassBorderWidth,
-                          ),
+                    decoration: ShapeDecoration(
+                      shape: squircleBorderFrom(
+                        borderRadius,
+                        side: BorderSide(
+                          color: colors.glassBorder,
+                          width: kGlassBorderWidth,
+                        ),
+                      ),
                     ),
                   ),
                 ),

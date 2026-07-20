@@ -4,6 +4,7 @@ import 'package:studanky_flutter_app/core/styles/colors/app_colors_dark.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors_light.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors_scheme.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
+import 'package:studanky_flutter_app/core/styles/shapes.dart';
 
 /// Builds the app's light and dark [ThemeData] from the shared
 /// [AppColorsScheme] tokens, using Plus Jakarta Sans (the design typeface).
@@ -59,9 +60,7 @@ abstract final class AppTheme {
       height: 20 / 14,
       letterSpacing: 0.02,
     );
-    final buttonShape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(kRadiusButton),
-    );
+    final buttonShape = squircleBorder(kRadiusButton);
     const buttonPadding = EdgeInsets.symmetric(horizontal: 20, vertical: 14);
     const buttonMinSize = Size(0, 48);
 
@@ -78,9 +77,7 @@ abstract final class AppTheme {
         behavior: SnackBarBehavior.floating,
         backgroundColor: c.neutral900,
         contentTextStyle: textTheme.bodyMedium?.copyWith(color: c.onNeutral),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(kRadiusButton),
-        ),
+        shape: squircleBorder(kRadiusButton),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(color: c.primaryMain),
       dividerTheme: DividerThemeData(

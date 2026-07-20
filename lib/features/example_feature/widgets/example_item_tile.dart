@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/example_feature/entities/example_item_entity.dart';
 
@@ -15,11 +16,11 @@ class ExampleItemTile extends StatelessWidget {
     final formatter = DateFormat.yMMMd();
 
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: squircleBorder(12),
       color: Styles.appColors.onSecondary,
       elevation: 0,
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        customBorder: squircleBorder(12),
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(16),

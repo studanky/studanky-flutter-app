@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
+import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
 import 'package:studanky_flutter_app/core/widgets/app_state_view.dart';
@@ -120,7 +121,7 @@ class _FavoriteTileSurface extends StatelessWidget {
 
     return Material(
       color: colors.onNeutral,
-      borderRadius: BorderRadius.circular(kRadiusControl),
+      shape: squircleBorder(kRadiusControl),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => Navigator.of(context).pop(spring),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
+import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 
 /// One iOS-style "inset grouped" section in the spring detail: an optional
@@ -76,9 +77,9 @@ class DetailCard extends StatelessWidget {
     return Material(
       color: colors.onNeutral,
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
+      shape: squircleBorder(
+        kRadiusControl,
         side: BorderSide(color: colors.neutral200),
-        borderRadius: BorderRadius.circular(kRadiusControl),
       ),
       child: Padding(
         padding: padding,

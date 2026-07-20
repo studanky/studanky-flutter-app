@@ -124,7 +124,7 @@ class _SwipeToDeleteTileState extends State<SwipeToDeleteTile> {
                 opacity: _isCollapsed ? 0 : 1,
                 duration: _collapseDuration,
                 curve: Curves.easeOutCubic,
-                child: ClipRRect(
+                child: ClipRSuperellipse(
                   borderRadius: BorderRadius.circular(kRadiusControl),
                   child: Stack(
                     children: [

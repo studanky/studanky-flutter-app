@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// Always-visible bottom notice that the app reports water *flow*, never
@@ -28,31 +30,30 @@ class MapDisclaimer extends StatelessWidget {
         behavior: HitTestBehavior.translucent,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: colors.onNeutral.withValues(alpha: 0.85),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    size: 13,
-                    color: colors.secondaryVariant1,
+          // Frosted-glass pill (the mockup's "liquid glass" disclaimer). Sheen
+          // off — at this size it would read as a smudge — so the pill stays as
+          // understated as the Mapy.com attribution it sits beside.
+          child: GlassSurface(
+            borderRadius: const BorderRadius.all(Radius.circular(kRadiusChip)),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            sheen: false,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  size: 13,
+                  color: colors.secondaryVariant1,
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  l10n.map_potability_disclaimer_title,
+                  style: text.body2.copyWith(
+                    fontSize: 11,
+                    color: colors.neutral700,
                   ),
-                  const SizedBox(width: 5),
-                  Text(
-                    l10n.map_potability_disclaimer_title,
-                    style: text.body2.copyWith(
-                      fontSize: 11,
-                      color: colors.neutral700,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

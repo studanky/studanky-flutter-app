@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:studanky_flutter_app/core/legal/legal_config.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
+import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
 import 'package:studanky_flutter_app/core/widgets/blurred_dialog.dart';
@@ -69,9 +70,9 @@ class _AboutCard extends StatelessWidget {
               const SizedBox(height: 24),
               Container(
                 padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
+                decoration: ShapeDecoration(
                   color: colors.secondaryBeige,
-                  borderRadius: BorderRadius.circular(kRadiusControl),
+                  shape: squircleBorder(kRadiusControl),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,

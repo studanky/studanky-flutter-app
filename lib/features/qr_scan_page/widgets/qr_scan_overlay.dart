@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/entities/qr_scan_result.dart';
 import 'package:studanky_flutter_app/features/qr_scan_page/providers/qr_scan_provider.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
@@ -162,9 +163,9 @@ class _OverlayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: Colors.black.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(16),
+        shape: squircleBorder(16),
       ),
       child: Padding(padding: const EdgeInsets.all(20), child: child),
     );

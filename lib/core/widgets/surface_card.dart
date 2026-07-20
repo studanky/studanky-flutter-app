@@ -40,7 +40,7 @@ class SurfaceCard extends StatelessWidget {
         borderRadius: borderRadius,
         boxShadow: shadows ?? glassShadows(isDark),
       ),
-      child: ClipRRect(
+      child: ClipRSuperellipse(
         borderRadius: borderRadius,
         child: Stack(
           children: [

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studanky_flutter_app/core/legal/legal_config.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
+import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
 import 'package:studanky_flutter_app/core/widgets/blurred_dialog.dart';
@@ -180,9 +181,9 @@ class _OnboardingStep extends StatelessWidget {
             Container(
               width: 52,
               height: 52,
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: iconBackground,
-                borderRadius: BorderRadius.circular(kRadiusControl),
+                shape: squircleBorder(kRadiusControl),
               ),
               child: Icon(icon, color: iconColor),
             ),
