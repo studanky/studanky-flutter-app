@@ -12,6 +12,7 @@ import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/core/navigation/app_router.dart';
 import 'package:studanky_flutter_app/core/providers/connectivity_status_provider.dart';
+import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_progress_indicator.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/features/favorites/widgets/favorites_dialog.dart';
@@ -26,13 +27,12 @@ import 'package:studanky_flutter_app/features/map_page/widgets/disclaimer_dialog
 import 'package:studanky_flutter_app/features/map_page/widgets/map_attribution.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_control_stack.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_disclaimer.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/map_empty_state.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_zoom_slider.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/offline_banner.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/status_bar_scrim.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
+import 'package:studanky_flutter_app/features/map_search/widgets/map_search_status.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
@@ -145,7 +145,6 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// Empty-map messaging should feel settled, not blink during camera motion or
   /// rapid fetch/status transitions.
   static const Duration _emptyStateRevealDelay = Duration(milliseconds: 450);
-  static const Duration _emptyStateFadeDuration = Duration(milliseconds: 240);
 
   /// Fade/slide of the search bar as the detail sheet takes over — slightly
   /// quicker than the sheet's 300ms entrance so the bar is out of the way by
@@ -671,14 +670,36 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     final searchBarHideDuration = reduceMotion
         ? Duration.zero
         : _searchBarHideDuration;
-    // The top-center status slot (offline banner / empty state) still swaps
-    // instantly under reduce-motion, just without the slide+fade.
-    final statusOverlayDuration = reduceMotion
-        ? Duration.zero
-        : _emptyStateFadeDuration;
     final isMapEmptyOverlayVisible = _isMapEmptyOverlayVisible;
     final isMapEmptyOverlayRefreshing =
         _mapEmptyOverlayMode == _MapEmptyOverlayMode.refreshing;
+
+    // Advisory status attached *under the search field* (replacing the old
+    // free-floating banner that twinned the search bar). Offline takes
+    // precedence over the generic "no springs here" empty state; a warm accent
+    // flags offline as attention, the calm brand blue marks an empty viewport.
+    final statusColors = Styles.appColors;
+    final MapSearchStatus? searchStatus;
+    if (isOffline) {
+      searchStatus = MapSearchStatus(
+        id: 'offline',
+        icon: Icons.wifi_off_rounded,
+        title: l10n.offline_banner_title,
+        message: l10n.offline_banner_message,
+        accent: statusColors.secondaryVariant1,
+      );
+    } else if (isMapEmptyOverlayVisible) {
+      searchStatus = MapSearchStatus(
+        id: 'empty',
+        icon: Icons.search_off_rounded,
+        title: l10n.map_empty_title,
+        message: l10n.map_empty_message,
+        accent: statusColors.primaryMain,
+        busy: isMapEmptyOverlayRefreshing,
+      );
+    } else {
+      searchStatus = null;
+    }
 
     final markers = <Marker>[
       for (final item in markerState.items)
@@ -811,46 +832,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                       right: 0,
                       child: Center(child: AppProgressIndicator()),
                     ),
-                  Positioned(
-                    left: 16,
-                    right: 16,
-                    top: 76,
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: AnimatedSwitcher(
-                        duration: statusOverlayDuration,
-                        reverseDuration: statusOverlayDuration,
-                        switchInCurve: Curves.easeOutCubic,
-                        switchOutCurve: Curves.easeInCubic,
-                        transitionBuilder: (child, animation) => FadeTransition(
-                          opacity: animation,
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(0, -0.12),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
-                          ),
-                        ),
-                        // Precedence for the shared top-center slot:
-                        // offline (the specific reason a map is empty) wins over
-                        // the generic "no springs here" empty state, which wins
-                        // over nothing. Distinct keys drive the crossfade.
-                        child: isOffline
-                            ? const OfflineBanner(
-                                key: ValueKey('offline-banner'),
-                              )
-                            : isMapEmptyOverlayVisible
-                            ? MapEmptyState(
-                                key: const ValueKey('map-empty-state'),
-                                refreshing: isMapEmptyOverlayRefreshing,
-                              )
-                            : const SizedBox.shrink(
-                                key: ValueKey('map-empty-state-hidden'),
-                              ),
-                      ),
-                    ),
-                  ),
+                  // The offline / empty-map status now lives *inside* the search
+                  // bar (see `searchStatus` → MapSearchWidget), so it no longer
+                  // occupies this top-center slot as a separate banner.
                   // Left vertical control stack (location, favourites, help),
                   // within thumb reach and clear of the disclaimer.
                   Positioned(
@@ -912,6 +896,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                                   hintText: l10n.map_search_hint,
                                   originProvider: _searchOrigin,
                                   onResultSelected: _onSearchResultSelected,
+                                  status: searchStatus,
                                 ),
                               ),
                             ),

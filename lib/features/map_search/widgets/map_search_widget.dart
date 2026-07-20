@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_overlay.dart';
+import 'package:studanky_flutter_app/features/map_search/widgets/map_search_status.dart';
 
 class MapSearchWidget extends ConsumerStatefulWidget {
   const MapSearchWidget({
@@ -11,11 +12,15 @@ class MapSearchWidget extends ConsumerStatefulWidget {
     required this.hintText,
     this.originProvider,
     this.onResultSelected,
+    this.status,
   });
 
   final String hintText;
   final LatLng? Function()? originProvider;
   final ValueChanged<MapSearchResult>? onResultSelected;
+
+  /// Optional advisory status (offline / empty map) attached under the field.
+  final MapSearchStatus? status;
 
   @override
   ConsumerState<MapSearchWidget> createState() => _MapSearchWidgetState();
@@ -74,6 +79,7 @@ class _MapSearchWidgetState extends ConsumerState<MapSearchWidget> {
       focusNode: _focusNode,
       state: state,
       hintText: widget.hintText,
+      status: widget.status,
       onQueryChanged: (query) =>
           notifier.setQuery(query, origin: widget.originProvider?.call()),
       // Clears the typed query but keeps the field focused so the user can keep
