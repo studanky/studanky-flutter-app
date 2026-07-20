@@ -118,6 +118,19 @@ class _ZoomTrack extends StatelessWidget {
     onChanged(minZoom + f * (maxZoom - minZoom));
   }
 
+  /// Maps a global drag position into the track's local Y (via [trackContext]'s
+  /// render box — the full-height rail) and emits the matching zoom, so the
+  /// thumb follows the finger no matter where on the thumb the drag started.
+  void _emitFromGlobal(
+    BuildContext trackContext,
+    Offset globalPosition,
+    double height,
+  ) {
+    final box = trackContext.findRenderObject() as RenderBox?;
+    if (box == null) return;
+    _emit(box.globalToLocal(globalPosition).dy, height);
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -127,21 +140,26 @@ class _ZoomTrack extends StatelessWidget {
             MapZoomSlider._verticalInsetFor(height) +
             (1 - fraction) * MapZoomSlider._trackTravelFor(height);
 
-        return GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: (d) => _emit(d.localPosition.dy, height),
-          onVerticalDragStart: (d) => _emit(d.localPosition.dy, height),
-          onVerticalDragUpdate: (d) => _emit(d.localPosition.dy, height),
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Positioned(
-                left: MapZoomSlider.width / 2 - MapZoomSlider._thumbRadius,
-                top: centerY - MapZoomSlider._thumbRadius,
+        // Only the thumb is interactive — dragging it changes the zoom. The
+        // rest of the rail is inert (no tap-to-jump, no drag-from-anywhere), so
+        // a stray touch near the screen edge, where this half-off-screen slider
+        // lives, never fires an accidental zoom.
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              left: MapZoomSlider.width / 2 - MapZoomSlider._thumbRadius,
+              top: centerY - MapZoomSlider._thumbRadius,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onVerticalDragStart: (d) =>
+                    _emitFromGlobal(context, d.globalPosition, height),
+                onVerticalDragUpdate: (d) =>
+                    _emitFromGlobal(context, d.globalPosition, height),
                 child: const _ZoomThumb(),
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
