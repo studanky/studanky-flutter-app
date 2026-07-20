@@ -13,11 +13,15 @@ class AppColorsLight extends AppColorsScheme {
   @override
   Color get background => const Color(0xFFF0F4F8);
 
+  // Fill bumped from 55% so the floating glass controls read as a distinct
+  // surface over busy/light map tiles instead of blending in — still clearly
+  // translucent (you see the blurred map through it), just more defined.
   @override
-  Color get glassFill => const Color(0x8CFFFFFF); // white @ 55%
+  Color get glassFill => const Color(0xA6FFFFFF); // white @ 65%
 
+  // Crisper top rim so the glass edge stays legible against light terrain.
   @override
-  Color get glassBorder => const Color(0xBFFFFFFF); // white @ 75%
+  Color get glassBorder => const Color(0xD9FFFFFF); // white @ 85%
 
   @override
   Color get neutral900 => const Color(0xFF191A1A);

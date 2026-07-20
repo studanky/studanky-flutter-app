@@ -13,18 +13,26 @@ const double kGlassBlurSigma = 18;
 const double kGlassBorderWidth = 1;
 
 /// The two-layer drop shadow shared by every glass surface: a soft cast shadow
-/// for lift plus a tight contact shadow for grounding. Heavier on the dark
-/// (inverted) map so panels keep separation from the tiles.
+/// for lift plus a tight contact shadow for grounding. Deliberately pronounced
+/// — glassmorphism blends into a busy map, so a clear elevation shadow is the
+/// main thing that separates a floating control from the tiles beneath it.
+/// Heavier again on the dark (inverted) map, where the light rim all but
+/// disappears and the shadow does most of the work.
 List<BoxShadow> glassShadows(bool isDark) => [
+  // Ambient lift — larger, softer and darker than a typical card shadow, with a
+  // little spread so the panel reads as clearly hovering above the map.
   BoxShadow(
-    color: Colors.black.withValues(alpha: isDark ? 0.50 : 0.16),
-    blurRadius: isDark ? 28 : 22,
-    offset: const Offset(0, 6),
+    color: Colors.black.withValues(alpha: isDark ? 0.55 : 0.22),
+    blurRadius: isDark ? 32 : 26,
+    spreadRadius: isDark ? 1 : 0.5,
+    offset: const Offset(0, 8),
   ),
+  // Tight contact shadow — grounds the panel and defines its lower edge over
+  // pale terrain, where the light rim highlight offers no contrast.
   BoxShadow(
-    color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.08),
-    blurRadius: 6,
-    offset: const Offset(0, 2),
+    color: Colors.black.withValues(alpha: isDark ? 0.32 : 0.14),
+    blurRadius: 8,
+    offset: const Offset(0, 3),
   ),
 ];
 

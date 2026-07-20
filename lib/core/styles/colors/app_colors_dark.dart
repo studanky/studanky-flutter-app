@@ -14,11 +14,14 @@ class AppColorsDark extends AppColorsScheme {
   @override
   Color get background => const Color(0xFF0A1628);
 
+  // Fill bumped from 55% so the controls separate from the dark, busy inverted
+  // map tiles — dark glass needs more body than light glass to read as a panel.
   @override
-  Color get glassFill => const Color(0x8C081228); // deep navy @ 55%
+  Color get glassFill => const Color(0xB8081228); // deep navy @ 72%
 
+  // A slightly brighter rim so the glass edge is visible on the dark map.
   @override
-  Color get glassBorder => const Color(0x1AFFFFFF); // white @ 10%
+  Color get glassBorder => const Color(0x2EFFFFFF); // white @ 18%
 
   // Text / neutral ramp — inverted: 900 is the brightest text on dark.
   @override
