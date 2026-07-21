@@ -291,18 +291,6 @@ class _FavoriteButton extends StatelessWidget {
     final icon = Icon(
       isFavorite ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
       color: isFavorite ? colors.saved : colors.neutral700,
-      shadows: isFavorite
-          ? [
-              Shadow(
-                color: colors.saved.withValues(alpha: 0.55),
-                blurRadius: 10,
-              ),
-              Shadow(
-                color: colors.saved.withValues(alpha: 0.30),
-                blurRadius: 22,
-              ),
-            ]
-          : null,
     );
 
     // Saving pops in with a slight overshoot (the familiar like/save reward
