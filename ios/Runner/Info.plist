@@ -20,7 +20,9 @@
 	<string>6.0</string>
 	<key>CFBundleLocalizations</key>
 	<array>
+		<string>en</string>
 		<string>cs</string>
+		<string>sk</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>Studánky</string>
@@ -56,12 +58,8 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<!-- NSCameraUsageDescription intentionally omitted for the MVP: the QR
-	     scanner (/scanner) is disabled and no camera is accessed, so no camera
-	     permission is declared and none appears in App Store review. Restore
-	     this key when re-enabling QR scanning. -->
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Aplikace potřebuje přístup k poloze, aby ji mohla zobrazit na mapě studánek.</string>
+	<string>The app needs location access to show your position on the springs map.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

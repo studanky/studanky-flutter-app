@@ -48,9 +48,10 @@ class ApiConfig {
 
   // Secure storage configuration
   static const String secureStorageAndroidSharedPreferencesName =
-      'ersta_secure_prefs';
-  static const String secureStorageAndroidPreferencesKeyPrefix = 'ersta_';
-  static const String secureStorageIosAccountName = 'cz.microcomp.ersta.secure';
+      'studanky_secure_prefs';
+  static const String secureStorageAndroidPreferencesKeyPrefix = 'studanky_';
+  static const String secureStorageIosAccountName =
+      'cz.studankyapp.studanky.secure';
   static const KeychainAccessibility secureStorageIosAccessibility =
       KeychainAccessibility.first_unlock_this_device;
   static const bool secureStorageIosSynchronizable = true;

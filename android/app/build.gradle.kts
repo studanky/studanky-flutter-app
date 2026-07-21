@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.studanky_flutter_app"
+    namespace = "cz.studankyapp.studanky"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

@@ -1,0 +1,3 @@
+"CFBundleDisplayName" = "Studánky";
+"CFBundleName" = "Studánky";
+"NSLocationWhenInUseUsageDescription" = "Aplikácia potrebuje prístup k polohe, aby ju mohla zobraziť na mape studničiek.";

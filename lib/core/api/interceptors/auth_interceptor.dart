@@ -18,7 +18,7 @@ class AuthInterceptor extends Interceptor {
     : _dio = dio,
       _ref = ref;
 
-  static const _retryExtraKey = 'ersta__retried';
+  static const _retryExtraKey = 'studanky__retried';
 
   final Dio _dio;
   final Ref _ref;

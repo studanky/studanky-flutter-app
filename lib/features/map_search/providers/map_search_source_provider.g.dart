@@ -60,7 +60,7 @@ final class MapSuggestDioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$mapSuggestDioHash() => r'b106a86ae24fadbf3934042e8a9243edd068ce79';
+String _$mapSuggestDioHash() => r'522721780635288dcfb8822ef5075a24db624e5e';
 
 @ProviderFor(mapSuggestApi)
 final mapSuggestApiProvider = MapSuggestApiProvider._();
