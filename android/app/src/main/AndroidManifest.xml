@@ -1,18 +1,9 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-<uses-permission android:name="android.permission.INTERNET"/>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <!-- Strip the CAMERA permission that the mobile_scanner plugin injects via
-         manifest merging. For the MVP the QR scanner is disabled and no camera
-         is used, so this keeps CAMERA out of the merged manifest and out of the
-         Play Store listing / Data safety review. Remove this override when
-         re-enabling QR scanning. -->
-    <uses-permission android:name="android.permission.CAMERA" tools:node="remove"/>
-    <uses-feature android:name="android.hardware.camera" tools:node="remove"/>
-    <uses-feature android:name="android.hardware.camera.autofocus" tools:node="remove"/>
     <application
-        android:label="studanky_flutter_app"
+        android:label="@string/app_name"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

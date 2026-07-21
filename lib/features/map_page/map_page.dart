@@ -11,8 +11,8 @@ class MapPage extends StatelessWidget {
   /// change on the live map, never a page swap.
   final String? detailDocumentId;
 
-  /// Already-loaded marker for an instant sheet header; null on a deep link /
-  /// QR scan, where the sheet fetches by [detailDocumentId].
+  /// Already-loaded marker for an instant sheet header; null on a public link,
+  /// where the sheet fetches by [detailDocumentId].
   final SpringMarkerEntity? detailMarker;
 
   @override

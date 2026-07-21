@@ -47,11 +47,11 @@ class Haptics {
   /// Crossing a destructive commit point, e.g. a swipe-to-delete arming.
   static void warning() => _fire(HapticFeedback.mediumImpact);
 
-  /// A task completed: a QR scanned cleanly, a report submitted. A light
-  /// double-tap reads unmistakably as "done" without the user looking.
+  /// A task completed. A light double-tap reads unmistakably as "done" without
+  /// the user looking.
   static void success() => _pattern(HapticFeedback.lightImpact, 90);
 
-  /// A failure: an invalid QR, a failed submit/navigation. A firm double-tap.
+  /// A failure: a failed submit/navigation. A firm double-tap.
   static void error() => _pattern(HapticFeedback.heavyImpact, 120);
 
   static bool get _active => enabled && !kIsWeb;

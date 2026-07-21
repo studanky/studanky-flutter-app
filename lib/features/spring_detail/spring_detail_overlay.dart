@@ -33,8 +33,8 @@ class SpringDetailOverlay extends StatefulWidget {
   /// Spring to show; null plays the exit slide and then renders nothing.
   final String? documentId;
 
-  /// Already-loaded marker for an instant header; null on a deep link / QR
-  /// scan, where the sheet fetches by [documentId].
+  /// Already-loaded marker for an instant header; null on a public link, where
+  /// the sheet fetches by [documentId].
   final SpringMarkerEntity? marker;
 
   /// Invoked when the sheet is dragged/flung down past its dismiss threshold.

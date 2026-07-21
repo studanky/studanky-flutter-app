@@ -35,8 +35,8 @@ class SpringDetailSheet extends StatefulWidget {
   /// Identifies which spring to load. Always present (route path param).
   final String documentId;
 
-  /// Optional pre-loaded summary for an instant header; null on a deep link /
-  /// QR scan, where the sheet falls back to fetching by [documentId].
+  /// Optional pre-loaded summary for an instant header; null on a public link,
+  /// where the sheet falls back to fetching by [documentId].
   final SpringMarkerEntity? marker;
 
   /// Invoked once when the sheet is dragged/flung down past its dismiss
@@ -198,8 +198,8 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
     final reportsState = ref.watch(springReportsProvider(_documentId));
 
     // Header renders from the marker immediately (tap/search/favourites) and is
-    // enriched by the detail. On a deep link / QR scan there is no marker, so
-    // the header waits for the detail to resolve.
+    // enriched by the detail. On a public link there is no marker, so the header
+    // waits for the detail to resolve.
     final name = detail?.name ?? marker?.name;
     final position = detail?.position ?? marker?.position;
     final status = detail?.status ?? marker?.status;

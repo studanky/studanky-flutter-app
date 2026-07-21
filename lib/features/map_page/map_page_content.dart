@@ -51,8 +51,7 @@ class MapPageContent extends ConsumerStatefulWidget {
   /// the half-open detail and tapping another marker switches in one tap.
   final String? detailDocumentId;
 
-  /// Already-loaded marker for an instant sheet header; null on a deep link /
-  /// QR scan.
+  /// Already-loaded marker for an instant sheet header; null on a public link.
   final SpringMarkerEntity? detailMarker;
 
   @override

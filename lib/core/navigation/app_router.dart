@@ -3,9 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:studanky_flutter_app/core/navigation/deep_links.dart';
 import 'package:studanky_flutter_app/core/widgets/error_widget.dart';
 import 'package:studanky_flutter_app/features/map_page/map_page.dart';
-// QR scanner disabled for the MVP (no camera permission shipped). Re-add this
-// import together with the ScannerRoute below when re-enabling QR scanning.
-// import 'package:studanky_flutter_app/features/qr_scan_page/qr_scan_page.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 
 part 'app_router.g.dart';
@@ -25,8 +22,7 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
 /// them swaps a parameter on the live map instead of pushing a modal route.
 /// The map keeps its camera and stays fully interactive under the half-open
 /// detail sheet — the Google/Apple Maps pattern — and tapping another marker
-/// switches the detail in one tap. The QR scanner is a top-level route that,
-/// on a successful scan, navigates to the detail.
+/// switches the detail in one tap.
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: const MapRoute().location,
@@ -54,10 +50,7 @@ const ValueKey<String> _mapPageKey = ValueKey('map-page');
 Page<void> _mapPage({String? detailDocumentId, SpringMarkerEntity? marker}) =>
     NoTransitionPage<void>(
       key: _mapPageKey,
-      child: MapPage(
-        detailDocumentId: detailDocumentId,
-        detailMarker: marker,
-      ),
+      child: MapPage(detailDocumentId: detailDocumentId, detailMarker: marker),
     );
 
 /// `/map` — the home screen.
@@ -77,10 +70,10 @@ class MapRoute extends GoRouteData with $MapRoute {
 /// key, opening/closing/switching the detail is just a parameter change on the
 /// live map page.
 ///
-/// [documentId] is a path param so the detail is deep-linkable (e.g. a QR code
-/// at the spring). The optional [$extra] carries an already-loaded marker for
-/// an instant header; when absent (deep link / scan) the sheet falls back to
-/// fetching the spring by id.
+/// [documentId] is a path param so the detail is deep-linkable. The optional
+/// [$extra] carries an already-loaded marker for an instant header; when absent
+/// (for example from a public link) the sheet falls back to fetching the spring
+/// by id.
 @TypedGoRoute<SpringRoute>(path: '/map/spring/:documentId')
 class SpringRoute extends GoRouteData with $SpringRoute {
   const SpringRoute({required this.documentId, this.$extra});
@@ -112,22 +105,3 @@ class ShareRoute extends GoRouteData with $ShareRoute {
   String? redirect(BuildContext context, GoRouterState state) =>
       SpringRoute(documentId: documentId).location;
 }
-
-// `/scanner` — full-screen QR scanner.
-//
-// Disabled for the MVP: this release ships without the camera permission, so
-// the scanner route is unregistered to keep any camera code path unreachable
-// (opening it without the permission would crash on iOS). The feature code
-// under features/qr_scan_page/ is kept intact. To re-enable: restore the
-// NSCameraUsageDescription (iOS) and drop the CAMERA tools:node="remove"
-// override (Android), uncomment the QrScanPage import above, and uncomment the
-// route below, then re-run build_runner.
-//
-// @TypedGoRoute<ScannerRoute>(path: '/scanner')
-// class ScannerRoute extends GoRouteData with $ScannerRoute {
-//   const ScannerRoute();
-//
-//   @override
-//   Widget build(BuildContext context, GoRouterState state) =>
-//       const QrScanPage();
-// }

@@ -21,14 +21,17 @@ void main() {
       expect(const ShareRoute(documentId: 'abc123').location, '/s/abc123');
     });
 
-    test('share route location matches DeepLinks.springSharePath (no drift)', () {
-      // The @TypedGoRoute path references DeepLinks.springSharePattern, so the
-      // generated matcher and the URL builder must resolve to the same path.
-      expect(
-        const ShareRoute(documentId: 'abc123').location,
-        DeepLinks.springSharePath('abc123'),
-      );
-    });
+    test(
+      'share route location matches DeepLinks.springSharePath (no drift)',
+      () {
+        // The @TypedGoRoute path references DeepLinks.springSharePattern, so the
+        // generated matcher and the URL builder must resolve to the same path.
+        expect(
+          const ShareRoute(documentId: 'abc123').location,
+          DeepLinks.springSharePath('abc123'),
+        );
+      },
+    );
   });
 
   group('route tree', () {
@@ -38,15 +41,6 @@ void main() {
     test('exposes /map as a top-level route', () {
       final paths = topLevel().map((r) => r.path).toList();
       expect(paths, contains('/map'));
-    });
-
-    test('the QR scanner route is disabled for the MVP (no camera permission)', () {
-      // The MVP ships without the camera permission, so the /scanner route is
-      // intentionally unregistered — nothing must expose a reachable camera
-      // screen. Re-enable ScannerRoute (and this route) when QR scanning and
-      // the camera permission come back.
-      final paths = topLevel().map((r) => r.path).toList();
-      expect(paths, isNot(contains('/scanner')));
     });
 
     test('exposes the public share route at the top level', () {
@@ -83,35 +77,36 @@ void main() {
   });
 
   group('share link redirect', () {
-    testWidgets('/s/:documentId redirects to the spring detail for the same id', (
-      tester,
-    ) async {
-      // Exercises ShareRoute.redirect against stub screens (no MapPage /
-      // providers), so the test stays fast and isolated from the real pages.
-      final router = GoRouter(
-        initialLocation: const ShareRoute(documentId: 'abc123').location,
-        routes: [
-          GoRoute(
-            path: '/map/spring/:documentId',
-            builder: (_, _) => const SizedBox.shrink(),
-          ),
-          GoRoute(
-            path: '/s/:documentId',
-            redirect: (context, state) => ShareRoute(
-              documentId: state.pathParameters['documentId']!,
-            ).redirect(context, state),
-          ),
-        ],
-      );
-      addTearDown(router.dispose);
+    testWidgets(
+      '/s/:documentId redirects to the spring detail for the same id',
+      (tester) async {
+        // Exercises ShareRoute.redirect against stub screens (no MapPage /
+        // providers), so the test stays fast and isolated from the real pages.
+        final router = GoRouter(
+          initialLocation: const ShareRoute(documentId: 'abc123').location,
+          routes: [
+            GoRoute(
+              path: '/map/spring/:documentId',
+              builder: (_, _) => const SizedBox.shrink(),
+            ),
+            GoRoute(
+              path: '/s/:documentId',
+              redirect: (context, state) => ShareRoute(
+                documentId: state.pathParameters['documentId']!,
+              ).redirect(context, state),
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
 
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
 
-      expect(
-        router.state.matchedLocation,
-        const SpringRoute(documentId: 'abc123').location,
-      );
-    });
+        expect(
+          router.state.matchedLocation,
+          const SpringRoute(documentId: 'abc123').location,
+        );
+      },
+    );
   });
 }
