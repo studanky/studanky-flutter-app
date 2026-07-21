@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserLocationState {
 
- LocationStatus get status;
+ LocationStatus get status; bool get activated;
 /// Create a copy of UserLocationState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $UserLocationStateCopyWith<UserLocationState> get copyWith => _$UserLocationStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserLocationState&&(identical(other.status, status) || other.status == status));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserLocationState&&(identical(other.status, status) || other.status == status)&&(identical(other.activated, activated) || other.activated == activated));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status);
+int get hashCode => Object.hash(runtimeType,status,activated);
 
 @override
 String toString() {
-  return 'UserLocationState(status: $status)';
+  return 'UserLocationState(status: $status, activated: $activated)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $UserLocationStateCopyWith<$Res>  {
   factory $UserLocationStateCopyWith(UserLocationState value, $Res Function(UserLocationState) _then) = _$UserLocationStateCopyWithImpl;
 @useResult
 $Res call({
- LocationStatus status
+ LocationStatus status, bool activated
 });
 
 
@@ -62,10 +62,11 @@ class _$UserLocationStateCopyWithImpl<$Res>
 
 /// Create a copy of UserLocationState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? activated = null,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as LocationStatus,
+as LocationStatus,activated: null == activated ? _self.activated : activated // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -150,10 +151,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( LocationStatus status)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( LocationStatus status,  bool activated)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserLocationState() when $default != null:
-return $default(_that.status);case _:
+return $default(_that.status,_that.activated);case _:
   return orElse();
 
 }
@@ -171,10 +172,10 @@ return $default(_that.status);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LocationStatus status)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LocationStatus status,  bool activated)  $default,) {final _that = this;
 switch (_that) {
 case _UserLocationState():
-return $default(_that.status);case _:
+return $default(_that.status,_that.activated);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +192,10 @@ return $default(_that.status);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( LocationStatus status)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( LocationStatus status,  bool activated)?  $default,) {final _that = this;
 switch (_that) {
 case _UserLocationState() when $default != null:
-return $default(_that.status);case _:
+return $default(_that.status,_that.activated);case _:
   return null;
 
 }
@@ -206,10 +207,11 @@ return $default(_that.status);case _:
 
 
 class _UserLocationState implements UserLocationState {
-  const _UserLocationState({this.status = LocationStatus.idle});
+  const _UserLocationState({this.status = LocationStatus.idle, this.activated = false});
   
 
 @override@JsonKey() final  LocationStatus status;
+@override@JsonKey() final  bool activated;
 
 /// Create a copy of UserLocationState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +223,16 @@ _$UserLocationStateCopyWith<_UserLocationState> get copyWith => __$UserLocationS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserLocationState&&(identical(other.status, status) || other.status == status));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserLocationState&&(identical(other.status, status) || other.status == status)&&(identical(other.activated, activated) || other.activated == activated));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status);
+int get hashCode => Object.hash(runtimeType,status,activated);
 
 @override
 String toString() {
-  return 'UserLocationState(status: $status)';
+  return 'UserLocationState(status: $status, activated: $activated)';
 }
 
 
@@ -241,7 +243,7 @@ abstract mixin class _$UserLocationStateCopyWith<$Res> implements $UserLocationS
   factory _$UserLocationStateCopyWith(_UserLocationState value, $Res Function(_UserLocationState) _then) = __$UserLocationStateCopyWithImpl;
 @override @useResult
 $Res call({
- LocationStatus status
+ LocationStatus status, bool activated
 });
 
 
@@ -258,10 +260,11 @@ class __$UserLocationStateCopyWithImpl<$Res>
 
 /// Create a copy of UserLocationState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? activated = null,}) {
   return _then(_UserLocationState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as LocationStatus,
+as LocationStatus,activated: null == activated ? _self.activated : activated // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

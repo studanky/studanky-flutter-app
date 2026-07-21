@@ -11,6 +11,7 @@ import 'package:studanky_flutter_app/core/styles/theme/app_theme.dart';
 import 'package:studanky_flutter_app/core/styles/theme/theme_mode_provider.dart';
 import 'package:studanky_flutter_app/features/legal/providers/legal_onboarding_provider.dart';
 import 'package:studanky_flutter_app/features/legal/widgets/legal_onboarding_dialog.dart';
+import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
 import 'package:studanky_flutter_app/l10n/app_locale_resolution.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
@@ -112,6 +113,16 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
       _legalOnboardingVisible = true;
       await showLegalOnboardingDialog(navigatorContext);
       _legalOnboardingVisible = false;
+      if (!mounted || !ref.read(legalOnboardingProvider)) return;
+
+      // Location activation intentionally lives here, after the onboarding route
+      // has closed. `legalOnboardingProvider` flips before Navigator.pop(), so a
+      // provider listener would let the system permission sheet cover the closing
+      // onboarding dialog.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ref.read(userLocationProvider.notifier).activate();
+      });
     });
   }
 

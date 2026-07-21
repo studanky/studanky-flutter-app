@@ -16,6 +16,7 @@ import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_progress_indicator.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/features/favorites/widgets/favorites_dialog.dart';
+import 'package:studanky_flutter_app/features/legal/providers/legal_onboarding_provider.dart';
 import 'package:studanky_flutter_app/features/map_page/constants/map_page_constants.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/map_marker_provider.dart';
@@ -233,7 +234,17 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     // First load is immediate; subsequent camera changes are debounced.
     _emitCamera();
     _updateCompass();
-    unawaited(_centerOnUserLocation());
+    if (ref.read(userLocationProvider).activated) {
+      unawaited(_centerOnUserLocation());
+    } else {
+      unawaited(_activateLocationIfPermissionAlreadyGranted());
+    }
+  }
+
+  Future<void> _activateLocationIfPermissionAlreadyGranted() async {
+    if (!ref.read(legalOnboardingProvider)) return;
+
+    await ref.read(userLocationProvider.notifier).activateIfPermissionGranted();
   }
 
   void _onMapEvent(MapEvent event) {
@@ -383,6 +394,13 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// Requests permission and centers the map on the user's first fix. On
   /// failure it leaves the map at the default center and shows a subtle notice.
   Future<void> _centerOnUserLocation() async {
+    if (!ref.read(legalOnboardingProvider)) {
+      _logger.warning(
+        'Ignoring location request before legal onboarding acknowledgement',
+      );
+      return;
+    }
+
     final location = await ref.read(userLocationProvider.notifier).firstFix();
 
     if (!mounted) return;
@@ -441,6 +459,12 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// use) and falls back to a status message if the location is unavailable.
   Future<void> _recenterOnUser() async {
     if (_isLocating) return;
+    if (!ref.read(legalOnboardingProvider)) {
+      _logger.warning(
+        'Ignoring location button before legal onboarding acknowledgement',
+      );
+      return;
+    }
 
     final notifier = ref.read(userLocationProvider.notifier);
 
@@ -643,6 +667,14 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
       ..listen<MapMarkerState>(mapMarkerProvider, (_, next) {
         _syncMapEmptyState(next);
       })
+      ..listen<UserLocationState>(userLocationProvider, (previous, next) {
+        if (!_isMapReady || !next.activated) return;
+        if (previous?.activated == true) return;
+        // A tap on "my location" already owns the first-fix camera move via
+        // _recenterOnUser(); don't also run the onboarding-startup recenter.
+        if (_isLocating) return;
+        unawaited(_centerOnUserLocation());
+      })
       // Reconnected after being offline → put a real request on the wire for
       // the current camera, so an idle map recovers on its own without the
       // user panning.
@@ -665,7 +697,8 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
 
     final markerState = ref.watch(mapMarkerProvider);
     final config = ref.watch(platformConfigControllerProvider);
-    final locationStatus = ref.watch(userLocationProvider).status;
+    final locationState = ref.watch(userLocationProvider);
+    final locationStatus = locationState.status;
     // Advisory only, optimistic by default: the offline banner takes the shared
     // top-center status slot ahead of the empty state once the network layer
     // confirms the backend is unreachable.
@@ -738,9 +771,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     // Shared position and heading streams. With our own position stream only
     // the provider requests permission (not the layer itself), and our own
     // heading stream avoids the sensor error on devices without a compass.
-    final locationNotifier = ref.watch(userLocationProvider.notifier);
-    final positionStream = locationNotifier.positionStream;
-    final headingStream = locationNotifier.headingStream;
+    final locationNotifier = ref.read(userLocationProvider.notifier);
 
     // Mapy.com serves no dark map set, so in dark mode we apply an invert +
     // hue-rotate colour filter over the raster tiles only (not our markers or
@@ -787,10 +818,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                   )
                 else
                   TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
-                CurrentLocationLayer(
-                  positionStream: positionStream,
-                  headingStream: headingStream,
-                ),
+                if (locationState.activated)
+                  CurrentLocationLayer(
+                    positionStream: locationNotifier.positionStream,
+                    headingStream: locationNotifier.headingStream,
+                  ),
                 MarkerLayer(markers: markers),
               ],
             ),
