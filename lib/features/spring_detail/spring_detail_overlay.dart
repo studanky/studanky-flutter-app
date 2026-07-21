@@ -37,9 +37,9 @@ class SpringDetailOverlay extends StatefulWidget {
   /// scan, where the sheet fetches by [documentId].
   final SpringMarkerEntity? marker;
 
-  /// Invoked when the sheet is dragged below its dismiss threshold. The owner
-  /// navigates back to plain `/map`, which flips [documentId] to null and
-  /// plays the exit slide.
+  /// Invoked when the sheet is dragged/flung down past its dismiss threshold.
+  /// The owner navigates back to plain `/map`, which flips [documentId] to null
+  /// and plays the exit slide.
   final VoidCallback onDismissed;
 
   /// Reports the live [DraggableScrollableSheet] extent to the map host so

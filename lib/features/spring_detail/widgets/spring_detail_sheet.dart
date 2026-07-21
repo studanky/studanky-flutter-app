@@ -39,10 +39,10 @@ class SpringDetailSheet extends StatefulWidget {
   /// QR scan, where the sheet falls back to fetching by [documentId].
   final SpringMarkerEntity? marker;
 
-  /// Invoked once when the sheet is dragged below its dismiss threshold. The
-  /// host closes the detail (navigates back to plain `/map`) and animates the
-  /// sheet away — the sheet is a widget in the map's stack, not a route, so it
-  /// cannot pop itself.
+  /// Invoked once when the sheet is dragged/flung down past its dismiss
+  /// threshold. The host closes the detail (navigates back to plain `/map`) and
+  /// animates the sheet away — the sheet is a widget in the map's stack, not a
+  /// route, so it cannot pop itself.
   final VoidCallback onDismissed;
 
   /// Opening height as a fraction of the screen. Public because the map page
@@ -55,17 +55,16 @@ class SpringDetailSheet extends StatefulWidget {
 }
 
 class _SpringDetailSheetState extends State<SpringDetailSheet> {
-  /// Opening height (half screen).
+  /// Opening height (half screen) — one of the two resting detents.
   static const double _initialSize = SpringDetailSheet.initialSize;
 
-  /// Lets the sheet be dragged well below half so a downward swipe can cross
-  /// the dismiss threshold (it never rests this low — it pops first).
+  /// Sits below half only to give a downward gesture room to cross
+  /// [_dismissThreshold]; the sheet never *rests* here — it dismisses first.
   static const double _minSize = 0.1;
 
-  /// Crossing this drag extent on the way down closes the sheet entirely.
-  /// Half is **not** a snap target, so the only resting states are the opening
-  /// half height and full screen: dragging up expands, dragging down dismisses
-  /// — a single downward swipe from full screen closes it (never stops at half).
+  /// A downward drag/fling that pulls the sheet past this extent closes the
+  /// detail. Just below the half detent, so a small pull-down from half closes,
+  /// while from full it mostly just settles back to half.
   static const double _dismissThreshold = 0.45;
 
   bool _dismissing = false;
@@ -75,6 +74,10 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
   bool _atFull = false;
 
   bool _onNotification(DraggableScrollableNotification notification) {
+    // Drag/fling the sheet down past the threshold → close. The sheet is a
+    // widget in the map's stack (not a route), so it asks the host to navigate
+    // away rather than popping itself. (Plain observation of the documented
+    // extent notification — no driving the sheet's controller from here.)
     if (!_dismissing && notification.extent < _dismissThreshold) {
       _dismissing = true;
       widget.onDismissed();
@@ -98,11 +101,17 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: _onNotification,
       child: DraggableScrollableSheet(
+        // Half ([snapSizes]) and full ([maxChildSize]) are the two resting
+        // detents, snapped by the widget's own velocity-aware physics.
+        // [minChildSize] sits below half only so a downward drag/fling has room
+        // to cross [_dismissThreshold] and close the detail; the sheet never
+        // rests that low. From full a gentle drag settles back to half, a firm
+        // drag-down closes.
         initialChildSize: _initialSize,
         minChildSize: _minSize,
         maxChildSize: 1.0,
         snap: true,
-        snapSizes: const [1.0],
+        snapSizes: const [_initialSize],
         expand: false,
         builder: (context, scrollController) {
           // Solid, opaque sheet pulled flush to the phone's bottom edge — the
