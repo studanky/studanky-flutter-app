@@ -145,6 +145,9 @@ class AppLocalizationsCs extends AppLocalizations {
       'Studánky jsou komunitní mapa míst v přírodě, kde lidé sdílí informace o tom, jestli voda teče. Pomáhají plánovat cestu podle aktuálnosti hlášení, nést méně vody na zádech a zbytečně neplnit přírodu jednorázovými lahvemi. Trasu si naplánujete ve své mapové aplikaci přes tlačítko Navigovat v detailu studánky.';
 
   @override
+  String get about_dialog_more_info_link => 'Více informací na webu';
+
+  @override
   String get about_dialog_legend_title => 'Význam značek';
 
   @override
@@ -172,6 +175,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get legal_link_data_sources => 'Zdroje dat';
 
   @override
+  String get legal_link_contact => 'Kontakt';
+
+  @override
   String get legal_onboarding_title => 'Vítejte ve Studánkách';
 
   @override
@@ -182,9 +188,6 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get legal_onboarding_finish => 'Jít na mapu';
-
-  @override
-  String get legal_onboarding_website_link => 'studankyapp.cz';
 
   @override
   String get legal_onboarding_step_welcome_title =>
@@ -232,17 +235,6 @@ class AppLocalizationsCs extends AppLocalizations {
   String get about_legal_version_loading => 'načítám';
 
   @override
-  String get about_legal_operator_label => 'Provozovatel';
-
-  @override
-  String about_legal_operator_value(String name, String ico) {
-    return '$name, IČO $ico';
-  }
-
-  @override
-  String get about_legal_contact_label => 'Kontakt';
-
-  @override
   String get about_legal_data_title => 'Zdroje dat';
 
   @override
@@ -264,7 +256,7 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get about_legal_privacy_body =>
-      'Aplikace nevyžaduje účet, nepoužívá reklamu, analytiku ani tracking. Poloha slouží k zobrazení pozice na mapě, kamera ke skenování QR kódů a Moje studánky se ukládají lokálně v zařízení.';
+      'Aplikace nevyžaduje účet, nepoužívá reklamu, analytiku ani tracking. Poloha slouží k zobrazení pozice na mapě, vyhledávání míst a adres používá Mapy.com/Seznam.cz a Moje studánky se ukládají lokálně v zařízení.';
 
   @override
   String get about_legal_documents_title => 'Další informace';
@@ -357,35 +349,6 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get favorites_remove => 'Odebrat z mých studánek';
-
-  @override
-  String get qr_scan_camera_error =>
-      'Kameru se nepodařilo otevřít. Zkontrolujte oprávnění a zkuste to znovu.';
-
-  @override
-  String get qr_scan_title => 'Naskenujte QR kód';
-
-  @override
-  String get qr_scan_message =>
-      'Zarovnejte kód do rámečku. Výsledek se zobrazí zde.';
-
-  @override
-  String get qr_scan_detected_title => 'QR kód načten';
-
-  @override
-  String get qr_scan_again => 'Skenovat znovu';
-
-  @override
-  String get qr_scan_processing => 'Zpracovávám…';
-
-  @override
-  String get qr_scan_failed => 'Skenování selhalo';
-
-  @override
-  String get qr_scan_try_again => 'Zkusit znovu';
-
-  @override
-  String get qr_scan_invalid_data => 'QR kód neobsahuje platná data';
 
   @override
   String get spring_detail_add_favorite => 'Přidat do mých studánek';

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
@@ -10,13 +11,16 @@ import 'package:studanky_flutter_app/core/styles/theme/theme_mode_provider.dart'
 import 'package:studanky_flutter_app/features/legal/providers/legal_onboarding_provider.dart';
 import 'package:studanky_flutter_app/features/legal/widgets/legal_onboarding_dialog.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
+import 'package:studanky_flutter_app/l10n/app_locale_resolution.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
 void _setLogging() {
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
-  Logger.root.onRecord.listen((record) {
-    debugPrint('${record.level.name}: ${record.time}: ${record.message}');
-  });
+  Logger.root.level = kReleaseMode ? Level.WARNING : Level.ALL;
+  if (!kReleaseMode) {
+    Logger.root.onRecord.listen((record) {
+      debugPrint('${record.level.name}: ${record.time}: ${record.message}');
+    });
+  }
 }
 
 Future<void> main() async {
@@ -127,6 +131,8 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
       routerConfig: appRouter,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      localeListResolutionCallback: (locales, supportedLocales) =>
+          resolveAppLocale(locales),
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,

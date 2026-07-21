@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_cs.dart';
+import 'app_localizations_en.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,7 +93,10 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('cs')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('cs'),
+    Locale('en'),
+  ];
 
   /// No description provided for @auth_error_provider_disabled.
   ///
@@ -334,6 +338,12 @@ abstract class AppLocalizations {
   /// **'Studánky jsou komunitní mapa míst v přírodě, kde lidé sdílí informace o tom, jestli voda teče. Pomáhají plánovat cestu podle aktuálnosti hlášení, nést méně vody na zádech a zbytečně neplnit přírodu jednorázovými lahvemi. Trasu si naplánujete ve své mapové aplikaci přes tlačítko Navigovat v detailu studánky.'**
   String get about_dialog_body;
 
+  /// No description provided for @about_dialog_more_info_link.
+  ///
+  /// In cs, this message translates to:
+  /// **'Více informací na webu'**
+  String get about_dialog_more_info_link;
+
   /// No description provided for @about_dialog_legend_title.
   ///
   /// In cs, this message translates to:
@@ -388,6 +398,12 @@ abstract class AppLocalizations {
   /// **'Zdroje dat'**
   String get legal_link_data_sources;
 
+  /// No description provided for @legal_link_contact.
+  ///
+  /// In cs, this message translates to:
+  /// **'Kontakt'**
+  String get legal_link_contact;
+
   /// No description provided for @legal_onboarding_title.
   ///
   /// In cs, this message translates to:
@@ -411,12 +427,6 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Jít na mapu'**
   String get legal_onboarding_finish;
-
-  /// No description provided for @legal_onboarding_website_link.
-  ///
-  /// In cs, this message translates to:
-  /// **'studankyapp.cz'**
-  String get legal_onboarding_website_link;
 
   /// No description provided for @legal_onboarding_step_welcome_title.
   ///
@@ -490,24 +500,6 @@ abstract class AppLocalizations {
   /// **'načítám'**
   String get about_legal_version_loading;
 
-  /// No description provided for @about_legal_operator_label.
-  ///
-  /// In cs, this message translates to:
-  /// **'Provozovatel'**
-  String get about_legal_operator_label;
-
-  /// No description provided for @about_legal_operator_value.
-  ///
-  /// In cs, this message translates to:
-  /// **'{name}, IČO {ico}'**
-  String about_legal_operator_value(String name, String ico);
-
-  /// No description provided for @about_legal_contact_label.
-  ///
-  /// In cs, this message translates to:
-  /// **'Kontakt'**
-  String get about_legal_contact_label;
-
   /// No description provided for @about_legal_data_title.
   ///
   /// In cs, this message translates to:
@@ -547,7 +539,7 @@ abstract class AppLocalizations {
   /// No description provided for @about_legal_privacy_body.
   ///
   /// In cs, this message translates to:
-  /// **'Aplikace nevyžaduje účet, nepoužívá reklamu, analytiku ani tracking. Poloha slouží k zobrazení pozice na mapě, kamera ke skenování QR kódů a Moje studánky se ukládají lokálně v zařízení.'**
+  /// **'Aplikace nevyžaduje účet, nepoužívá reklamu, analytiku ani tracking. Poloha slouží k zobrazení pozice na mapě, vyhledávání míst a adres používá Mapy.com/Seznam.cz a Moje studánky se ukládají lokálně v zařízení.'**
   String get about_legal_privacy_body;
 
   /// No description provided for @about_legal_documents_title.
@@ -717,60 +709,6 @@ abstract class AppLocalizations {
   /// In cs, this message translates to:
   /// **'Odebrat z mých studánek'**
   String get favorites_remove;
-
-  /// No description provided for @qr_scan_camera_error.
-  ///
-  /// In cs, this message translates to:
-  /// **'Kameru se nepodařilo otevřít. Zkontrolujte oprávnění a zkuste to znovu.'**
-  String get qr_scan_camera_error;
-
-  /// No description provided for @qr_scan_title.
-  ///
-  /// In cs, this message translates to:
-  /// **'Naskenujte QR kód'**
-  String get qr_scan_title;
-
-  /// No description provided for @qr_scan_message.
-  ///
-  /// In cs, this message translates to:
-  /// **'Zarovnejte kód do rámečku. Výsledek se zobrazí zde.'**
-  String get qr_scan_message;
-
-  /// No description provided for @qr_scan_detected_title.
-  ///
-  /// In cs, this message translates to:
-  /// **'QR kód načten'**
-  String get qr_scan_detected_title;
-
-  /// No description provided for @qr_scan_again.
-  ///
-  /// In cs, this message translates to:
-  /// **'Skenovat znovu'**
-  String get qr_scan_again;
-
-  /// No description provided for @qr_scan_processing.
-  ///
-  /// In cs, this message translates to:
-  /// **'Zpracovávám…'**
-  String get qr_scan_processing;
-
-  /// No description provided for @qr_scan_failed.
-  ///
-  /// In cs, this message translates to:
-  /// **'Skenování selhalo'**
-  String get qr_scan_failed;
-
-  /// No description provided for @qr_scan_try_again.
-  ///
-  /// In cs, this message translates to:
-  /// **'Zkusit znovu'**
-  String get qr_scan_try_again;
-
-  /// No description provided for @qr_scan_invalid_data.
-  ///
-  /// In cs, this message translates to:
-  /// **'QR kód neobsahuje platná data'**
-  String get qr_scan_invalid_data;
 
   /// No description provided for @spring_detail_add_favorite.
   ///
@@ -1012,7 +950,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['cs'].contains(locale.languageCode);
+      <String>['cs', 'en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1023,6 +961,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'cs':
       return AppLocalizationsCs();
+    case 'en':
+      return AppLocalizationsEn();
   }
 
   throw FlutterError(
