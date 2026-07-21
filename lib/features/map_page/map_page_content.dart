@@ -210,18 +210,22 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     super.dispose();
   }
 
-  /// On resume, re-verify connectivity with a real request: the outcome updates
-  /// the offline banner via `ConnectivityInterceptor`. connectivity_plus
-  /// delivers no interface-change event to a backgrounded app (Android O+), so
-  /// nothing else refreshes the state across a background stint.
+  /// On resume, refresh the markers if their cache has gone stale — the tile
+  /// time-to-live decides, so flicking in and out of the app costs nothing.
   ///
-  /// The fetch is *forced* past the marker cache because the app may resume on
-  /// the same camera — a cache-short-circuited fetch would never touch the
-  /// network and the banner would stay stuck at whatever it was before
-  /// backgrounding: falsely online if the network broke while away, falsely
-  /// offline if it recovered. Forcing it re-verifies both directions.
+  /// An offline map is the one case that must force a request past the cache.
+  /// `ConnectivityController` re-checks the interface on resume and can flip
+  /// itself *to* offline, but deliberately never back to online — a live
+  /// interface doesn't prove the backend is reachable. Recovery is therefore
+  /// left to the next real request, and on a cached map there would not be one.
   void _onAppResumed() {
-    if (_isMapReady) unawaited(_markerNotifier.refreshVisible());
+    if (!_isMapReady) return;
+
+    if (ref.read(connectivityStatusProvider).isOffline) {
+      unawaited(_markerNotifier.refreshVisible());
+      return;
+    }
+    _emitCamera();
   }
 
   void _onMapReady() {
@@ -639,8 +643,15 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
       ..listen<MapMarkerState>(mapMarkerProvider, (_, next) {
         _syncMapEmptyState(next);
       })
-      // Reconnected after being offline → refetch markers for the current
-      // camera so an idle map recovers on its own, without the user panning.
+      // Reconnected after being offline → put a real request on the wire for
+      // the current camera, so an idle map recovers on its own without the
+      // user panning.
+      //
+      // Forced past the tile cache on purpose. `ConnectivityController` turns
+      // optimistically online off a bare interface-up signal and leaves the
+      // proof to "the next failing request" — but a map whose tiles are still
+      // fresh has no next request for minutes, so behind a captive portal the
+      // banner would clear without anything ever reaching the backend.
       ..listen<ConnectivityStatus>(connectivityStatusProvider, (
         previous,
         next,
@@ -648,7 +659,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
         if (previous == ConnectivityStatus.offline &&
             next == ConnectivityStatus.online &&
             _isMapReady) {
-          _emitCamera();
+          unawaited(_markerNotifier.refreshVisible());
         }
       });
 
@@ -822,7 +833,12 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
             child: SafeArea(
               child: Stack(
                 children: [
+                  // Spin only while the visible area has nothing to show. A
+                  // fetch over already-drawn markers is background revalidation
+                  // (a stale tile, a resume probe) — a spinner there would blink
+                  // over data the user can already see.
                   if (markerState.status.isLoading &&
+                      !markerState.visibleBoundsLoaded &&
                       !isMapEmptyOverlayVisible &&
                       !isOffline)
                     const Positioned(

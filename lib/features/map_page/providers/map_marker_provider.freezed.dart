@@ -12,10 +12,11 @@ part of 'map_marker_provider.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$MapMarkerState {
+mixin _$MapMarkerState implements DiagnosticableTreeMixin {
 
-/// Loading/error of the background fetch. Items stay visible while a new
-/// fetch runs, so this is a thin status channel, not the source of markers.
+/// Loading/error of the background fetch, mirrored from
+/// [springMarkersProvider]. Items stay visible while a fetch runs, so this
+/// is a thin status channel, not the source of markers.
  AsyncValue<void> get status;/// Clustered, drawable items for the most recent camera.
  List<MapClusterItem> get items;/// True once the currently visible camera bounds are covered by fetched
 /// marker data. Lets the UI distinguish a real empty map area from a camera
@@ -28,6 +29,12 @@ mixin _$MapMarkerState {
 $MapMarkerStateCopyWith<MapMarkerState> get copyWith => _$MapMarkerStateCopyWithImpl<MapMarkerState>(this as MapMarkerState, _$identity);
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'MapMarkerState'))
+    ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('items', items))..add(DiagnosticsProperty('visibleBoundsLoaded', visibleBoundsLoaded));
+}
 
 @override
 bool operator ==(Object other) {
@@ -39,7 +46,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(items),visibleBoundsLoaded);
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'MapMarkerState(status: $status, items: $items, visibleBoundsLoaded: $visibleBoundsLoaded)';
 }
 
@@ -213,12 +220,13 @@ return $default(_that.status,_that.items,_that.visibleBoundsLoaded);case _:
 /// @nodoc
 
 
-class _MapMarkerState implements MapMarkerState {
+class _MapMarkerState with DiagnosticableTreeMixin implements MapMarkerState {
   const _MapMarkerState({this.status = const AsyncValue<void>.data(null), final  List<MapClusterItem> items = const <MapClusterItem>[], this.visibleBoundsLoaded = false}): _items = items;
   
 
-/// Loading/error of the background fetch. Items stay visible while a new
-/// fetch runs, so this is a thin status channel, not the source of markers.
+/// Loading/error of the background fetch, mirrored from
+/// [springMarkersProvider]. Items stay visible while a fetch runs, so this
+/// is a thin status channel, not the source of markers.
 @override@JsonKey() final  AsyncValue<void> status;
 /// Clustered, drawable items for the most recent camera.
  final  List<MapClusterItem> _items;
@@ -241,6 +249,12 @@ class _MapMarkerState implements MapMarkerState {
 _$MapMarkerStateCopyWith<_MapMarkerState> get copyWith => __$MapMarkerStateCopyWithImpl<_MapMarkerState>(this, _$identity);
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'MapMarkerState'))
+    ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('items', items))..add(DiagnosticsProperty('visibleBoundsLoaded', visibleBoundsLoaded));
+}
 
 @override
 bool operator ==(Object other) {
@@ -252,7 +266,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_items),visibleBoundsLoaded);
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'MapMarkerState(status: $status, items: $items, visibleBoundsLoaded: $visibleBoundsLoaded)';
 }
 
