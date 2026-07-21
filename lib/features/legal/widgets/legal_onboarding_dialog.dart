@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:studanky_flutter_app/core/legal/legal_config.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
@@ -10,7 +9,6 @@ import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
 import 'package:studanky_flutter_app/core/widgets/blurred_dialog.dart';
 import 'package:studanky_flutter_app/core/widgets/scroll_edge_effect.dart';
 import 'package:studanky_flutter_app/features/legal/providers/legal_onboarding_provider.dart';
-import 'package:studanky_flutter_app/features/legal/widgets/legal_link_button.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 Future<void> showLegalOnboardingDialog(BuildContext context) {
@@ -52,7 +50,7 @@ class _LegalOnboardingCardState extends ConsumerState<_LegalOnboardingCard> {
   Future<void> _finish() async {
     await ref.read(legalOnboardingProvider.notifier).acknowledge();
     if (!mounted) return;
-    unawaited(Navigator.of(context).maybePop());
+    Navigator.of(context).pop();
   }
 
   @override
@@ -127,11 +125,6 @@ class _LegalOnboardingCardState extends ConsumerState<_LegalOnboardingCard> {
           l10n.legal_onboarding_step_welcome_bullet_community,
           l10n.legal_onboarding_step_welcome_bullet_feedback,
         ],
-        child: LegalLinkButton(
-          icon: Icons.public_rounded,
-          label: l10n.legal_onboarding_website_link,
-          uri: LegalConfig.websiteUrl,
-        ),
       ),
       _OnboardingStep(
         icon: Icons.warning_amber_rounded,
@@ -154,7 +147,6 @@ class _OnboardingStep extends StatelessWidget {
     required this.title,
     required this.body,
     this.bullets = const [],
-    this.child,
     this.accent = false,
   });
 
@@ -162,7 +154,6 @@ class _OnboardingStep extends StatelessWidget {
   final String title;
   final String body;
   final List<String> bullets;
-  final Widget? child;
   final bool accent;
 
   @override
@@ -196,7 +187,6 @@ class _OnboardingStep extends StatelessWidget {
               for (final bullet in bullets)
                 _Bullet(text: bullet, accent: accent),
             ],
-            if (child != null) ...[const SizedBox(height: 12), child!],
           ],
         ),
       ),
