@@ -3,8 +3,10 @@ import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    // kotlin-android is deliberately not declared here. The Flutter Gradle Plugin
+    // applies it itself when it is absent, and declaring it explicitly triggers the
+    // "applies the Kotlin Gradle Plugin" migration warning on every build.
+    // The Flutter Gradle Plugin must be applied after the Android Gradle plugin.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
