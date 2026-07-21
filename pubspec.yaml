@@ -13,6 +13,7 @@ dependencies:
   dio_smart_retry: ^7.0.1
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
   flutter_localizations:
     sdk: flutter
   flutter_map: ^8.2.2
@@ -57,3 +58,23 @@ flutter:
 
   assets:
     - assets/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  
+  image_path: "assets/icons/ios.png"
+  
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icons/android_fg.png"
+  adaptive_icon_monochrome: "assets/icons/android_fg.png"
+  # adaptive_icon_foreground_inset: 16
+  
+  image_path_ios: "assets/icons/ios.png"
+  remove_alpha_ios: true
+  background_color_ios: "#FFFFFF"
+  
+  image_path_ios_dark_transparent: "assets/icons/ios_transparent.png"
+  
+  image_path_ios_tinted_grayscale: "assets/icons/ios_tinted.png"
+  desaturate_tinted_to_grayscale_ios: true
