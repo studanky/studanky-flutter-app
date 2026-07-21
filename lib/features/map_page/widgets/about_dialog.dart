@@ -48,6 +48,12 @@ class _AboutCard extends StatelessWidget {
                   height: 1.45,
                 ),
               ),
+              const SizedBox(height: 6),
+              LegalLinkButton(
+                icon: Icons.public_rounded,
+                label: l10n.about_dialog_more_info_link,
+                uri: LegalConfig.websiteUrl,
+              ),
               const SizedBox(height: 24),
               _SectionTitle(l10n.about_dialog_legend_title),
               const SizedBox(height: 12),
@@ -93,6 +99,13 @@ class _AboutCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
+              _SectionTitle(l10n.about_legal_privacy_title),
+              const SizedBox(height: 10),
+              Text(
+                l10n.about_legal_privacy_body,
+                style: text.body2.copyWith(color: colors.neutral700),
+              ),
+              const SizedBox(height: 24),
               _SectionTitle(l10n.about_legal_documents_title),
               const SizedBox(height: 10),
               Text(
@@ -114,6 +127,11 @@ class _AboutCard extends StatelessWidget {
                 icon: Icons.dataset_linked_rounded,
                 label: l10n.legal_link_data_sources,
                 uri: LegalConfig.dataSourcesUrl,
+              ),
+              LegalLinkButton(
+                icon: Icons.contact_support_rounded,
+                label: l10n.legal_link_contact,
+                uri: LegalConfig.contactUrl,
               ),
               Align(
                 alignment: Alignment.centerLeft,
