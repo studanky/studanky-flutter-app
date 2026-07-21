@@ -746,7 +746,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     // hue-rotate colour filter over the raster tiles only (not our markers or
     // the location dot). Follows the app theme's brightness, so it tracks both
     // the system setting and any future manual light/dark toggle.
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+    final mapBackgroundColor = theme.scaffoldBackgroundColor;
 
     final content = SizedBox.expand(
       child: Stack(
@@ -759,6 +761,8 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                 initialZoom: _defaultZoom,
                 minZoom: _minZoom,
                 maxZoom: _maxZoom,
+                // Avoid flutter_map's light grey default while tiles load.
+                backgroundColor: mapBackgroundColor,
                 onMapReady: _onMapReady,
                 onMapEvent: _onMapEvent,
                 // A bare tap on the map (no marker hit) dismisses the keyboard,
@@ -884,7 +888,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                   Positioned(
                     left: 16,
                     right: 16,
-                    top: 12,
+                    top: 16,
                     child: IgnorePointer(
                       ignoring: isDetailOpen,
                       child: ExcludeSemantics(

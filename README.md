@@ -1,4 +1,4 @@
-# Studanky
+# Studánky
 
 ## Environment configuration
 

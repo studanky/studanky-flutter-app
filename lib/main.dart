@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:studanky_flutter_app/core/bootstrap/bootstrap_error_app.dart';
 import 'package:studanky_flutter_app/core/navigation/app_router.dart';
 import 'package:studanky_flutter_app/core/providers/shared_preferences_provider.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors.dart';
@@ -27,17 +28,30 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _setLogging();
 
-  // SharedPreferences resolves asynchronously; load it once here and inject the
-  // instance so the synchronous [sharedPreferencesProvider] can be read from
-  // anywhere (e.g. the platform config cache) without awaiting.
-  final prefs = await SharedPreferences.getInstance();
+  try {
+    // SharedPreferences resolves asynchronously; load it once here and inject the
+    // instance so the synchronous [sharedPreferencesProvider] can be read from
+    // anywhere (e.g. the platform config cache) without awaiting.
+    final prefs = await SharedPreferences.getInstance();
 
-  runApp(
-    ProviderScope(
-      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
-      child: const MainApp(),
-    ),
-  );
+    runApp(
+      ProviderScope(
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        child: const MainApp(),
+      ),
+    );
+  } catch (error, stackTrace) {
+    FlutterError.reportError(
+      FlutterErrorDetails(
+        exception: error,
+        stack: stackTrace,
+        library: 'app bootstrap',
+        context: ErrorDescription('while loading SharedPreferences'),
+      ),
+    );
+    Logger('Bootstrap').severe('Failed to start the app', error, stackTrace);
+    runApp(BootstrapErrorApp(error: error, stackTrace: stackTrace));
+  }
 }
 
 class MainApp extends ConsumerStatefulWidget {
