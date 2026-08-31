@@ -28,6 +28,7 @@ import 'package:studanky_flutter_app/features/map_page/widgets/disclaimer_dialog
 import 'package:studanky_flutter_app/features/map_page/widgets/map_attribution.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_control_stack.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_disclaimer.dart';
+import 'package:studanky_flutter_app/features/map_page/widgets/map_quick_zoom.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_zoom_slider.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/status_bar_scrim.dart';
@@ -112,6 +113,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// tiny address bbox still lands at a sensible street-level zoom.
   static const double _searchMaxFitZoom = 16;
 
+  /// `InteractiveFlag.doubleTapDragZoom` is deliberately omitted in favour of
+  /// [MapQuickZoom], which works around
+  /// https://github.com/fleaflet/flutter_map/issues/2246.
   static const int _mapInteractionFlags =
       InteractiveFlag.pinchZoom |
       InteractiveFlag.pinchMove |
@@ -793,46 +797,52 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
       child: Stack(
         children: [
           Positioned.fill(
-            child: FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                initialCenter: _initialCenter,
-                initialZoom: _defaultZoom,
-                minZoom: _minZoom,
-                maxZoom: _maxZoom,
-                // Avoid flutter_map's light grey default while tiles load.
-                backgroundColor: mapBackgroundColor,
-                onMapReady: _onMapReady,
-                onMapEvent: _onMapEvent,
-                // A bare tap on the map (no marker hit) dismisses the keyboard,
-                // like panning does — and, map-app convention, closes an open
-                // detail sheet. Marker taps never reach here.
-                onTap: (_, _) => _onMapTap(),
-                interactionOptions: const InteractionOptions(
-                  flags: _mapInteractionFlags,
-                  enableMultiFingerGestureRace: true,
-                  pinchZoomThreshold: _pinchZoomGestureThreshold,
-                  rotationThreshold: _rotationGestureThresholdDegrees,
-                  pinchZoomWinGestures: _pinchGestureWinGestures,
-                  pinchMoveWinGestures: _pinchGestureWinGestures,
-                  rotationWinGestures: MultiFingerGesture.rotate,
-                ),
-              ),
-              children: [
-                if (isDarkMode)
-                  darkModeTilesContainerBuilder(
-                    context,
-                    TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
-                  )
-                else
-                  TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
-                if (locationState.activated)
-                  CurrentLocationLayer(
-                    positionStream: locationNotifier.positionStream,
-                    headingStream: locationNotifier.headingStream,
+            child: MapQuickZoom(
+              controller: _mapController,
+              minZoom: _minZoom,
+              maxZoom: _maxZoom,
+              onZoomStart: _dismissKeyboard,
+              child: FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  initialCenter: _initialCenter,
+                  initialZoom: _defaultZoom,
+                  minZoom: _minZoom,
+                  maxZoom: _maxZoom,
+                  // Avoid flutter_map's light grey default while tiles load.
+                  backgroundColor: mapBackgroundColor,
+                  onMapReady: _onMapReady,
+                  onMapEvent: _onMapEvent,
+                  // A bare tap on the map (no marker hit) dismisses the keyboard,
+                  // like panning does — and, map-app convention, closes an open
+                  // detail sheet. Marker taps never reach here.
+                  onTap: (_, _) => _onMapTap(),
+                  interactionOptions: const InteractionOptions(
+                    flags: _mapInteractionFlags,
+                    enableMultiFingerGestureRace: true,
+                    pinchZoomThreshold: _pinchZoomGestureThreshold,
+                    rotationThreshold: _rotationGestureThresholdDegrees,
+                    pinchZoomWinGestures: _pinchGestureWinGestures,
+                    pinchMoveWinGestures: _pinchGestureWinGestures,
+                    rotationWinGestures: MultiFingerGesture.rotate,
                   ),
-                MarkerLayer(markers: markers),
-              ],
+                ),
+                children: [
+                  if (isDarkMode)
+                    darkModeTilesContainerBuilder(
+                      context,
+                      TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
+                    )
+                  else
+                    TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
+                  if (locationState.activated)
+                    CurrentLocationLayer(
+                      positionStream: locationNotifier.positionStream,
+                      headingStream: locationNotifier.headingStream,
+                    ),
+                  MarkerLayer(markers: markers),
+                ],
+              ),
             ),
           ),
           // Permanent frosted strip behind the OS status bar so the system
