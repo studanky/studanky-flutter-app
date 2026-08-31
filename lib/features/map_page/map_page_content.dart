@@ -97,6 +97,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// to be unambiguous before the detail sheet appears.
   static const double _springSearchZoom = 17.0;
 
+  /// Keeps the selected spring just below the geometric centre of the map
+  /// strip visible above the detail sheet. A small fixed logical-pixel offset
+  /// reads consistently across screen sizes without tying it to map zoom.
+  static const double _detailFocusDownwardOffset = 24;
+
   /// Map center within this many metres of the user's fix counts as "centered".
   static const double _centeredThresholdMeters = 25;
 
@@ -527,8 +532,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// between the safe-area top and the sheet's top edge:
   ///
   ///   sheetTop = h − (h − topInset)·s
-  ///   targetY  = (topInset + sheetTop) / 2
-  ///   shift    = h/2 − targetY = ((h − topInset)·s − topInset) / 2
+  ///   targetY  = (topInset + sheetTop) / 2 + downwardOffset
+  ///   shift    = h/2 − targetY
+  ///            = ((h − topInset)·s − topInset) / 2 − downwardOffset
   ///
   /// [MapCamera.screenOffsetToLatLng] works in screen space, so map rotation
   /// is accounted for.
@@ -544,7 +550,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     final size = onTarget.nonRotatedSize;
     final topInset = MediaQuery.viewPaddingOf(context).top;
     final extent = sheetExtent.clamp(0.0, 1.0).toDouble();
-    final shift = ((size.height - topInset) * extent - topInset) / 2;
+    final shift =
+        ((size.height - topInset) * extent - topInset) / 2 -
+        _detailFocusDownwardOffset;
     return onTarget.screenOffsetToLatLng(
       size.center(Offset.zero) + Offset(0, shift),
     );
