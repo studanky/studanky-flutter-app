@@ -17,7 +17,11 @@ import 'package:studanky_flutter_app/l10n/app_locale_resolution.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
 void _setLogging() {
-  Logger.root.level = kReleaseMode ? Level.WARNING : Level.ALL;
+  // Profile builds must stay representative of production performance. Fine
+  // API logging performs deep payload redaction and stringification, so keep
+  // verbose output exclusive to debug builds. Warnings and errors remain
+  // visible in profile mode to preserve useful diagnostics during profiling.
+  Logger.root.level = kDebugMode ? Level.ALL : Level.WARNING;
   if (!kReleaseMode) {
     Logger.root.onRecord.listen((record) {
       debugPrint('${record.level.name}: ${record.time}: ${record.message}');
