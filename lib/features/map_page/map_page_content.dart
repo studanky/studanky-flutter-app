@@ -1054,6 +1054,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                   MapDisclaimer(
                     onTap: () => unawaited(showDisclaimerDialog(context)),
                   ),
+                  const SizedBox(height: 8),
                   const MapAttribution(),
                 ],
               ),
