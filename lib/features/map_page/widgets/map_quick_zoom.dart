@@ -7,13 +7,18 @@ import 'package:latlong2/latlong.dart';
 ///
 /// The first tap is released; the second is held and dragged vertically. The
 /// gap between taps is time-limited, but once the second pointer is down it may
-/// be held for any length of time before dragging.
+/// be held for any length of time before dragging. [onGestureActiveChanged]
+/// lets the map temporarily suspend its competing pan interaction, so
+/// horizontal movement is ignored for the complete quick-zoom sequence.
 ///
 /// This is a workaround for a `flutter_map` bug where the built-in
 /// `doubleTapDragZoom` expires the whole gesture shortly after the first tap,
 /// even when the second pointer is already down. Remove this workaround once
 /// <https://github.com/fleaflet/flutter_map/issues/2246> is fixed in the minimum
-/// supported `flutter_map` version.
+/// supported `flutter_map` version. At that point this entire widget/file is
+/// obsolete: use `InteractiveFlag.doubleTapDragZoom` directly instead of
+/// keeping both recognizers. The app-level removal checklist lives beside
+/// `_mapInteractionFlags` in `map_page_content.dart`.
 class MapQuickZoom extends StatefulWidget {
   const MapQuickZoom({
     required this.controller,
@@ -21,6 +26,7 @@ class MapQuickZoom extends StatefulWidget {
     required this.maxZoom,
     required this.child,
     this.onZoomStart,
+    this.onGestureActiveChanged,
     super.key,
   });
 
@@ -29,6 +35,12 @@ class MapQuickZoom extends StatefulWidget {
   final double maxZoom;
   final Widget child;
   final VoidCallback? onZoomStart;
+
+  /// Reports the recognised second tap from pointer-down until up/cancel.
+  ///
+  /// The containing map uses this to suspend its normal one-finger pan while
+  /// quick zoom has exclusive control of the pointer.
+  final ValueChanged<bool>? onGestureActiveChanged;
 
   @override
   State<MapQuickZoom> createState() => _MapQuickZoomState();
@@ -50,6 +62,7 @@ class _MapQuickZoomState extends State<MapQuickZoom> {
 
   bool _quickZoomCandidate = false;
   bool _quickZoomActive = false;
+  bool _gestureActive = false;
   double? _quickZoomStartY;
   double? _quickZoomStartLevel;
   LatLng? _quickZoomStartCenter;
@@ -75,6 +88,7 @@ class _MapQuickZoomState extends State<MapQuickZoom> {
             _doubleTapMaxOffset;
 
     if (!followsFirstTap) {
+      _setGestureActive(false);
       _quickZoomCandidate = false;
       _firstTapUpTime = null;
       _firstTapPosition = null;
@@ -82,6 +96,7 @@ class _MapQuickZoomState extends State<MapQuickZoom> {
     }
 
     final camera = widget.controller.camera;
+    _setGestureActive(true);
     _quickZoomCandidate = true;
     _firstTapUpTime = null;
     _firstTapPosition = null;
@@ -98,7 +113,11 @@ class _MapQuickZoomState extends State<MapQuickZoom> {
     final dragDistance = (event.localPosition - downPosition).distance;
     if (dragDistance > kTouchSlop) _pointerMoved = true;
 
-    if (!_quickZoomCandidate || dragDistance <= kTouchSlop) return;
+    // Horizontal travel never activates or influences zoom. Requiring vertical
+    // touch slop also filters the small Y jitter of an intended sideways move.
+    final verticalDragDistance = (event.localPosition.dy - downPosition.dy)
+        .abs();
+    if (!_quickZoomCandidate || verticalDragDistance <= kTouchSlop) return;
     if (!_quickZoomActive) {
       _quickZoomActive = true;
       widget.onZoomStart?.call();
@@ -127,6 +146,7 @@ class _MapQuickZoomState extends State<MapQuickZoom> {
 
     if (_quickZoomCandidate) {
       if (_quickZoomActive) _applyZoom(event.localPosition.dy);
+      _setGestureActive(false);
       _clearCurrentPointer();
       _quickZoomCandidate = false;
       _quickZoomActive = false;
@@ -155,11 +175,18 @@ class _MapQuickZoomState extends State<MapQuickZoom> {
   }
 
   void _cancelSequence() {
+    _setGestureActive(false);
     _clearCurrentPointer();
     _firstTapUpTime = null;
     _firstTapPosition = null;
     _quickZoomCandidate = false;
     _quickZoomActive = false;
+  }
+
+  void _setGestureActive(bool active) {
+    if (_gestureActive == active) return;
+    _gestureActive = active;
+    widget.onGestureActiveChanged?.call(active);
   }
 
   @override

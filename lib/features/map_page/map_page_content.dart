@@ -114,9 +114,25 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// tiny address bbox still lands at a sensible street-level zoom.
   static const double _searchMaxFitZoom = 16;
 
-  /// `InteractiveFlag.doubleTapDragZoom` is deliberately omitted in favour of
-  /// [MapQuickZoom], which works around
-  /// https://github.com/fleaflet/flutter_map/issues/2246.
+  // TODO(flutter_map#2246): This whole quick-zoom integration is temporary.
+  // Remove it only after the minimum supported `flutter_map` version contains
+  // the fix for https://github.com/fleaflet/flutter_map/issues/2246.
+  //
+  // Cleanup after that upgrade:
+  // 1. Raise the `flutter_map` constraint in pubspec.yaml to the fixed version
+  //    and add `InteractiveFlag.doubleTapDragZoom` below.
+  // 2. Add `MapEventSource.doubleTapHold` to `_userMoveSources`, replacing
+  //    `MapQuickZoom.onZoomStart` for keyboard dismissal.
+  // 3. Replace the `MapQuickZoom` + `ValueListenableBuilder<bool>` wrappers
+  //    around `FlutterMap` with the `FlutterMap` itself and always pass
+  //    `_mapInteractionFlags` to `InteractionOptions.flags`.
+  // 4. Remove `_quickZoomGestureActive` (including its dispose call), delete
+  //    widgets/map_quick_zoom.dart, and migrate its regression scenarios from
+  //    map_quick_zoom_test.dart to tests of flutter_map's native gesture.
+  //
+  // Until then the native flag must stay disabled: its expired second-tap
+  // state falls back to normal drag, which is the horizontal map movement this
+  // workaround prevents.
   static const int _mapInteractionFlags =
       InteractiveFlag.pinchZoom |
       InteractiveFlag.pinchMove |
@@ -195,6 +211,12 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// without rebuilding the whole map.
   final ValueNotifier<double> _zoom = ValueNotifier(_defaultZoom);
 
+  /// Temporary state for the flutter_map#2246 workaround described beside
+  /// [_mapInteractionFlags]. Remove it together with [MapQuickZoom].
+  /// While quick zoom owns the second tap, normal map drag is suspended so
+  /// horizontal pointer movement cannot pan the map underneath.
+  final ValueNotifier<bool> _quickZoomGestureActive = ValueNotifier(false);
+
   late final MapCameraAnimator _animator = MapCameraAnimator(
     mapController: _mapController,
     vsync: this,
@@ -218,6 +240,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     _animator.dispose();
     _compass.dispose();
     _zoom.dispose();
+    _quickZoomGestureActive.dispose();
     super.dispose();
   }
 
@@ -800,52 +823,63 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
       child: Stack(
         children: [
           Positioned.fill(
+            // TODO(flutter_map#2246): Remove MapQuickZoom and the nested bool
+            // listener after enabling flutter_map's fixed native
+            // doubleTapDragZoom. See the cleanup checklist by
+            // `_mapInteractionFlags`; FlutterMap then becomes the direct child.
             child: MapQuickZoom(
               controller: _mapController,
               minZoom: _minZoom,
               maxZoom: _maxZoom,
               onZoomStart: _dismissKeyboard,
-              child: FlutterMap(
-                mapController: _mapController,
-                options: MapOptions(
-                  initialCenter: _initialCenter,
-                  initialZoom: _defaultZoom,
-                  minZoom: _minZoom,
-                  maxZoom: _maxZoom,
-                  // Avoid flutter_map's light grey default while tiles load.
-                  backgroundColor: mapBackgroundColor,
-                  onMapReady: _onMapReady,
-                  onMapEvent: _onMapEvent,
-                  // A bare tap on the map (no marker hit) dismisses the keyboard,
-                  // like panning does — and, map-app convention, closes an open
-                  // detail sheet. Marker taps never reach here.
-                  onTap: (_, _) => _onMapTap(),
-                  interactionOptions: const InteractionOptions(
-                    flags: _mapInteractionFlags,
-                    enableMultiFingerGestureRace: true,
-                    pinchZoomThreshold: _pinchZoomGestureThreshold,
-                    rotationThreshold: _rotationGestureThresholdDegrees,
-                    pinchZoomWinGestures: _pinchGestureWinGestures,
-                    pinchMoveWinGestures: _pinchGestureWinGestures,
-                    rotationWinGestures: MultiFingerGesture.rotate,
-                  ),
-                ),
-                children: [
-                  if (isDarkMode)
-                    DarkMapTileFilter(
-                      child: TileLayer(
-                        urlTemplate: MapPageConstants.mapTilesMapy,
-                      ),
-                    )
-                  else
-                    TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
-                  if (locationState.activated)
-                    CurrentLocationLayer(
-                      positionStream: locationNotifier.positionStream,
-                      headingStream: locationNotifier.headingStream,
+              onGestureActiveChanged: (active) =>
+                  _quickZoomGestureActive.value = active,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: _quickZoomGestureActive,
+                builder: (context, quickZoomGestureActive, _) => FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: _initialCenter,
+                    initialZoom: _defaultZoom,
+                    minZoom: _minZoom,
+                    maxZoom: _maxZoom,
+                    // Avoid flutter_map's light grey default while tiles load.
+                    backgroundColor: mapBackgroundColor,
+                    onMapReady: _onMapReady,
+                    onMapEvent: _onMapEvent,
+                    // A bare tap on the map (no marker hit) dismisses the keyboard,
+                    // like panning does — and, map-app convention, closes an open
+                    // detail sheet. Marker taps never reach here.
+                    onTap: (_, _) => _onMapTap(),
+                    interactionOptions: InteractionOptions(
+                      flags: quickZoomGestureActive
+                          ? _mapInteractionFlags & ~InteractiveFlag.drag
+                          : _mapInteractionFlags,
+                      enableMultiFingerGestureRace: true,
+                      pinchZoomThreshold: _pinchZoomGestureThreshold,
+                      rotationThreshold: _rotationGestureThresholdDegrees,
+                      pinchZoomWinGestures: _pinchGestureWinGestures,
+                      pinchMoveWinGestures: _pinchGestureWinGestures,
+                      rotationWinGestures: MultiFingerGesture.rotate,
                     ),
-                  MarkerLayer(markers: markers),
-                ],
+                  ),
+                  children: [
+                    if (isDarkMode)
+                      DarkMapTileFilter(
+                        child: TileLayer(
+                          urlTemplate: MapPageConstants.mapTilesMapy,
+                        ),
+                      )
+                    else
+                      TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
+                    if (locationState.activated)
+                      CurrentLocationLayer(
+                        positionStream: locationNotifier.positionStream,
+                        headingStream: locationNotifier.headingStream,
+                      ),
+                    MarkerLayer(markers: markers),
+                  ],
+                ),
               ),
             ),
           ),
