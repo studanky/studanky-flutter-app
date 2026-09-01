@@ -70,11 +70,16 @@ class SpringDetailHeader extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 6),
-                  child: Text(
-                    name,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: text.h5.copyWith(color: colors.neutral900),
+                  // SelectionArea preserves the title's existing Text layout
+                  // while providing Flutter's platform-adaptive Android/iOS
+                  // selection handles, magnifier, and copy context menu.
+                  child: SelectionArea(
+                    child: Text(
+                      name,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: text.h5.copyWith(color: colors.neutral900),
+                    ),
                   ),
                 ),
               ),
@@ -139,9 +144,16 @@ class SpringDetailHeader extends StatelessWidget {
         if (description != null)
           DetailSection(
             title: l10n.spring_detail_section_about,
-            child: Text(
-              description!,
-              style: text.body2.copyWith(color: colors.neutral800, height: 1.5),
+            // Keep selection scoped to the description instead of the whole
+            // section, so its heading and neighbouring controls are excluded.
+            child: SelectionArea(
+              child: Text(
+                description!,
+                style: text.body2.copyWith(
+                  color: colors.neutral800,
+                  height: 1.5,
+                ),
+              ),
             ),
           ),
       ],
