@@ -819,6 +819,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     final isDarkMode = theme.brightness == Brightness.dark;
     final mapBackgroundColor = theme.scaffoldBackgroundColor;
 
+    // All map GlassSurface instances use the same blur and do not overlap.
+    // Sharing their backdrop input allows the engine to blur the map once
+    // instead of repeating the expensive operation for every floating
+    // control. Filters with different/overlapping effects (status-bar scrim
+    // and detail frost) deliberately remain regular BackdropFilters.
     final content = SizedBox.expand(
       child: Stack(
         children: [
@@ -1070,7 +1075,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
         value: isDarkMode
             ? SystemUiOverlayStyle.light
             : SystemUiOverlayStyle.dark,
-        child: content,
+        child: BackdropGroup(child: content),
       ),
     );
   }

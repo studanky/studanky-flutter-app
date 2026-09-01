@@ -79,14 +79,20 @@ class GlassSurface extends StatelessWidget {
       ),
       child: ClipRSuperellipse(
         borderRadius: borderRadius,
-        child: BackdropFilter(
+        // Opt into a shared backdrop only when an ancestor provides a
+        // BackdropGroup. On the map this lets the engine blur the tiles once
+        // for all non-overlapping glass controls; elsewhere the grouped
+        // constructor gracefully behaves like a regular BackdropFilter.
+        child: BackdropFilter.grouped(
           filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
           // Layered inside the clip: translucent fill → sheen → content →
           // hairline edge on top. The content (Padding) is the only
           // non-positioned child, so it sizes the stack and the rest fills it.
           child: Stack(
             children: [
-              Positioned.fill(child: ColoredBox(color: fill ?? colors.glassFill)),
+              Positioned.fill(
+                child: ColoredBox(color: fill ?? colors.glassFill),
+              ),
               if (sheen)
                 Positioned.fill(
                   child: IgnorePointer(
@@ -96,7 +102,9 @@ class GlassSurface extends StatelessWidget {
                           begin: Alignment.topCenter,
                           end: Alignment.center,
                           colors: [
-                            Colors.white.withValues(alpha: isDark ? 0.10 : 0.28),
+                            Colors.white.withValues(
+                              alpha: isDark ? 0.10 : 0.28,
+                            ),
                             Colors.white.withValues(alpha: 0),
                           ],
                         ),
