@@ -39,7 +39,7 @@ class MapZoomSlider extends StatelessWidget {
   static const double _thumbRadius = _thumbDiameter / 2;
   static const double _edgeShadowPadding = 30;
 
-  /// 0 (min zoom, bottom) … 1 (max zoom, top).
+  /// 0 (min zoom, top) … 1 (max zoom, bottom).
   double get _fraction =>
       ((zoom - minZoom) / (maxZoom - minZoom)).clamp(0.0, 1.0);
 
@@ -112,9 +112,10 @@ class _ZoomTrack extends StatelessWidget {
     final verticalInset = MapZoomSlider._verticalInsetFor(height);
     final trackTravel = MapZoomSlider._trackTravelFor(height);
 
-    // Top = max zoom, bottom = min zoom.
+    // Match one-finger quick zoom: dragging down zooms in, dragging up zooms
+    // out. Therefore the top is min zoom and the bottom is max zoom.
     final y = localY.clamp(verticalInset, height - verticalInset);
-    final f = (1 - ((y - verticalInset) / trackTravel)).clamp(0.0, 1.0);
+    final f = ((y - verticalInset) / trackTravel).clamp(0.0, 1.0);
     onChanged(minZoom + f * (maxZoom - minZoom));
   }
 
@@ -138,7 +139,7 @@ class _ZoomTrack extends StatelessWidget {
         final height = constraints.maxHeight;
         final centerY =
             MapZoomSlider._verticalInsetFor(height) +
-            (1 - fraction) * MapZoomSlider._trackTravelFor(height);
+            fraction * MapZoomSlider._trackTravelFor(height);
 
         // Only the thumb is interactive — dragging it changes the zoom. The
         // rest of the rail is inert (no tap-to-jump, no drag-from-anywhere), so
