@@ -18,7 +18,6 @@ import 'package:studanky_flutter_app/core/widgets/backdrop_blur_scope.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/features/favorites/widgets/favorites_dialog.dart';
 import 'package:studanky_flutter_app/features/legal/providers/legal_onboarding_provider.dart';
-import 'package:studanky_flutter_app/features/map_page/constants/map_page_constants.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/map_marker_provider.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
@@ -32,6 +31,7 @@ import 'package:studanky_flutter_app/features/map_page/widgets/map_attribution.d
 import 'package:studanky_flutter_app/features/map_page/widgets/map_control_stack.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_disclaimer.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_quick_zoom.dart';
+import 'package:studanky_flutter_app/features/map_page/widgets/map_tile_layer.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_zoom_slider.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/status_bar_scrim.dart';
@@ -887,13 +887,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                   ),
                   children: [
                     if (isDarkMode)
-                      DarkMapTileFilter(
-                        child: TileLayer(
-                          urlTemplate: MapPageConstants.mapTilesMapy,
-                        ),
-                      )
+                      DarkMapTileFilter(child: buildMapTileLayer())
                     else
-                      TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
+                      buildMapTileLayer(),
                     if (locationState.activated)
                       CurrentLocationLayer(
                         positionStream: locationNotifier.positionStream,
