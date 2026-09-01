@@ -8,4 +8,7 @@ import 'package:studanky_flutter_app/features/map_page/constants/map_page_consta
 TileLayer buildMapTileLayer() => TileLayer(
   urlTemplate: MapPageConstants.mapTilesMapy,
   keepBuffer: MapPageConstants.mapTileKeepBuffer,
+  // A/B candidate: skip the default 100 ms per-tile opacity animation and
+  // present decoded tiles immediately. panBuffer intentionally stays at 1.
+  tileDisplay: const TileDisplay.instantaneous(),
 );

@@ -4,12 +4,12 @@ import 'package:studanky_flutter_app/features/map_page/constants/map_page_consta
 import 'package:studanky_flutter_app/features/map_page/widgets/map_tile_layer.dart';
 
 void main() {
-  test('retains one off-screen tile ring without changing load behaviour', () {
+  test('shows retained and prefetched tiles without a fade animation', () {
     final layer = buildMapTileLayer();
 
     expect(layer.urlTemplate, MapPageConstants.mapTilesMapy);
     expect(layer.keepBuffer, 1);
     expect(layer.panBuffer, 1);
-    expect(layer.tileDisplay, const TileDisplay.fadeIn());
+    expect(layer.tileDisplay, const TileDisplay.instantaneous());
   });
 }
