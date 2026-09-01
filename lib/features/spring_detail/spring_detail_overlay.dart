@@ -3,6 +3,7 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
+import 'package:studanky_flutter_app/core/widgets/backdrop_blur_scope.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 
@@ -191,6 +192,8 @@ class _FrostBackdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final blurEnabled = BackdropBlurScope.enabledOf(context);
+
     return IgnorePointer(
       child: AnimatedBuilder(
         animation: Listenable.merge([animation, extent]),
@@ -205,6 +208,7 @@ class _FrostBackdrop extends StatelessWidget {
           if (sigma == 0) return const SizedBox.expand();
           return BackdropFilter(
             filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
+            enabled: blurEnabled,
             child: const SizedBox.expand(),
           );
         },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:studanky_flutter_app/core/widgets/backdrop_blur_scope.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 
 void main() {
@@ -44,5 +45,38 @@ void main() {
       find.byType(BackdropFilter),
     );
     expect(filter.backdropKey, isNull);
+  });
+
+  testWidgets('blur scope disables only the backdrop render operation', (
+    tester,
+  ) async {
+    Future<void> pumpGlass({required bool blurEnabled}) => tester.pumpWidget(
+      MaterialApp(
+        home: BackdropGroup(
+          child: BackdropBlurScope(
+            enabled: blurEnabled,
+            child: const GlassSurface(child: SizedBox(width: 40, height: 40)),
+          ),
+        ),
+      ),
+    );
+
+    await pumpGlass(blurEnabled: false);
+    var filter = tester.renderObject<RenderBackdropFilter>(
+      find.byType(BackdropFilter),
+    );
+    final glassFill = find.descendant(
+      of: find.byType(GlassSurface),
+      matching: find.byType(ColoredBox),
+    );
+    expect(filter.enabled, isFalse);
+    expect(glassFill, findsOneWidget);
+
+    await pumpGlass(blurEnabled: true);
+    filter = tester.renderObject<RenderBackdropFilter>(
+      find.byType(BackdropFilter),
+    );
+    expect(filter.enabled, isTrue);
+    expect(glassFill, findsOneWidget);
   });
 }

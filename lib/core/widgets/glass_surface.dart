@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/core/widgets/backdrop_blur_scope.dart';
 
 /// Shared visual tokens for the app's frosted-glass surfaces, so every floating
 /// control over the map (search bar, button stack, zoom slider) reads as one
@@ -71,6 +72,7 @@ class GlassSurface extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
     final isDark = colors.brightness == Brightness.dark;
+    final blurEnabled = BackdropBlurScope.enabledOf(context);
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -85,6 +87,9 @@ class GlassSurface extends StatelessWidget {
         // constructor gracefully behaves like a regular BackdropFilter.
         child: BackdropFilter.grouped(
           filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+          // Prefer disabling the render operation to substituting a zero-sigma
+          // filter: Flutter can then skip the backdrop saveLayer altogether.
+          enabled: blurEnabled,
           // Layered inside the clip: translucent fill → sheen → content →
           // hairline edge on top. The content (Padding) is the only
           // non-positioned child, so it sizes the stack and the rest fills it.

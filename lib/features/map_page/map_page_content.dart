@@ -14,6 +14,7 @@ import 'package:studanky_flutter_app/core/navigation/app_router.dart';
 import 'package:studanky_flutter_app/core/providers/connectivity_status_provider.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_progress_indicator.dart';
+import 'package:studanky_flutter_app/core/widgets/backdrop_blur_scope.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/features/favorites/widgets/favorites_dialog.dart';
 import 'package:studanky_flutter_app/features/legal/providers/legal_onboarding_provider.dart';
@@ -21,6 +22,7 @@ import 'package:studanky_flutter_app/features/map_page/constants/map_page_consta
 import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/map_marker_provider.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
+import 'package:studanky_flutter_app/features/map_page/utils/map_backdrop_blur_controller.dart';
 import 'package:studanky_flutter_app/features/map_page/utils/map_camera_animator.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/about_dialog.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/cluster_marker.dart';
@@ -211,6 +213,10 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// without rebuilding the whole map.
   final ValueNotifier<double> _zoom = ValueNotifier(_defaultZoom);
 
+  /// Only backdrop-filter widgets listen to this controller, so toggling their
+  /// expensive operation never rebuilds FlutterMap or its tile/marker layers.
+  final MapBackdropBlurController _backdropBlur = MapBackdropBlurController();
+
   /// Temporary state for the flutter_map#2246 workaround described beside
   /// [_mapInteractionFlags]. Remove it together with [MapQuickZoom].
   /// While quick zoom owns the second tap, normal map drag is suspended so
@@ -240,6 +246,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     _animator.dispose();
     _compass.dispose();
     _zoom.dispose();
+    _backdropBlur.dispose();
     _quickZoomGestureActive.dispose();
     super.dispose();
   }
@@ -284,12 +291,22 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     // Orientation/centered feedback must be live (every frame of a rotate or
     // pan), so update it immediately; only the marker fetch is debounced.
     _updateCompass();
+    _updateBackdropBlur(event);
     _markMapEmptyStateRefreshing();
     if (_userMoveSources.contains(event.source)) {
       _dismissKeyboard();
     }
     _cameraDebounceTimer?.cancel();
     _cameraDebounceTimer = Timer(_cameraDebounce, _emitCamera);
+  }
+
+  void _updateBackdropBlur(MapEvent event) {
+    // Start/end/tap events do not repaint map pixels. Actual camera updates all
+    // implement MapEventWithMove, including drag, pinch, fling, wheel, quick
+    // zoom, the edge slider, and MapCameraAnimator controller ticks.
+    if (event is! MapEventWithMove) return;
+
+    _backdropBlur.onCameraMoved();
   }
 
   void _onMapTap() {
@@ -1075,7 +1092,14 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
         value: isDarkMode
             ? SystemUiOverlayStyle.light
             : SystemUiOverlayStyle.dark,
-        child: BackdropGroup(child: content),
+        child: BackdropGroup(
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _backdropBlur,
+            child: content,
+            builder: (context, blurEnabled, child) =>
+                BackdropBlurScope(enabled: blurEnabled, child: child!),
+          ),
+        ),
       ),
     );
   }

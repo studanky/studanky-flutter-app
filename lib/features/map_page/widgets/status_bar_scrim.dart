@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/core/widgets/backdrop_blur_scope.dart';
 
 /// A permanent frosted strip behind the OS status bar over the full-bleed map,
 /// so the system clock and indicators stay legible no matter what tiles sit
@@ -23,6 +24,7 @@ class StatusBarScrim extends StatelessWidget {
     final height = MediaQuery.viewPaddingOf(context).top;
     if (height <= 0) return const SizedBox.shrink();
 
+    final blurEnabled = BackdropBlurScope.enabledOf(context);
     final colors = Styles.appColors;
     final isDark = colors.brightness == Brightness.dark;
     final wash = isDark ? colors.background : colors.onNeutral;
@@ -42,6 +44,7 @@ class StatusBarScrim extends StatelessWidget {
             ).createShader(bounds),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: _blurSigma, sigmaY: _blurSigma),
+              enabled: blurEnabled,
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
