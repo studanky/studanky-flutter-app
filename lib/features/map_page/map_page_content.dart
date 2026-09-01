@@ -24,6 +24,7 @@ import 'package:studanky_flutter_app/features/map_page/providers/user_location_p
 import 'package:studanky_flutter_app/features/map_page/utils/map_camera_animator.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/about_dialog.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/cluster_marker.dart';
+import 'package:studanky_flutter_app/features/map_page/widgets/dark_map_tile_filter.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/disclaimer_dialog.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_attribution.dart';
 import 'package:studanky_flutter_app/features/map_page/widgets/map_control_stack.dart';
@@ -785,10 +786,12 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     // heading stream avoids the sensor error on devices without a compass.
     final locationNotifier = ref.read(userLocationProvider.notifier);
 
-    // Mapy.com serves no dark map set, so in dark mode we apply an invert +
-    // hue-rotate colour filter over the raster tiles only (not our markers or
-    // the location dot). Follows the app theme's brightness, so it tracks both
-    // the system setting and any future manual light/dark toggle.
+    // Mapy.com serves no native dark map set. DarkMapTileFilter therefore
+    // applies a strongly desaturated, cool navy transform to the raster tiles
+    // only. Unlike a feature-level map style it cannot restyle roads, water,
+    // and buildings independently, but it removes the warm brown/olive cast.
+    // Markers, attribution, and the location dot retain their original colours.
+    // Theme brightness keeps the map synced with system and manual theme modes.
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
     final mapBackgroundColor = theme.scaffoldBackgroundColor;
@@ -829,9 +832,10 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                 ),
                 children: [
                   if (isDarkMode)
-                    darkModeTilesContainerBuilder(
-                      context,
-                      TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
+                    DarkMapTileFilter(
+                      child: TileLayer(
+                        urlTemplate: MapPageConstants.mapTilesMapy,
+                      ),
                     )
                   else
                     TileLayer(urlTemplate: MapPageConstants.mapTilesMapy),
