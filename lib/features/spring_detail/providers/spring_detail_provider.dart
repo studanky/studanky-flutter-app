@@ -12,10 +12,10 @@ part 'spring_detail_provider.g.dart';
 Future<SpringDetail> springDetail(
   Ref ref,
   String documentId, {
-  String? locale,
+  required String languageTag,
 }) async {
   final result = await ref
       .watch(springDetailRepositoryProvider)
-      .fetchDetail(documentId, locale: locale);
+      .fetchDetail(documentId: documentId, languageTag: languageTag);
   return result.orThrow;
 }

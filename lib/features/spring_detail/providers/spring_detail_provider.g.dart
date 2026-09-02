@@ -35,7 +35,7 @@ final class SpringDetailProvider
   /// surrounding `AsyncValue` capture the typed failure for the UI.
   SpringDetailProvider._({
     required SpringDetailFamily super.from,
-    required (String, {String? locale}) super.argument,
+    required (String, {String languageTag}) super.argument,
   }) : super(
          retry: null,
          name: r'springDetailProvider',
@@ -62,8 +62,8 @@ final class SpringDetailProvider
 
   @override
   FutureOr<SpringDetail> create(Ref ref) {
-    final argument = this.argument as (String, {String? locale});
-    return springDetail(ref, argument.$1, locale: argument.locale);
+    final argument = this.argument as (String, {String languageTag});
+    return springDetail(ref, argument.$1, languageTag: argument.languageTag);
   }
 
   @override
@@ -77,7 +77,7 @@ final class SpringDetailProvider
   }
 }
 
-String _$springDetailHash() => r'36506daf4edc43bbb562ed088536b987c571183a';
+String _$springDetailHash() => r'b873967c60dcde5c7e908bef708717f55064285a';
 
 /// Loads the full spring detail for the header. Auto-disposed with the sheet.
 ///
@@ -88,7 +88,7 @@ final class SpringDetailFamily extends $Family
     with
         $FunctionalFamilyOverride<
           FutureOr<SpringDetail>,
-          (String, {String? locale})
+          (String, {String languageTag})
         > {
   SpringDetailFamily._()
     : super(
@@ -104,9 +104,9 @@ final class SpringDetailFamily extends $Family
   /// The repository returns an `ApiResult`; unwrapping with `orThrow` lets the
   /// surrounding `AsyncValue` capture the typed failure for the UI.
 
-  SpringDetailProvider call(String documentId, {String? locale}) =>
+  SpringDetailProvider call(String documentId, {required String languageTag}) =>
       SpringDetailProvider._(
-        argument: (documentId, locale: locale),
+        argument: (documentId, languageTag: languageTag),
         from: this,
       );
 

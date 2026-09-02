@@ -11,11 +11,13 @@ import 'package:studanky_flutter_app/features/spring_detail/mappers/spring_detai
 part 'spring_detail_repository.g.dart';
 
 abstract class SpringDetailRepository {
-  /// Full detail for [documentId]. Populates `photo` and `owner`; pass [locale]
-  /// to request a localized `name`/`description` (api-reference.md §3.2).
-  Future<ApiResult<SpringDetail>> fetchDetail(
-    String documentId, {
-    String? locale,
+  /// Full detail for [documentId]. Populates `photo` and `owner`; the backend
+  /// localizes `description` using the complete BCP-47 [languageTag] and its
+  /// configured fallback policy. Unsupported tags are valid preferences, not
+  /// errors, and are intentionally not normalized by the client.
+  Future<ApiResult<SpringDetail>> fetchDetail({
+    required String documentId,
+    required String languageTag,
   });
 
   /// One page of report history, newest first (api-reference.md §3.3).
@@ -32,14 +34,14 @@ class SpringDetailRepositoryImpl implements SpringDetailRepository {
   final SpringDetailApi _api;
 
   @override
-  Future<ApiResult<SpringDetail>> fetchDetail(
-    String documentId, {
-    String? locale,
+  Future<ApiResult<SpringDetail>> fetchDetail({
+    required String documentId,
+    required String languageTag,
   }) {
     final queries = <String, dynamic>{
       'populate[photo]': true,
       'populate[owner]': true,
-      'locale': ?locale,
+      'locale': languageTag,
     };
 
     return guardApiCall(() async {

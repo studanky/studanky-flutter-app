@@ -188,10 +188,10 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
   @override
   Widget build(BuildContext context) {
     final marker = widget.marker;
-    final locale = Localizations.localeOf(context).languageCode;
+    final languageTag = Localizations.localeOf(context).toLanguageTag();
 
     final detailAsync = ref.watch(
-      springDetailProvider(_documentId, locale: locale),
+      springDetailProvider(_documentId, languageTag: languageTag),
     );
     final detail = detailAsync.value;
     final config = ref.watch(platformConfigControllerProvider);
@@ -236,7 +236,10 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
                       error: detailAsync.error!,
                       stackTrace: detailAsync.stackTrace ?? StackTrace.empty,
                       onRefresh: () => ref.invalidate(
-                        springDetailProvider(_documentId, locale: locale),
+                        springDetailProvider(
+                          _documentId,
+                          languageTag: languageTag,
+                        ),
                       ),
                     )
                   : const AppProgressIndicator(),
