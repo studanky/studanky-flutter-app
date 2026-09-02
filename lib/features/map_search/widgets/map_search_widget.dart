@@ -29,6 +29,7 @@ class MapSearchWidget extends ConsumerStatefulWidget {
 class _MapSearchWidgetState extends ConsumerState<MapSearchWidget> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
+  Locale? _searchLocale;
 
   @override
   void initState() {
@@ -40,6 +41,21 @@ class _MapSearchWidgetState extends ConsumerState<MapSearchWidget> {
   }
 
   void _onFocusChanged() => setState(() {});
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final searchLocale = Localizations.localeOf(context);
+    if (_searchLocale == searchLocale) return;
+    _searchLocale = searchLocale;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _searchLocale != searchLocale) return;
+      ref
+          .read(mapSearchProvider.notifier)
+          .updateLocale(searchLocale, origin: widget.originProvider?.call());
+    });
+  }
 
   @override
   void dispose() {
@@ -62,10 +78,10 @@ class _MapSearchWidgetState extends ConsumerState<MapSearchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = Localizations.localeOf(context);
-    final provider = mapSearchProvider(locale.languageCode);
-    final state = ref.watch(provider);
-    final notifier = ref.read(provider.notifier);
+    // didChangeDependencies always resolves this before the first build.
+    final searchLocale = _searchLocale!;
+    final state = ref.watch(mapSearchProvider);
+    final notifier = ref.read(mapSearchProvider.notifier);
 
     if (_controller.text != state.query) {
       _controller.value = TextEditingValue(
@@ -80,8 +96,11 @@ class _MapSearchWidgetState extends ConsumerState<MapSearchWidget> {
       state: state,
       hintText: widget.hintText,
       status: widget.status,
-      onQueryChanged: (query) =>
-          notifier.setQuery(query, origin: widget.originProvider?.call()),
+      onQueryChanged: (query) => notifier.setQuery(
+        query,
+        locale: searchLocale,
+        origin: widget.originProvider?.call(),
+      ),
       // Clears the typed query but keeps the field focused so the user can keep
       // typing; the overlay's trailing button handles dismissing an empty field.
       onClear: notifier.clear,

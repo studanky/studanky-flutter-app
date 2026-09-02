@@ -16,9 +16,15 @@ abstract class SpringsApi {
   factory SpringsApi(Dio dio, {String? baseUrl}) = _SpringsApi;
 
   /// [bbox] is `minLng,minLat,maxLng,maxLat`.
+  ///
+  /// [languageTag] deliberately remains the complete Flutter BCP-47 tag. The
+  /// backend canonicalizes arbitrary requested tags, queries configured
+  /// locales only, and falls back server-side; the client must not shorten a
+  /// regional or script-aware tag to its base language.
   @GET(ApiConfig.springsMapEndpoint)
   Future<StrapiListResponse<SpringMapMarkerDto>> getMap(
     @Query('bbox') String bbox,
+    @Query('locale') String languageTag,
   );
 
   @GET(ApiConfig.springsSearchEndpoint)
@@ -27,7 +33,7 @@ abstract class SpringsApi {
     @Query('lat') double? latitude,
     @Query('lng') double? longitude,
     @Query('limit') int limit,
-    @Query('locale') String? locale,
+    @Query('locale') String languageTag,
   );
 }
 

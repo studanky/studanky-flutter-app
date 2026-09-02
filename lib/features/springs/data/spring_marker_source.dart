@@ -18,19 +18,23 @@ part 'spring_marker_source.g.dart';
 /// time-to-live — that area still draws its markers while a refresh runs
 /// behind it.
 abstract class SpringMarkerSource {
-  /// Whether [bounds] is fully fetched **and still fresh**. False means
-  /// [load] has work to do.
-  bool covers(SpringBounds bounds);
+  /// Whether [bounds] is fully fetched **and still fresh** for [languageTag].
+  /// False means [load] has work to do.
+  bool covers(SpringBounds bounds, {required String languageTag});
 
-  /// Whether [bounds] has been fetched at all, however long ago. Drives "there
-  /// are no springs here": a stale answer is still an answer, and withdrawing
-  /// the message during a background refresh would make it blink.
-  bool hasDataFor(SpringBounds bounds);
+  /// Whether [bounds] has been fetched for [languageTag] at all, however long
+  /// ago. Drives "there are no springs here": a stale answer is still an
+  /// answer, while data from the previous locale remains only a drawable
+  /// placeholder during the replacement fetch.
+  bool hasDataFor(SpringBounds bounds, {required String languageTag});
 
-  /// Fetches whatever [bounds] still needs and returns **all** markers known
-  /// afterwards — never just the new ones, so callers can treat the result as
-  /// the complete dataset.
-  Future<ApiResult<List<SpringMarkerEntity>>> load(SpringBounds bounds);
+  /// Fetches whatever [bounds] still needs for [languageTag] and returns
+  /// **all** markers known afterwards — never just the new ones, so callers can
+  /// treat the result as the complete dataset.
+  Future<ApiResult<List<SpringMarkerEntity>>> load(
+    SpringBounds bounds, {
+    required String languageTag,
+  });
 }
 
 /// Viewport cache keyed by a fixed lat/lng grid.
@@ -41,9 +45,9 @@ abstract class SpringMarkerSource {
 /// grows, so a pan back is free — while the camera still never pulls more than
 /// the area it is actually looking at.
 ///
-/// Each tile carries its own fetch timestamp, so staleness expires per area
-/// rather than all at once, and a long-running session keeps refreshing what
-/// the user is actually looking at.
+/// Each tile carries its request locale and fetch timestamp, so locale/age
+/// staleness expires per area rather than creating an immortal full cache per
+/// locale. A long-running session refreshes only what the user actually views.
 class TileGridSpringMarkerSource implements SpringMarkerSource {
   TileGridSpringMarkerSource(
     this._repository, {
@@ -83,27 +87,39 @@ class TileGridSpringMarkerSource implements SpringMarkerSource {
   final Map<_Tile, _TileData> _tiles = {};
 
   @override
-  bool covers(SpringBounds bounds) {
+  bool covers(SpringBounds bounds, {required String languageTag}) {
     final deadline = _now().subtract(maxAge);
-    return _tilesIn(bounds).every((tile) => _tiles[tile]?.isFreshAt(deadline) ?? false);
+    return _tilesIn(bounds).every(
+      (tile) =>
+          _tiles[tile]?.isFreshAt(deadline, languageTag: languageTag) ?? false,
+    );
   }
 
   @override
-  bool hasDataFor(SpringBounds bounds) => _tilesIn(bounds).every(_tiles.containsKey);
+  bool hasDataFor(SpringBounds bounds, {required String languageTag}) =>
+      _tilesIn(
+        bounds,
+      ).every((tile) => _tiles[tile]?.languageTag == languageTag);
 
   @override
-  Future<ApiResult<List<SpringMarkerEntity>>> load(SpringBounds bounds) async {
-    final rect = _requestRect(bounds);
+  Future<ApiResult<List<SpringMarkerEntity>>> load(
+    SpringBounds bounds, {
+    required String languageTag,
+  }) async {
+    final rect = _requestRect(bounds, languageTag);
     // No tiles to aim at — a box that wraps the antimeridian, which this
     // grid does not model. [covers] already reports such a camera as covered,
     // so only a forced probe can land here; there is nothing to request.
     if (rect == null) return ApiResult.success(_allSprings());
 
-    final result = await _repository.fetchMapMarkers(rect.toBounds(tileSize));
+    final result = await _repository.fetchMapMarkers(
+      bounds: rect.toBounds(tileSize),
+      languageTag: languageTag,
+    );
 
     switch (result) {
       case Success(:final data):
-        _absorb(rect, data);
+        _absorb(rect, data, languageTag);
         return ApiResult.success(_allSprings());
       case Failure(:final exception):
         // Tiles keep their previous contents and timestamps: a failed refresh
@@ -116,13 +132,17 @@ class TileGridSpringMarkerSource implements SpringMarkerSource {
   /// than at the raw viewport is what makes a tile's contents *complete* — a
   /// request clipped mid-tile would leave a hole that coverage bookkeeping
   /// could not see.
-  _TileRect? _requestRect(SpringBounds bounds) {
+  _TileRect? _requestRect(SpringBounds bounds, String languageTag) {
     final tiles = _tilesIn(bounds).toList(growable: false);
     if (tiles.isEmpty) return null;
 
     final deadline = _now().subtract(maxAge);
     final stale = tiles
-        .where((tile) => !(_tiles[tile]?.isFreshAt(deadline) ?? false))
+        .where(
+          (tile) =>
+              !(_tiles[tile]?.isFreshAt(deadline, languageTag: languageTag) ??
+                  false),
+        )
         .toList(growable: false);
 
     // A forced refresh over fully fresh tiles has nothing stale to aim at, but
@@ -131,7 +151,11 @@ class TileGridSpringMarkerSource implements SpringMarkerSource {
     return _TileRect.spanning(stale.isEmpty ? tiles : stale);
   }
 
-  void _absorb(_TileRect rect, List<SpringMarkerEntity> data) {
+  void _absorb(
+    _TileRect rect,
+    List<SpringMarkerEntity> data,
+    String languageTag,
+  ) {
     final fetchedAt = _now();
     final grouped = <_Tile, List<SpringMarkerEntity>>{};
 
@@ -151,6 +175,7 @@ class TileGridSpringMarkerSource implements SpringMarkerSource {
       _tiles[tile] = _TileData(
         springs: grouped[tile] ?? const <SpringMarkerEntity>[],
         fetchedAt: fetchedAt,
+        languageTag: languageTag,
       );
     }
   }
@@ -222,12 +247,18 @@ class _Tile {
 }
 
 class _TileData {
-  const _TileData({required this.springs, required this.fetchedAt});
+  const _TileData({
+    required this.springs,
+    required this.fetchedAt,
+    required this.languageTag,
+  });
 
   final List<SpringMarkerEntity> springs;
   final DateTime fetchedAt;
+  final String languageTag;
 
-  bool isFreshAt(DateTime deadline) => fetchedAt.isAfter(deadline);
+  bool isFreshAt(DateTime deadline, {required String languageTag}) =>
+      this.languageTag == languageTag && fetchedAt.isAfter(deadline);
 }
 
 /// A rectangular block of tiles — what a single request covers.

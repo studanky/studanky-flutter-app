@@ -18,45 +18,47 @@ class _FakeSpringRepository implements SpringRepository {
   String? lastQuery;
   LatLng? lastOrigin;
   int? lastLimit;
-  String? lastLocale;
+  String? lastLanguageTag;
 
   @override
-  Future<ApiResult<List<SpringMarkerEntity>>> fetchMapMarkers(
-    SpringBounds bounds,
-  ) async {
+  Future<ApiResult<List<SpringMarkerEntity>>> fetchMapMarkers({
+    required SpringBounds bounds,
+    required String languageTag,
+  }) async {
     return const ApiResult.success([]);
   }
 
   @override
   Future<ApiResult<List<SpringSearchResult>>> searchByName({
     required String query,
+    required String languageTag,
     LatLng? origin,
     int limit = 5,
-    String? locale,
   }) async {
     searchCalls += 1;
     lastQuery = query;
     lastOrigin = origin;
     lastLimit = limit;
-    lastLocale = locale;
+    lastLanguageTag = languageTag;
     return ApiResult.success(searchResults);
   }
 }
 
 class _FailingSpringRepository implements SpringRepository {
   @override
-  Future<ApiResult<List<SpringMarkerEntity>>> fetchMapMarkers(
-    SpringBounds bounds,
-  ) async {
+  Future<ApiResult<List<SpringMarkerEntity>>> fetchMapMarkers({
+    required SpringBounds bounds,
+    required String languageTag,
+  }) async {
     return const ApiResult.success([]);
   }
 
   @override
   Future<ApiResult<List<SpringSearchResult>>> searchByName({
     required String query,
+    required String languageTag,
     LatLng? origin,
     int limit = 5,
-    String? locale,
   }) async {
     return const ApiResult<List<SpringSearchResult>>.failure(
       NetworkException(message: 'offline'),
@@ -71,7 +73,7 @@ void main() {
       final repository = _FakeSpringRepository(const []);
       final source = SpringMapSearchSource(
         repository: repository,
-        languageCode: 'cs',
+        languageTag: 'en-AU',
         springLabel: 'Studánka',
       );
 
@@ -96,7 +98,7 @@ void main() {
       ]);
       final source = SpringMapSearchSource(
         repository: repository,
-        languageCode: 'cs',
+        languageTag: 'en-AU',
         springLabel: 'Studánka',
         limit: 7,
       );
@@ -107,7 +109,7 @@ void main() {
       expect(repository.lastQuery, 'ostr');
       expect(repository.lastOrigin, origin);
       expect(repository.lastLimit, 7);
-      expect(repository.lastLocale, 'cs');
+      expect(repository.lastLanguageTag, 'en-AU');
 
       expect(results, hasLength(1));
       expect(results.single.label, 'Ostružná');
@@ -120,7 +122,7 @@ void main() {
   test('propagates repository failures so the UI can show an error', () async {
     final source = SpringMapSearchSource(
       repository: _FailingSpringRepository(),
-      languageCode: 'cs',
+      languageTag: 'sr-Latn-RS',
       springLabel: 'Studánka',
     );
 

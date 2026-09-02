@@ -20,7 +20,10 @@ mixin _$SpringMarkersState implements DiagnosticableTreeMixin {
 /// business — ask [SpringMarkersNotifier.hasDataFor] rather than inferring
 /// coverage from this list, because an area that genuinely holds no springs
 /// contributes nothing to it.
- List<SpringMarkerEntity> get springs;
+ List<SpringMarkerEntity> get springs;/// Active request locale. Kept with the session state so projections can
+/// evaluate locale-specific tile coverage without their own initialization
+/// invariant or duplicate mutable field.
+ String? get languageTag;
 /// Create a copy of SpringMarkersState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -32,21 +35,21 @@ $SpringMarkersStateCopyWith<SpringMarkersState> get copyWith => _$SpringMarkersS
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'SpringMarkersState'))
-    ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('springs', springs));
+    ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('springs', springs))..add(DiagnosticsProperty('languageTag', languageTag));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringMarkersState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.springs, springs));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringMarkersState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.springs, springs)&&(identical(other.languageTag, languageTag) || other.languageTag == languageTag));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(springs));
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(springs),languageTag);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'SpringMarkersState(status: $status, springs: $springs)';
+  return 'SpringMarkersState(status: $status, springs: $springs, languageTag: $languageTag)';
 }
 
 
@@ -57,7 +60,7 @@ abstract mixin class $SpringMarkersStateCopyWith<$Res>  {
   factory $SpringMarkersStateCopyWith(SpringMarkersState value, $Res Function(SpringMarkersState) _then) = _$SpringMarkersStateCopyWithImpl;
 @useResult
 $Res call({
- AsyncValue<void> status, List<SpringMarkerEntity> springs
+ AsyncValue<void> status, List<SpringMarkerEntity> springs, String? languageTag
 });
 
 
@@ -74,11 +77,12 @@ class _$SpringMarkersStateCopyWithImpl<$Res>
 
 /// Create a copy of SpringMarkersState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? springs = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? springs = null,Object? languageTag = freezed,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as AsyncValue<void>,springs: null == springs ? _self.springs : springs // ignore: cast_nullable_to_non_nullable
-as List<SpringMarkerEntity>,
+as List<SpringMarkerEntity>,languageTag: freezed == languageTag ? _self.languageTag : languageTag // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -163,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<SpringMarkerEntity> springs)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<SpringMarkerEntity> springs,  String? languageTag)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SpringMarkersState() when $default != null:
-return $default(_that.status,_that.springs);case _:
+return $default(_that.status,_that.springs,_that.languageTag);case _:
   return orElse();
 
 }
@@ -184,10 +188,10 @@ return $default(_that.status,_that.springs);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<SpringMarkerEntity> springs)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<SpringMarkerEntity> springs,  String? languageTag)  $default,) {final _that = this;
 switch (_that) {
 case _SpringMarkersState():
-return $default(_that.status,_that.springs);case _:
+return $default(_that.status,_that.springs,_that.languageTag);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -204,10 +208,10 @@ return $default(_that.status,_that.springs);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncValue<void> status,  List<SpringMarkerEntity> springs)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncValue<void> status,  List<SpringMarkerEntity> springs,  String? languageTag)?  $default,) {final _that = this;
 switch (_that) {
 case _SpringMarkersState() when $default != null:
-return $default(_that.status,_that.springs);case _:
+return $default(_that.status,_that.springs,_that.languageTag);case _:
   return null;
 
 }
@@ -219,7 +223,7 @@ return $default(_that.status,_that.springs);case _:
 
 
 class _SpringMarkersState with DiagnosticableTreeMixin implements SpringMarkersState {
-  const _SpringMarkersState({this.status = const AsyncValue<void>.data(null), final  List<SpringMarkerEntity> springs = const <SpringMarkerEntity>[]}): _springs = springs;
+  const _SpringMarkersState({this.status = const AsyncValue<void>.data(null), final  List<SpringMarkerEntity> springs = const <SpringMarkerEntity>[], this.languageTag}): _springs = springs;
   
 
 /// Loading/error of the fetch. [springs] stays intact while one runs, so
@@ -240,6 +244,10 @@ class _SpringMarkersState with DiagnosticableTreeMixin implements SpringMarkersS
   return EqualUnmodifiableListView(_springs);
 }
 
+/// Active request locale. Kept with the session state so projections can
+/// evaluate locale-specific tile coverage without their own initialization
+/// invariant or duplicate mutable field.
+@override final  String? languageTag;
 
 /// Create a copy of SpringMarkersState
 /// with the given fields replaced by the non-null parameter values.
@@ -252,21 +260,21 @@ _$SpringMarkersStateCopyWith<_SpringMarkersState> get copyWith => __$SpringMarke
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'SpringMarkersState'))
-    ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('springs', springs));
+    ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('springs', springs))..add(DiagnosticsProperty('languageTag', languageTag));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringMarkersState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._springs, _springs));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringMarkersState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._springs, _springs)&&(identical(other.languageTag, languageTag) || other.languageTag == languageTag));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_springs));
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_springs),languageTag);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'SpringMarkersState(status: $status, springs: $springs)';
+  return 'SpringMarkersState(status: $status, springs: $springs, languageTag: $languageTag)';
 }
 
 
@@ -277,7 +285,7 @@ abstract mixin class _$SpringMarkersStateCopyWith<$Res> implements $SpringMarker
   factory _$SpringMarkersStateCopyWith(_SpringMarkersState value, $Res Function(_SpringMarkersState) _then) = __$SpringMarkersStateCopyWithImpl;
 @override @useResult
 $Res call({
- AsyncValue<void> status, List<SpringMarkerEntity> springs
+ AsyncValue<void> status, List<SpringMarkerEntity> springs, String? languageTag
 });
 
 
@@ -294,11 +302,12 @@ class __$SpringMarkersStateCopyWithImpl<$Res>
 
 /// Create a copy of SpringMarkersState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? springs = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? springs = null,Object? languageTag = freezed,}) {
   return _then(_SpringMarkersState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as AsyncValue<void>,springs: null == springs ? _self._springs : springs // ignore: cast_nullable_to_non_nullable
-as List<SpringMarkerEntity>,
+as List<SpringMarkerEntity>,languageTag: freezed == languageTag ? _self.languageTag : languageTag // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

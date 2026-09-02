@@ -13,6 +13,7 @@ class _RecordingSpringsApi implements SpringsApi {
 
   final List<SpringMapMarkerDto> response;
   String? lastBbox;
+  String? lastMapLanguageTag;
   String? lastQuery;
   double? lastLatitude;
   double? lastLongitude;
@@ -20,8 +21,12 @@ class _RecordingSpringsApi implements SpringsApi {
   String? lastLocale;
 
   @override
-  Future<StrapiListResponse<SpringMapMarkerDto>> getMap(String bbox) async {
+  Future<StrapiListResponse<SpringMapMarkerDto>> getMap(
+    String bbox,
+    String languageTag,
+  ) async {
     lastBbox = bbox;
+    lastMapLanguageTag = languageTag;
     return StrapiListResponse(data: response);
   }
 
@@ -31,13 +36,13 @@ class _RecordingSpringsApi implements SpringsApi {
     double? latitude,
     double? longitude,
     int limit,
-    String? locale,
+    String languageTag,
   ) async {
     lastQuery = query;
     lastLatitude = latitude;
     lastLongitude = longitude;
     lastLimit = limit;
-    lastLocale = locale;
+    lastLocale = languageTag;
     return StrapiListResponse(data: response);
   }
 }
@@ -53,21 +58,30 @@ void main() {
           lat: 50.0,
           lng: 14.5,
           currentStatus: 'is_not_flowing',
+          locale: 'cs',
         ),
       ]);
       final repository = SpringRepositoryImpl(api);
 
       final result = await repository.fetchMapMarkers(
-        const SpringBounds(north: 50.2, south: 49.4, east: 16.0, west: 14.0),
+        bounds: const SpringBounds(
+          north: 50.2,
+          south: 49.4,
+          east: 16.0,
+          west: 14.0,
+        ),
+        languageTag: 'en-AU',
       );
 
       // west, south, east, north
       expect(api.lastBbox, '14.0,49.4,16.0,50.2');
+      expect(api.lastMapLanguageTag, 'en-AU');
 
       final springs = result.dataOrNull;
       expect(springs, isNotNull);
       expect(springs!.single.documentId, 'd1');
       expect(springs.single.status, SpringStatus.isNotFlowing);
+      expect(springs.single.servedLanguageTag, 'cs');
     },
   );
 
@@ -79,6 +93,7 @@ void main() {
         lat: 50.18,
         lng: 17.05,
         currentStatus: 'is_flowing',
+        locale: 'cs',
         distanceMeters: 2310,
       ),
     ]);
@@ -86,20 +101,21 @@ void main() {
 
     final result = await repository.searchByName(
       query: 'ostr',
+      languageTag: 'sr-Latn-RS',
       origin: const LatLng(50.1, 17.0),
       limit: 7,
-      locale: 'cs',
     );
 
     expect(api.lastQuery, 'ostr');
     expect(api.lastLatitude, 50.1);
     expect(api.lastLongitude, 17.0);
     expect(api.lastLimit, 7);
-    expect(api.lastLocale, 'cs');
+    expect(api.lastLocale, 'sr-Latn-RS');
 
     final springs = result.dataOrNull;
     expect(springs, isNotNull);
     expect(springs!.single.spring.documentId, 'd1');
+    expect(springs.single.spring.servedLanguageTag, 'cs');
     expect(springs.single.distanceMeters, 2310);
   });
 }

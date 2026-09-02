@@ -29,6 +29,11 @@ abstract class SpringMarkersState with _$SpringMarkersState {
     /// coverage from this list, because an area that genuinely holds no springs
     /// contributes nothing to it.
     @Default(<SpringMarkerEntity>[]) List<SpringMarkerEntity> springs,
+
+    /// Active request locale. Kept with the session state so projections can
+    /// evaluate locale-specific tile coverage without their own initialization
+    /// invariant or duplicate mutable field.
+    String? languageTag,
   }) = _SpringMarkersState;
 }
 
@@ -52,10 +57,28 @@ class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
   bool _pendingForce = false;
 
   @override
-  SpringMarkersState build() => const SpringMarkersState();
+  SpringMarkersState build() {
+    ref.onDispose(() {
+      _pending = null;
+      _disposed = true;
+    });
+    return const SpringMarkersState();
+  }
+
+  bool _disposed = false;
+
+  /// Invalidates tile coverage for future reads without clearing the last
+  /// drawable dataset. Any old-language request completing afterwards is
+  /// ignored by [_load].
+  void updateLanguageTag(String languageTag) {
+    if (_disposed) return;
+    if (state.languageTag == languageTag) return;
+    state = state.copyWith(languageTag: languageTag);
+  }
 
   /// Whether [bounds] already has data to draw, however old.
-  bool hasDataFor(SpringBounds bounds) => _source.hasDataFor(bounds);
+  bool hasDataFor(SpringBounds bounds, {required String languageTag}) =>
+      _source.hasDataFor(bounds, languageTag: languageTag);
 
   /// Ensures the springs inside [bounds] are loaded, and completes once they
   /// are. A no-op — no request, no state write — when the area is already
@@ -70,8 +93,15 @@ class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
   /// replaces whatever was waiting and is served after the current round. The
   /// caller's future covers its own round, so panning into a new area mid-fetch
   /// still loads that area.
-  Future<void> ensureLoaded(SpringBounds bounds, {bool force = false}) {
-    if (!force && _source.covers(bounds)) return Future<void>.value();
+  Future<void> ensureLoaded(
+    SpringBounds bounds, {
+    required String languageTag,
+    bool force = false,
+  }) {
+    updateLanguageTag(languageTag);
+    if (!force && _source.covers(bounds, languageTag: languageTag)) {
+      return Future<void>.value();
+    }
 
     _pending = bounds;
     _pendingForce |= force;
@@ -83,21 +113,42 @@ class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
     while (_pending != null) {
       final bounds = _pending!;
       final force = _pendingForce;
+      // [ensureLoaded] writes the tag before starting the drain. Reading it
+      // here lets a locale flip retarget a queued latest-camera round.
+      final languageTag = state.languageTag!;
       _pending = null;
       _pendingForce = false;
 
       // The round that just finished may already have covered this camera —
       // a wide fetch usually subsumes the pan that was queued behind it.
-      if (!force && _source.covers(bounds)) continue;
+      if (!force && _source.covers(bounds, languageTag: languageTag)) continue;
 
-      await _load(bounds);
+      await _load(bounds, languageTag);
     }
   }
 
-  Future<void> _load(SpringBounds bounds) async {
+  Future<void> _load(SpringBounds bounds, String languageTag) async {
     state = state.copyWith(status: const AsyncValue<void>.loading());
 
-    final result = await _source.load(bounds);
+    final result = await _source.load(bounds, languageTag: languageTag);
+
+    // A locale flip can happen while the old request is on the wire. The
+    // source may cache that complete old-locale response, but it is stale for
+    // the active tag and must never overwrite the visible session state. A
+    // queued camera round, when present, fetches the active locale next.
+    if (_disposed) return;
+    if (state.languageTag != languageTag) {
+      // This method owns the loading state it emitted above. When no newer
+      // camera round is queued, resolve that state locally instead of leaving
+      // the map spinner waiting for an unrelated future camera event.
+      // A pending round failed coverage for the active tag. The stale absorb
+      // wrote only its old tag, and the drain resumes synchronously, so that
+      // round cannot be skipped as newly covered and will settle this status.
+      if (_pending == null && state.status.isLoading) {
+        state = state.copyWith(status: const AsyncValue<void>.data(null));
+      }
+      return;
+    }
 
     switch (result) {
       case Success(:final data):

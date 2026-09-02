@@ -18,9 +18,10 @@ mixin _$MapMarkerState implements DiagnosticableTreeMixin {
 /// [springMarkersProvider]. Items stay visible while a fetch runs, so this
 /// is a thin status channel, not the source of markers.
  AsyncValue<void> get status;/// Clustered, drawable items for the most recent camera.
- List<MapClusterItem> get items;/// True once the currently visible camera bounds are covered by fetched
-/// marker data. Lets the UI distinguish a real empty map area from a camera
-/// position that is still waiting for its first fetch.
+ List<MapClusterItem> get items;/// True once the visible camera bounds are covered by fetched marker data.
+/// Lets the UI distinguish a real empty viewport from one that is still
+/// waiting for its first fetch. Prefetch-ring coverage is deliberately not
+/// part of this presentation flag.
  bool get visibleBoundsLoaded;
 /// Create a copy of MapMarkerState
 /// with the given fields replaced by the non-null parameter values.
@@ -237,9 +238,10 @@ class _MapMarkerState with DiagnosticableTreeMixin implements MapMarkerState {
   return EqualUnmodifiableListView(_items);
 }
 
-/// True once the currently visible camera bounds are covered by fetched
-/// marker data. Lets the UI distinguish a real empty map area from a camera
-/// position that is still waiting for its first fetch.
+/// True once the visible camera bounds are covered by fetched marker data.
+/// Lets the UI distinguish a real empty viewport from one that is still
+/// waiting for its first fetch. Prefetch-ring coverage is deliberately not
+/// part of this presentation flag.
 @override@JsonKey() final  bool visibleBoundsLoaded;
 
 /// Create a copy of MapMarkerState

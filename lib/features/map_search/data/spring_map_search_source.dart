@@ -12,7 +12,7 @@ import 'package:studanky_flutter_app/features/springs/entities/spring_search_res
 class SpringMapSearchSource implements MapSearchSource {
   SpringMapSearchSource({
     required this.repository,
-    required this.languageCode,
+    required this.languageTag,
     required this.springLabel,
     this.limit = 5,
   });
@@ -25,7 +25,7 @@ class SpringMapSearchSource implements MapSearchSource {
   static const int _maxCacheEntries = 64;
 
   final SpringRepository repository;
-  final String languageCode;
+  final String languageTag;
   final String springLabel;
   final int limit;
 
@@ -43,20 +43,20 @@ class SpringMapSearchSource implements MapSearchSource {
     final trimmed = query.trim();
     if (trimmed.length < _minQueryLength) return const [];
 
+    // The source instance is already scoped to [languageTag].
     final cacheKey = [
       trimmed.toLowerCase(),
       origin?.latitude.toStringAsFixed(4),
       origin?.longitude.toStringAsFixed(4),
-      languageCode,
     ].join('|');
     final cached = _cache[cacheKey];
     if (cached != null) return cached;
 
     final result = await repository.searchByName(
       query: trimmed,
+      languageTag: languageTag,
       origin: origin,
       limit: limit,
-      locale: languageCode,
     );
 
     switch (result) {

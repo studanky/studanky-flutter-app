@@ -29,15 +29,17 @@ abstract class MapMarkerState with _$MapMarkerState {
     /// Clustered, drawable items for the most recent camera.
     @Default(<MapClusterItem>[]) List<MapClusterItem> items,
 
-    /// True once the currently visible camera bounds are covered by fetched
-    /// marker data. Lets the UI distinguish a real empty map area from a camera
-    /// position that is still waiting for its first fetch.
+    /// True once the visible camera bounds are covered by fetched marker data.
+    /// Lets the UI distinguish a real empty viewport from one that is still
+    /// waiting for its first fetch. Prefetch-ring coverage is deliberately not
+    /// part of this presentation flag.
     @Default(false) bool visibleBoundsLoaded,
   }) = _MapMarkerState;
 }
 
 /// Projects (dataset × camera) onto the drawable marker items, and asks
-/// [springMarkersProvider] to make sure the camera's area is loaded.
+/// [springMarkersProvider] to make sure the camera's padded data window is
+/// loaded.
 ///
 /// Owns no springs and performs no fetching itself — deliberately, because both
 /// outlive this notifier: it is `autoDispose`, so a map page that goes away and
@@ -45,11 +47,8 @@ abstract class MapMarkerState with _$MapMarkerState {
 /// Clustering is synchronous and cheap, and is skipped outright while the
 /// camera stays inside the window the current items were computed for.
 class MapMarkerNotifier extends Notifier<MapMarkerState> {
-  /// Clustering runs against a window this much larger than the viewport, so
-  /// ordinary panning reuses the same items instead of rebuilding the marker
-  /// layer on every camera event. Markers just outside the screen are drawn
-  /// too, which is what makes a pan reveal them without a rebuild.
-  static const double _clusterWindowPadding = 0.2;
+  /// Fraction of each viewport extent added on every edge by [_dataWindow].
+  static const double _dataWindowPadding = 0.2;
 
   /// Pixel radius within which points merge, and the max zoom the index builds
   /// to. Keep [_clusterMaxZoom] aligned with the map's max zoom.
@@ -78,34 +77,56 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
     return MapMarkerState(status: dataset.status);
   }
 
+  /// Marks cached coverage stale for a new locale without replacing the
+  /// marker/index state. Complete old-locale markers intentionally remain as
+  /// placeholders — including their localized names used by accessibility and
+  /// the provisional detail header — until the cluster window is refreshed.
+  void onLanguageTagChanged(String languageTag) {
+    ref.read(springMarkersProvider.notifier).updateLanguageTag(languageTag);
+  }
+
   /// Call on map ready and after each (debounced) camera change. Reclusters
   /// from the cache immediately, then ensures the area is loaded — which is a
   /// no-op for tiles already fetched and still fresh.
-  Future<void> onCameraChanged(LatLngBounds visibleBounds, double zoom) {
+  Future<void> onCameraChanged(
+    LatLngBounds visibleBounds,
+    double zoom, {
+    required String languageTag,
+  }) {
     _lastVisibleBounds = visibleBounds;
     _lastZoom = zoom;
     _publish();
     return ref
         .read(springMarkersProvider.notifier)
-        .ensureLoaded(_toSpringBounds(visibleBounds));
+        .ensureLoaded(
+          _toSpringBounds(_dataWindow(visibleBounds)),
+          languageTag: languageTag,
+        );
   }
 
-  /// Re-fetches the visible area even though it is cached and fresh. Reserved
-  /// for the resume-while-offline probe: only a real request can discover that
-  /// the network came back, and its outcome drives the offline banner. No-op
-  /// until the first camera has been reported.
-  Future<void> refreshVisible() async {
+  /// Re-fetches the visible camera's padded data window even though it is
+  /// cached and fresh. Reserved for the resume-while-offline probe: only a real
+  /// request can discover that the network came back, and its outcome drives
+  /// the offline banner. No-op until the first camera has been reported.
+  Future<void> refreshVisible({required String languageTag}) async {
     final bounds = _lastVisibleBounds;
     if (bounds == null) return;
     await ref
         .read(springMarkersProvider.notifier)
-        .ensureLoaded(_toSpringBounds(bounds), force: true);
+        .ensureLoaded(
+          _toSpringBounds(_dataWindow(bounds)),
+          languageTag: languageTag,
+          force: true,
+        );
   }
 
   /// The dataset is the only thing that invalidates the cluster index — camera
   /// changes merely re-search it. Status and loaded-ness ride along so the map
   /// page reads one state object.
-  void _onDatasetChanged(SpringMarkersState? previous, SpringMarkersState next) {
+  void _onDatasetChanged(
+    SpringMarkersState? previous,
+    SpringMarkersState next,
+  ) {
     // Value equality, not identity: freezed hands out a fresh
     // `EqualUnmodifiableListView` on every `springs` read, so identity would
     // never match and the index would be rebuilt on every status flip.
@@ -142,9 +163,11 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
   bool _isVisibleBoundsLoaded() {
     final bounds = _lastVisibleBounds;
     if (bounds == null) return false;
+    final languageTag = ref.read(springMarkersProvider).languageTag;
+    if (languageTag == null) return false;
     return ref
         .read(springMarkersProvider.notifier)
-        .hasDataFor(_toSpringBounds(bounds));
+        .hasDataFor(_toSpringBounds(bounds), languageTag: languageTag);
   }
 
   /// Clusters the current camera's window, or returns null when the existing
@@ -165,7 +188,7 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
       return state.items.isEmpty ? null : const <MapClusterItem>[];
     }
 
-    final window = _padBounds(bounds);
+    final window = _dataWindow(bounds);
     final elements = index.search(
       window.west,
       window.south,
@@ -230,14 +253,20 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
     west: bounds.west,
   );
 
-  LatLngBounds _padBounds(LatLngBounds bounds) {
-    if (_clusterWindowPadding == 0) return bounds;
+  /// The shared clustering and fetch window deliberately includes a prefetch
+  /// ring, not just the visible viewport. It makes small pans reveal complete,
+  /// locale-current marker data without rebuilding the layer. Padding each edge
+  /// by 20% can make the raw rectangle up to 1.96x the viewport area. The
+  /// 0.5-degree tile grid usually absorbs it at browsing zoom; at low zoom it
+  /// can add edge rows or columns of tiles to the request.
+  LatLngBounds _dataWindow(LatLngBounds bounds) {
+    if (_dataWindowPadding == 0) return bounds;
 
     final latExtent = bounds.north - bounds.south;
     final lonExtent = bounds.longitudeWidth;
 
-    final latPadding = latExtent * _clusterWindowPadding;
-    final lonPadding = lonExtent * _clusterWindowPadding;
+    final latPadding = latExtent * _dataWindowPadding;
+    final lonPadding = lonExtent * _dataWindowPadding;
 
     final north = math.min(LatLngBounds.maxLatitude, bounds.north + latPadding);
     final south = math.max(LatLngBounds.minLatitude, bounds.south - latPadding);

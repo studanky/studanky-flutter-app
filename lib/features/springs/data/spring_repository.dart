@@ -13,17 +13,18 @@ part 'spring_repository.g.dart';
 abstract class SpringRepository {
   /// Fetches the map markers inside [bounds], normalising errors into an
   /// [ApiResult.failure] so callers never see a raw `DioException`.
-  Future<ApiResult<List<SpringMarkerEntity>>> fetchMapMarkers(
-    SpringBounds bounds,
-  );
+  Future<ApiResult<List<SpringMarkerEntity>>> fetchMapMarkers({
+    required SpringBounds bounds,
+    required String languageTag,
+  });
 
-  /// Searches springs by localized name for map autocomplete. [origin] enables
+  /// Searches springs by canonical name for map autocomplete. [origin] enables
   /// nearest-first ordering and distance metadata on the backend.
   Future<ApiResult<List<SpringSearchResult>>> searchByName({
     required String query,
+    required String languageTag,
     LatLng? origin,
     int limit = 5,
-    String? locale,
   });
 }
 
@@ -33,15 +34,16 @@ class SpringRepositoryImpl implements SpringRepository {
   final SpringsApi _api;
 
   @override
-  Future<ApiResult<List<SpringMarkerEntity>>> fetchMapMarkers(
-    SpringBounds bounds,
-  ) {
+  Future<ApiResult<List<SpringMarkerEntity>>> fetchMapMarkers({
+    required SpringBounds bounds,
+    required String languageTag,
+  }) {
     // bbox order is minLng,minLat,maxLng,maxLat (api-reference.md §3.1).
     final bbox =
         '${bounds.west},${bounds.south},${bounds.east},${bounds.north}';
 
     return guardApiCall(() async {
-      final response = await _api.getMap(bbox);
+      final response = await _api.getMap(bbox, languageTag);
       return response.data
           .map(SpringMapMarkerMapper.fromDto)
           .toList(growable: false);
@@ -51,9 +53,9 @@ class SpringRepositoryImpl implements SpringRepository {
   @override
   Future<ApiResult<List<SpringSearchResult>>> searchByName({
     required String query,
+    required String languageTag,
     LatLng? origin,
     int limit = 5,
-    String? locale,
   }) {
     return guardApiCall(() async {
       final response = await _api.search(
@@ -61,7 +63,7 @@ class SpringRepositoryImpl implements SpringRepository {
         origin?.latitude,
         origin?.longitude,
         limit,
-        locale,
+        languageTag,
       );
       return response.data
           .map(

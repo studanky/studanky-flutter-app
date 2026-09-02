@@ -106,7 +106,9 @@ String _$mapSuggestApiHash() => r'642c31670c276c2fccab321a4fd8031ce082f76c';
 /// Provides the active search backend. Requires the Mapy.com suggest API.
 ///
 /// Kept alive so the first-party result cache survives between debounced
-/// keystrokes instead of being rebuilt on every `ref.read`.
+/// keystrokes instead of being rebuilt on every `ref.read`. The search notifier
+/// explicitly invalidates its previous locale family on a language switch.
+/// The final retained source is bounded to 64 first-party result lists.
 
 @ProviderFor(mapSearchSource)
 final mapSearchSourceProvider = MapSearchSourceFamily._();
@@ -114,7 +116,9 @@ final mapSearchSourceProvider = MapSearchSourceFamily._();
 /// Provides the active search backend. Requires the Mapy.com suggest API.
 ///
 /// Kept alive so the first-party result cache survives between debounced
-/// keystrokes instead of being rebuilt on every `ref.read`.
+/// keystrokes instead of being rebuilt on every `ref.read`. The search notifier
+/// explicitly invalidates its previous locale family on a language switch.
+/// The final retained source is bounded to 64 first-party result lists.
 
 final class MapSearchSourceProvider
     extends
@@ -123,10 +127,12 @@ final class MapSearchSourceProvider
   /// Provides the active search backend. Requires the Mapy.com suggest API.
   ///
   /// Kept alive so the first-party result cache survives between debounced
-  /// keystrokes instead of being rebuilt on every `ref.read`.
+  /// keystrokes instead of being rebuilt on every `ref.read`. The search notifier
+  /// explicitly invalidates its previous locale family on a language switch.
+  /// The final retained source is bounded to 64 first-party result lists.
   MapSearchSourceProvider._({
     required MapSearchSourceFamily super.from,
-    required String super.argument,
+    required Locale super.argument,
   }) : super(
          retry: null,
          name: r'mapSearchSourceProvider',
@@ -152,7 +158,7 @@ final class MapSearchSourceProvider
 
   @override
   MapSearchSource create(Ref ref) {
-    final argument = this.argument as String;
+    final argument = this.argument as Locale;
     return mapSearchSource(ref, argument);
   }
 
@@ -175,15 +181,17 @@ final class MapSearchSourceProvider
   }
 }
 
-String _$mapSearchSourceHash() => r'5e8eafb972dd7b3fff259a81c1915c470cc9bd74';
+String _$mapSearchSourceHash() => r'1ec13034e8e26a62c68aed86f066201389554b53';
 
 /// Provides the active search backend. Requires the Mapy.com suggest API.
 ///
 /// Kept alive so the first-party result cache survives between debounced
-/// keystrokes instead of being rebuilt on every `ref.read`.
+/// keystrokes instead of being rebuilt on every `ref.read`. The search notifier
+/// explicitly invalidates its previous locale family on a language switch.
+/// The final retained source is bounded to 64 first-party result lists.
 
 final class MapSearchSourceFamily extends $Family
-    with $FunctionalFamilyOverride<MapSearchSource, String> {
+    with $FunctionalFamilyOverride<MapSearchSource, Locale> {
   MapSearchSourceFamily._()
     : super(
         retry: null,
@@ -196,10 +204,12 @@ final class MapSearchSourceFamily extends $Family
   /// Provides the active search backend. Requires the Mapy.com suggest API.
   ///
   /// Kept alive so the first-party result cache survives between debounced
-  /// keystrokes instead of being rebuilt on every `ref.read`.
+  /// keystrokes instead of being rebuilt on every `ref.read`. The search notifier
+  /// explicitly invalidates its previous locale family on a language switch.
+  /// The final retained source is bounded to 64 first-party result lists.
 
-  MapSearchSourceProvider call(String languageCode) =>
-      MapSearchSourceProvider._(argument: languageCode, from: this);
+  MapSearchSourceProvider call(Locale locale) =>
+      MapSearchSourceProvider._(argument: locale, from: this);
 
   @override
   String toString() => r'mapSearchSourceProvider';

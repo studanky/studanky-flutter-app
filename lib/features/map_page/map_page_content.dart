@@ -191,6 +191,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   /// True while a tap on the "my location" button is waiting for the first fix.
   bool _isLocating = false;
   bool _isMapReady = false;
+  String? _activeLanguageTag;
   _MapEmptyOverlayMode _mapEmptyOverlayMode = _MapEmptyOverlayMode.hidden;
   int _searchSelectionToken = 0;
 
@@ -230,12 +231,34 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
 
   MapMarkerNotifier get _markerNotifier => ref.read(mapMarkerProvider.notifier);
 
+  String get _languageTag =>
+      _activeLanguageTag ?? Localizations.localeOf(context).toLanguageTag();
+
   late final AppLifecycleListener _lifecycleListener;
 
   @override
   void initState() {
     super.initState();
     _lifecycleListener = AppLifecycleListener(onResume: _onAppResumed);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final languageTag = Localizations.localeOf(context).toLanguageTag();
+    final previousLanguageTag = _activeLanguageTag;
+    if (previousLanguageTag == languageTag) return;
+    final shouldReloadCamera = previousLanguageTag != null && _isMapReady;
+    _activeLanguageTag = languageTag;
+
+    if (shouldReloadCamera) _cameraDebounceTimer?.cancel();
+    // Riverpod state must not be changed while didChangeDependencies is part
+    // of the widget's build. Synchronize the tag after this frame instead.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _activeLanguageTag != languageTag) return;
+      _markerNotifier.onLanguageTagChanged(languageTag);
+      if (shouldReloadCamera) _emitCamera();
+    });
   }
 
   @override
@@ -263,7 +286,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     if (!_isMapReady) return;
 
     if (ref.read(connectivityStatusProvider).isOffline) {
-      unawaited(_markerNotifier.refreshVisible());
+      unawaited(_markerNotifier.refreshVisible(languageTag: _languageTag));
       return;
     }
     _emitCamera();
@@ -373,7 +396,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     final camera = _mapController.camera;
     unawaited(
       _markerNotifier
-          .onCameraChanged(camera.visibleBounds, camera.zoom)
+          .onCameraChanged(
+            camera.visibleBounds,
+            camera.zoom,
+            languageTag: _languageTag,
+          )
           .whenComplete(() {
             if (!mounted) return;
             _syncMapEmptyState(ref.read(mapMarkerProvider));
@@ -744,7 +771,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
         if (previous == ConnectivityStatus.offline &&
             next == ConnectivityStatus.online &&
             _isMapReady) {
-          unawaited(_markerNotifier.refreshVisible());
+          unawaited(_markerNotifier.refreshVisible(languageTag: _languageTag));
         }
       });
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,13 +21,18 @@ abstract class MapSearchState with _$MapSearchState {
   }) = _MapSearchState;
 }
 
-final mapSearchProvider = NotifierProvider.autoDispose
-    .family<MapSearchNotifier, MapSearchState, String>(MapSearchNotifier.new);
+final mapSearchProvider =
+    NotifierProvider.autoDispose<MapSearchNotifier, MapSearchState>(
+      MapSearchNotifier.new,
+    );
 
 /// Debounced notifier that coordinates search requests and exposes results.
+///
+/// This intentionally is not a locale-keyed family: the query is ephemeral UI
+/// state and must survive an OS locale change. Locale-dependent search sources
+/// are families instead, while [updateLocale] cancels/repeats only an active
+/// query against the newly selected source.
 class MapSearchNotifier extends Notifier<MapSearchState> {
-  MapSearchNotifier(this._languageCode);
-
   static const Duration _kDebounceDuration = Duration(milliseconds: 300);
 
   final _logger = Logger('MapSearchNotifier');
@@ -41,10 +47,23 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
   /// backspace down to a sub-threshold query).
   CancelToken? _inFlightRequest;
 
-  final String _languageCode;
+  Locale? _locale;
+  bool _hasActiveQuery = false;
 
-  MapSearchSource get _searchSource =>
-      ref.read(mapSearchSourceProvider(_languageCode));
+  MapSearchSource _searchSource(Locale locale) =>
+      ref.read(mapSearchSourceProvider(locale));
+
+  bool _activateLocale(Locale locale) {
+    final previous = _locale;
+    if (previous == locale) return false;
+    _locale = locale;
+
+    // The source family is keepAlive so its small first-party query cache
+    // survives debounce reads. Explicitly evict the previous locale on a switch
+    // so repeated OS-language changes cannot accumulate immortal families.
+    if (previous != null) ref.invalidate(mapSearchSourceProvider(previous));
+    return true;
+  }
 
   @override
   MapSearchState build() {
@@ -68,8 +87,9 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
   }
 
   /// Sets the current query and schedules a debounced backend request.
-  void setQuery(String query, {LatLng? origin}) {
-    if (query == state.query) {
+  void setQuery(String query, {required Locale locale, LatLng? origin}) {
+    final localeChanged = _activateLocale(locale);
+    if (query == state.query && !localeChanged) {
       return;
     }
 
@@ -80,17 +100,39 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
     final token = ++_lastToken;
 
     if (query.trim().isEmpty) {
+      _hasActiveQuery = false;
       state = const MapSearchState();
       return;
     }
 
+    _hasActiveQuery = true;
     state = state.copyWith(
       query: query,
       searchResults: const AsyncValue<List<MapSearchResult>>.loading(),
     );
 
     _debounceTimer = Timer(_kDebounceDuration, () {
-      _performSearch(query, token, origin);
+      _performSearch(query, token, origin, locale);
+    });
+  }
+
+  /// Switches both search backends to [locale] without discarding what the
+  /// user typed. An active query is repeated and any old-locale completion is
+  /// cancelled or rejected by its request token.
+  void updateLocale(Locale locale, {LatLng? origin}) {
+    if (!_activateLocale(locale)) return;
+
+    _debounceTimer?.cancel();
+    _cancelInFlight();
+    final token = ++_lastToken;
+    final query = state.query;
+    if (!_hasActiveQuery) return;
+
+    state = state.copyWith(
+      searchResults: const AsyncValue<List<MapSearchResult>>.loading(),
+    );
+    _debounceTimer = Timer(_kDebounceDuration, () {
+      _performSearch(query, token, origin, locale);
     });
   }
 
@@ -101,6 +143,7 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
     // so it can't push a stale query/results back into the UI.
     _cancelInFlight();
     ++_lastToken;
+    _hasActiveQuery = false;
     state = const MapSearchState();
   }
 
@@ -111,21 +154,25 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
     // completion so it can't overwrite the selection.
     _cancelInFlight();
     ++_lastToken;
+    _hasActiveQuery = false;
     state = state.copyWith(
       query: result.label,
       searchResults: const AsyncValue<List<MapSearchResult>>.data([]),
     );
   }
 
-  Future<void> _performSearch(String query, int token, LatLng? origin) async {
+  Future<void> _performSearch(
+    String query,
+    int token,
+    LatLng? origin,
+    Locale locale,
+  ) async {
     final cancelToken = CancelToken();
     _inFlightRequest = cancelToken;
     try {
-      final results = await _searchSource.search(
-        query,
-        origin: origin,
-        cancelToken: cancelToken,
-      );
+      final results = await _searchSource(
+        locale,
+      ).search(query, origin: origin, cancelToken: cancelToken);
       if (token != _lastToken) return;
 
       state = state.copyWith(

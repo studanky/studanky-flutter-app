@@ -18,9 +18,15 @@ class _SpringsApi implements SpringsApi {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<StrapiListResponse<SpringMapMarkerDto>> getMap(String bbox) async {
+  Future<StrapiListResponse<SpringMapMarkerDto>> getMap(
+    String bbox,
+    String languageTag,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'bbox': bbox};
+    final queryParameters = <String, dynamic>{
+      r'bbox': bbox,
+      r'locale': languageTag,
+    };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<StrapiListResponse<SpringMapMarkerDto>>(
@@ -53,7 +59,7 @@ class _SpringsApi implements SpringsApi {
     double? latitude,
     double? longitude,
     int limit,
-    String? locale,
+    String languageTag,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -61,7 +67,7 @@ class _SpringsApi implements SpringsApi {
       r'lat': latitude,
       r'lng': longitude,
       r'limit': limit,
-      r'locale': locale,
+      r'locale': languageTag,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
