@@ -218,12 +218,31 @@ void main() {
 
     await notifier.reportCamera(_pragueBounds, 18);
 
-    final points = container
-        .read(mapMarkerProvider)
-        .items
-        .whereType<SpringPoint>();
+    final paddedState = container.read(mapMarkerProvider);
+    final points = paddedState.items.whereType<SpringPoint>();
     expect(points.single.spring, _praguePaddingRing);
-    expect(container.read(mapMarkerProvider).visibleBoundsLoaded, isTrue);
+    expect(paddedState.visibleBoundsLoaded, isTrue);
+    expect(
+      paddedState.hasVisibleMarkers,
+      isFalse,
+      reason: 'A prefetched marker must not hide the empty-viewport message.',
+    );
+
+    // Move just far enough for the prefetched marker to enter the viewport,
+    // while staying inside the existing clustering window and fetched tiles.
+    // The item list remains untouched, but its visibility projection changes.
+    final pannedBounds = LatLngBounds(
+      const LatLng(50.125, 14.60),
+      const LatLng(49.975, 14.30),
+    );
+    final pannedLoad = notifier.reportCamera(pannedBounds, 18);
+    final visibleState = container.read(mapMarkerProvider);
+    expect(visibleState.hasVisibleMarkers, isTrue);
+    expect(
+      identical(visibleState.items.single, paddedState.items.single),
+      isTrue,
+    );
+    await pannedLoad;
   });
 
   test(

@@ -34,6 +34,11 @@ abstract class MapMarkerState with _$MapMarkerState {
     /// waiting for its first fetch. Prefetch-ring coverage is deliberately not
     /// part of this presentation flag.
     @Default(false) bool visibleBoundsLoaded,
+
+    /// Whether at least one drawable marker or cluster anchor is inside the
+    /// exact visible camera bounds. [items] deliberately spans the padded data
+    /// window, so its non-emptiness cannot answer whether the user sees data.
+    @Default(false) bool hasVisibleMarkers,
   }) = _MapMarkerState;
 }
 
@@ -144,11 +149,14 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
   /// comparing every clustered item to decide that.
   void _publish({AsyncValue<void>? status}) {
     final items = _clusterItems();
+    final nextItems = items ?? state.items;
     final loaded = _isVisibleBoundsLoaded();
+    final hasVisibleMarkers = _hasVisibleMarkers(nextItems);
     final nextStatus = status ?? state.status;
 
     if (items == null &&
         loaded == state.visibleBoundsLoaded &&
+        hasVisibleMarkers == state.hasVisibleMarkers &&
         nextStatus == state.status) {
       return;
     }
@@ -156,8 +164,22 @@ class MapMarkerNotifier extends Notifier<MapMarkerState> {
     state = state.copyWith(
       status: nextStatus,
       visibleBoundsLoaded: loaded,
-      items: items ?? state.items,
+      hasVisibleMarkers: hasVisibleMarkers,
+      items: nextItems,
     );
+  }
+
+  bool _hasVisibleMarkers(List<MapClusterItem> items) {
+    final bounds = _lastVisibleBounds;
+    if (bounds == null) return false;
+
+    return items.any((item) {
+      final position = switch (item) {
+        Cluster(:final position) => position,
+        SpringPoint(:final spring) => spring.position,
+      };
+      return bounds.contains(position);
+    });
   }
 
   bool _isVisibleBoundsLoaded() {

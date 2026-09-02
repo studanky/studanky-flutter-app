@@ -410,7 +410,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
 
   bool _isEmptyStateEligible(MapMarkerState state) =>
       state.visibleBoundsLoaded &&
-      state.items.isEmpty &&
+      !state.hasVisibleMarkers &&
       !state.status.isLoading &&
       !state.status.hasError;
 
@@ -420,7 +420,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   void _syncMapEmptyState(MapMarkerState state) {
     _emptyStateRevealTimer?.cancel();
 
-    if (state.items.isNotEmpty) {
+    if (state.hasVisibleMarkers) {
       _setMapEmptyOverlayMode(_MapEmptyOverlayMode.hidden);
       return;
     }
@@ -976,6 +976,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
                   // over data the user can already see.
                   if (markerState.status.isLoading &&
                       !markerState.visibleBoundsLoaded &&
+                      !markerState.hasVisibleMarkers &&
                       !isMapEmptyOverlayVisible &&
                       !isOffline)
                     const Positioned(
