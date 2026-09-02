@@ -19,6 +19,11 @@ abstract class SpringDetail with _$SpringDetail {
     required LatLng position,
     required SpringStatus status,
     String? description,
+
+    /// Locale of the complete detail selected by backend fallback. Keeping it
+    /// prevents future caches/diagnostics from assuming the requested locale
+    /// was served, as required by the API migration contract.
+    String? servedLanguageTag,
     DateTime? statusUpdatedAt,
     int? lastFlowScale,
     double? lastFlowRateLps,

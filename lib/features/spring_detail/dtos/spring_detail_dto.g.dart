@@ -14,6 +14,7 @@ SpringDetailDto _$SpringDetailDtoFromJson(Map<String, dynamic> json) =>
       lng: (json['lng'] as num).toDouble(),
       currentStatus: json['current_status'] as String,
       description: json['description'] as String?,
+      locale: json['locale'] as String?,
       statusUpdatedAt: json['status_updated_at'] == null
           ? null
           : DateTime.parse(json['status_updated_at'] as String),
@@ -34,6 +35,7 @@ Map<String, dynamic> _$SpringDetailDtoToJson(SpringDetailDto instance) =>
       'description': instance.description,
       'lat': instance.lat,
       'lng': instance.lng,
+      'locale': instance.locale,
       'current_status': instance.currentStatus,
       'status_updated_at': instance.statusUpdatedAt?.toIso8601String(),
       'last_flow_scale': instance.lastFlowScale,

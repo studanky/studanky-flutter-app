@@ -12,6 +12,7 @@ void main() {
         lat: 50.18,
         lng: 17.05,
         currentStatus: 'is_flowing',
+        locale: 'cs',
         statusUpdatedAt: DateTime.utc(2026, 5, 31, 5),
       );
 
@@ -22,6 +23,7 @@ void main() {
       expect(entity.position.latitude, 50.18);
       expect(entity.position.longitude, 17.05);
       expect(entity.status, SpringStatus.isFlowing);
+      expect(entity.servedLanguageTag, 'cs');
       expect(entity.statusUpdatedAt, DateTime.utc(2026, 5, 31, 5));
     });
 
@@ -36,12 +38,28 @@ void main() {
 
       expect(SpringMapMarkerMapper.fromDto(dto).statusUpdatedAt, isNull);
     });
+
+    test('accepts a pre-1.5.0 marker without locale', () {
+      final dto = SpringMapMarkerDto.fromJson(const {
+        'documentId': 'd1',
+        'name': 'Legacy spring',
+        'lat': 49.0,
+        'lng': 14.0,
+        'current_status': 'unknown',
+      });
+
+      expect(dto.locale, isNull);
+      expect(SpringMapMarkerMapper.fromDto(dto).servedLanguageTag, isNull);
+    });
   });
 
   group('SpringStatus.fromWire', () {
     test('parses known values', () {
       expect(SpringStatus.fromWire('is_flowing'), SpringStatus.isFlowing);
-      expect(SpringStatus.fromWire('is_not_flowing'), SpringStatus.isNotFlowing);
+      expect(
+        SpringStatus.fromWire('is_not_flowing'),
+        SpringStatus.isNotFlowing,
+      );
       expect(SpringStatus.fromWire('unknown'), SpringStatus.unknown);
     });
 

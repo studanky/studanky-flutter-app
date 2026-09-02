@@ -13,6 +13,7 @@ SpringMapMarkerDto _$SpringMapMarkerDtoFromJson(Map<String, dynamic> json) =>
       lat: (json['lat'] as num).toDouble(),
       lng: (json['lng'] as num).toDouble(),
       currentStatus: json['current_status'] as String,
+      locale: json['locale'] as String?,
       statusUpdatedAt: json['status_updated_at'] == null
           ? null
           : DateTime.parse(json['status_updated_at'] as String),
@@ -25,6 +26,7 @@ Map<String, dynamic> _$SpringMapMarkerDtoToJson(SpringMapMarkerDto instance) =>
       'name': instance.name,
       'lat': instance.lat,
       'lng': instance.lng,
+      'locale': instance.locale,
       'current_status': instance.currentStatus,
       'status_updated_at': instance.statusUpdatedAt?.toIso8601String(),
       'distance_m': instance.distanceMeters,

@@ -16,6 +16,7 @@ class SpringDetailDto {
     required this.lng,
     required this.currentStatus,
     this.description,
+    this.locale,
     this.statusUpdatedAt,
     this.lastFlowScale,
     this.lastFlowRateLps,
@@ -31,6 +32,10 @@ class SpringDetailDto {
   final String? description;
   final double lat;
   final double lng;
+
+  /// Localization actually selected by Strapi's server-side fallback. Nullable
+  /// while the mobile rollout may still reach a pre-1.5.0 backend.
+  final String? locale;
 
   @JsonKey(name: 'current_status')
   final String currentStatus;

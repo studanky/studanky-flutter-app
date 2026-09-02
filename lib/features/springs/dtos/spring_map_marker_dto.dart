@@ -17,6 +17,7 @@ class SpringMapMarkerDto {
     required this.lat,
     required this.lng,
     required this.currentStatus,
+    this.locale,
     this.statusUpdatedAt,
     this.distanceMeters,
   });
@@ -28,6 +29,10 @@ class SpringMapMarkerDto {
   final String name;
   final double lat;
   final double lng;
+
+  /// Localization actually selected by Strapi's server-side fallback. Nullable
+  /// while the mobile rollout may still reach a pre-1.5.0 backend.
+  final String? locale;
 
   @JsonKey(name: 'current_status')
   final String currentStatus;

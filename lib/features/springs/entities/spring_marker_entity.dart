@@ -17,6 +17,10 @@ abstract class SpringMarkerEntity with _$SpringMarkerEntity {
     required String name,
     required LatLng position,
     required SpringStatus status,
+
+    /// Locale of the complete row selected by backend fallback. Retained as
+    /// response provenance even though the current marker UI does not show it.
+    String? servedLanguageTag,
     DateTime? statusUpdatedAt,
   }) = _SpringMarkerEntity;
 }

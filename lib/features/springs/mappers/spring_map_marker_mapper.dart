@@ -12,6 +12,7 @@ class SpringMapMarkerMapper {
       name: dto.name,
       position: LatLng(dto.lat, dto.lng),
       status: SpringStatus.fromWire(dto.currentStatus),
+      servedLanguageTag: dto.locale,
       statusUpdatedAt: dto.statusUpdatedAt,
     );
   }

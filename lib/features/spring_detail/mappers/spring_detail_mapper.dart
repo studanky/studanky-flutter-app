@@ -21,6 +21,7 @@ class SpringDetailMapper {
       description: (description == null || description.isEmpty)
           ? null
           : description,
+      servedLanguageTag: dto.locale,
       statusUpdatedAt: dto.statusUpdatedAt,
       lastFlowScale: dto.lastFlowScale,
       lastFlowRateLps: dto.lastFlowRateLps,

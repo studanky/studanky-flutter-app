@@ -14,7 +14,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SpringMarkerEntity {
 
- String get documentId; String get name; LatLng get position; SpringStatus get status; DateTime? get statusUpdatedAt;
+ String get documentId; String get name; LatLng get position; SpringStatus get status;/// Locale of the complete row selected by backend fallback. Retained as
+/// response provenance even though the current marker UI does not show it.
+ String? get servedLanguageTag; DateTime? get statusUpdatedAt;
 /// Create a copy of SpringMarkerEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +27,16 @@ $SpringMarkerEntityCopyWith<SpringMarkerEntity> get copyWith => _$SpringMarkerEn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringMarkerEntity&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringMarkerEntity&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.servedLanguageTag, servedLanguageTag) || other.servedLanguageTag == servedLanguageTag)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,documentId,name,position,status,statusUpdatedAt);
+int get hashCode => Object.hash(runtimeType,documentId,name,position,status,servedLanguageTag,statusUpdatedAt);
 
 @override
 String toString() {
-  return 'SpringMarkerEntity(documentId: $documentId, name: $name, position: $position, status: $status, statusUpdatedAt: $statusUpdatedAt)';
+  return 'SpringMarkerEntity(documentId: $documentId, name: $name, position: $position, status: $status, servedLanguageTag: $servedLanguageTag, statusUpdatedAt: $statusUpdatedAt)';
 }
 
 
@@ -45,7 +47,7 @@ abstract mixin class $SpringMarkerEntityCopyWith<$Res>  {
   factory $SpringMarkerEntityCopyWith(SpringMarkerEntity value, $Res Function(SpringMarkerEntity) _then) = _$SpringMarkerEntityCopyWithImpl;
 @useResult
 $Res call({
- String documentId, String name, LatLng position, SpringStatus status, DateTime? statusUpdatedAt
+ String documentId, String name, LatLng position, SpringStatus status, String? servedLanguageTag, DateTime? statusUpdatedAt
 });
 
 
@@ -62,13 +64,14 @@ class _$SpringMarkerEntityCopyWithImpl<$Res>
 
 /// Create a copy of SpringMarkerEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? documentId = null,Object? name = null,Object? position = null,Object? status = null,Object? statusUpdatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? documentId = null,Object? name = null,Object? position = null,Object? status = null,Object? servedLanguageTag = freezed,Object? statusUpdatedAt = freezed,}) {
   return _then(_self.copyWith(
 documentId: null == documentId ? _self.documentId : documentId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as LatLng,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as SpringStatus,statusUpdatedAt: freezed == statusUpdatedAt ? _self.statusUpdatedAt : statusUpdatedAt // ignore: cast_nullable_to_non_nullable
+as SpringStatus,servedLanguageTag: freezed == servedLanguageTag ? _self.servedLanguageTag : servedLanguageTag // ignore: cast_nullable_to_non_nullable
+as String?,statusUpdatedAt: freezed == statusUpdatedAt ? _self.statusUpdatedAt : statusUpdatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
 }
@@ -154,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String documentId,  String name,  LatLng position,  SpringStatus status,  DateTime? statusUpdatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String documentId,  String name,  LatLng position,  SpringStatus status,  String? servedLanguageTag,  DateTime? statusUpdatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SpringMarkerEntity() when $default != null:
-return $default(_that.documentId,_that.name,_that.position,_that.status,_that.statusUpdatedAt);case _:
+return $default(_that.documentId,_that.name,_that.position,_that.status,_that.servedLanguageTag,_that.statusUpdatedAt);case _:
   return orElse();
 
 }
@@ -175,10 +178,10 @@ return $default(_that.documentId,_that.name,_that.position,_that.status,_that.st
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String documentId,  String name,  LatLng position,  SpringStatus status,  DateTime? statusUpdatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String documentId,  String name,  LatLng position,  SpringStatus status,  String? servedLanguageTag,  DateTime? statusUpdatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _SpringMarkerEntity():
-return $default(_that.documentId,_that.name,_that.position,_that.status,_that.statusUpdatedAt);case _:
+return $default(_that.documentId,_that.name,_that.position,_that.status,_that.servedLanguageTag,_that.statusUpdatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +198,10 @@ return $default(_that.documentId,_that.name,_that.position,_that.status,_that.st
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String documentId,  String name,  LatLng position,  SpringStatus status,  DateTime? statusUpdatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String documentId,  String name,  LatLng position,  SpringStatus status,  String? servedLanguageTag,  DateTime? statusUpdatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _SpringMarkerEntity() when $default != null:
-return $default(_that.documentId,_that.name,_that.position,_that.status,_that.statusUpdatedAt);case _:
+return $default(_that.documentId,_that.name,_that.position,_that.status,_that.servedLanguageTag,_that.statusUpdatedAt);case _:
   return null;
 
 }
@@ -210,13 +213,16 @@ return $default(_that.documentId,_that.name,_that.position,_that.status,_that.st
 
 
 class _SpringMarkerEntity implements SpringMarkerEntity {
-  const _SpringMarkerEntity({required this.documentId, required this.name, required this.position, required this.status, this.statusUpdatedAt});
+  const _SpringMarkerEntity({required this.documentId, required this.name, required this.position, required this.status, this.servedLanguageTag, this.statusUpdatedAt});
   
 
 @override final  String documentId;
 @override final  String name;
 @override final  LatLng position;
 @override final  SpringStatus status;
+/// Locale of the complete row selected by backend fallback. Retained as
+/// response provenance even though the current marker UI does not show it.
+@override final  String? servedLanguageTag;
 @override final  DateTime? statusUpdatedAt;
 
 /// Create a copy of SpringMarkerEntity
@@ -229,16 +235,16 @@ _$SpringMarkerEntityCopyWith<_SpringMarkerEntity> get copyWith => __$SpringMarke
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringMarkerEntity&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringMarkerEntity&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.servedLanguageTag, servedLanguageTag) || other.servedLanguageTag == servedLanguageTag)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,documentId,name,position,status,statusUpdatedAt);
+int get hashCode => Object.hash(runtimeType,documentId,name,position,status,servedLanguageTag,statusUpdatedAt);
 
 @override
 String toString() {
-  return 'SpringMarkerEntity(documentId: $documentId, name: $name, position: $position, status: $status, statusUpdatedAt: $statusUpdatedAt)';
+  return 'SpringMarkerEntity(documentId: $documentId, name: $name, position: $position, status: $status, servedLanguageTag: $servedLanguageTag, statusUpdatedAt: $statusUpdatedAt)';
 }
 
 
@@ -249,7 +255,7 @@ abstract mixin class _$SpringMarkerEntityCopyWith<$Res> implements $SpringMarker
   factory _$SpringMarkerEntityCopyWith(_SpringMarkerEntity value, $Res Function(_SpringMarkerEntity) _then) = __$SpringMarkerEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String documentId, String name, LatLng position, SpringStatus status, DateTime? statusUpdatedAt
+ String documentId, String name, LatLng position, SpringStatus status, String? servedLanguageTag, DateTime? statusUpdatedAt
 });
 
 
@@ -266,13 +272,14 @@ class __$SpringMarkerEntityCopyWithImpl<$Res>
 
 /// Create a copy of SpringMarkerEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? documentId = null,Object? name = null,Object? position = null,Object? status = null,Object? statusUpdatedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? documentId = null,Object? name = null,Object? position = null,Object? status = null,Object? servedLanguageTag = freezed,Object? statusUpdatedAt = freezed,}) {
   return _then(_SpringMarkerEntity(
 documentId: null == documentId ? _self.documentId : documentId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as LatLng,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as SpringStatus,statusUpdatedAt: freezed == statusUpdatedAt ? _self.statusUpdatedAt : statusUpdatedAt // ignore: cast_nullable_to_non_nullable
+as SpringStatus,servedLanguageTag: freezed == servedLanguageTag ? _self.servedLanguageTag : servedLanguageTag // ignore: cast_nullable_to_non_nullable
+as String?,statusUpdatedAt: freezed == statusUpdatedAt ? _self.statusUpdatedAt : statusUpdatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
 }

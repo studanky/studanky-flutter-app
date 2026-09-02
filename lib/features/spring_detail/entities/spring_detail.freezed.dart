@@ -14,7 +14,10 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SpringDetail {
 
- String get documentId; String get name; LatLng get position; SpringStatus get status; String? get description; DateTime? get statusUpdatedAt; int? get lastFlowScale; double? get lastFlowRateLps; SpringPhoto? get photo; SpringOwner? get owner;
+ String get documentId; String get name; LatLng get position; SpringStatus get status; String? get description;/// Locale of the complete detail selected by backend fallback. Keeping it
+/// prevents future caches/diagnostics from assuming the requested locale
+/// was served, as required by the API migration contract.
+ String? get servedLanguageTag; DateTime? get statusUpdatedAt; int? get lastFlowScale; double? get lastFlowRateLps; SpringPhoto? get photo; SpringOwner? get owner;
 /// Create a copy of SpringDetail
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +28,16 @@ $SpringDetailCopyWith<SpringDetail> get copyWith => _$SpringDetailCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringDetail&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt)&&(identical(other.lastFlowScale, lastFlowScale) || other.lastFlowScale == lastFlowScale)&&(identical(other.lastFlowRateLps, lastFlowRateLps) || other.lastFlowRateLps == lastFlowRateLps)&&(identical(other.photo, photo) || other.photo == photo)&&(identical(other.owner, owner) || other.owner == owner));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringDetail&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.servedLanguageTag, servedLanguageTag) || other.servedLanguageTag == servedLanguageTag)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt)&&(identical(other.lastFlowScale, lastFlowScale) || other.lastFlowScale == lastFlowScale)&&(identical(other.lastFlowRateLps, lastFlowRateLps) || other.lastFlowRateLps == lastFlowRateLps)&&(identical(other.photo, photo) || other.photo == photo)&&(identical(other.owner, owner) || other.owner == owner));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,documentId,name,position,status,description,statusUpdatedAt,lastFlowScale,lastFlowRateLps,photo,owner);
+int get hashCode => Object.hash(runtimeType,documentId,name,position,status,description,servedLanguageTag,statusUpdatedAt,lastFlowScale,lastFlowRateLps,photo,owner);
 
 @override
 String toString() {
-  return 'SpringDetail(documentId: $documentId, name: $name, position: $position, status: $status, description: $description, statusUpdatedAt: $statusUpdatedAt, lastFlowScale: $lastFlowScale, lastFlowRateLps: $lastFlowRateLps, photo: $photo, owner: $owner)';
+  return 'SpringDetail(documentId: $documentId, name: $name, position: $position, status: $status, description: $description, servedLanguageTag: $servedLanguageTag, statusUpdatedAt: $statusUpdatedAt, lastFlowScale: $lastFlowScale, lastFlowRateLps: $lastFlowRateLps, photo: $photo, owner: $owner)';
 }
 
 
@@ -45,7 +48,7 @@ abstract mixin class $SpringDetailCopyWith<$Res>  {
   factory $SpringDetailCopyWith(SpringDetail value, $Res Function(SpringDetail) _then) = _$SpringDetailCopyWithImpl;
 @useResult
 $Res call({
- String documentId, String name, LatLng position, SpringStatus status, String? description, DateTime? statusUpdatedAt, int? lastFlowScale, double? lastFlowRateLps, SpringPhoto? photo, SpringOwner? owner
+ String documentId, String name, LatLng position, SpringStatus status, String? description, String? servedLanguageTag, DateTime? statusUpdatedAt, int? lastFlowScale, double? lastFlowRateLps, SpringPhoto? photo, SpringOwner? owner
 });
 
 
@@ -62,13 +65,14 @@ class _$SpringDetailCopyWithImpl<$Res>
 
 /// Create a copy of SpringDetail
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? documentId = null,Object? name = null,Object? position = null,Object? status = null,Object? description = freezed,Object? statusUpdatedAt = freezed,Object? lastFlowScale = freezed,Object? lastFlowRateLps = freezed,Object? photo = freezed,Object? owner = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? documentId = null,Object? name = null,Object? position = null,Object? status = null,Object? description = freezed,Object? servedLanguageTag = freezed,Object? statusUpdatedAt = freezed,Object? lastFlowScale = freezed,Object? lastFlowRateLps = freezed,Object? photo = freezed,Object? owner = freezed,}) {
   return _then(_self.copyWith(
 documentId: null == documentId ? _self.documentId : documentId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as LatLng,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as SpringStatus,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,servedLanguageTag: freezed == servedLanguageTag ? _self.servedLanguageTag : servedLanguageTag // ignore: cast_nullable_to_non_nullable
 as String?,statusUpdatedAt: freezed == statusUpdatedAt ? _self.statusUpdatedAt : statusUpdatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,lastFlowScale: freezed == lastFlowScale ? _self.lastFlowScale : lastFlowScale // ignore: cast_nullable_to_non_nullable
 as int?,lastFlowRateLps: freezed == lastFlowRateLps ? _self.lastFlowRateLps : lastFlowRateLps // ignore: cast_nullable_to_non_nullable
@@ -183,10 +187,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String documentId,  String name,  LatLng position,  SpringStatus status,  String? description,  DateTime? statusUpdatedAt,  int? lastFlowScale,  double? lastFlowRateLps,  SpringPhoto? photo,  SpringOwner? owner)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String documentId,  String name,  LatLng position,  SpringStatus status,  String? description,  String? servedLanguageTag,  DateTime? statusUpdatedAt,  int? lastFlowScale,  double? lastFlowRateLps,  SpringPhoto? photo,  SpringOwner? owner)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SpringDetail() when $default != null:
-return $default(_that.documentId,_that.name,_that.position,_that.status,_that.description,_that.statusUpdatedAt,_that.lastFlowScale,_that.lastFlowRateLps,_that.photo,_that.owner);case _:
+return $default(_that.documentId,_that.name,_that.position,_that.status,_that.description,_that.servedLanguageTag,_that.statusUpdatedAt,_that.lastFlowScale,_that.lastFlowRateLps,_that.photo,_that.owner);case _:
   return orElse();
 
 }
@@ -204,10 +208,10 @@ return $default(_that.documentId,_that.name,_that.position,_that.status,_that.de
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String documentId,  String name,  LatLng position,  SpringStatus status,  String? description,  DateTime? statusUpdatedAt,  int? lastFlowScale,  double? lastFlowRateLps,  SpringPhoto? photo,  SpringOwner? owner)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String documentId,  String name,  LatLng position,  SpringStatus status,  String? description,  String? servedLanguageTag,  DateTime? statusUpdatedAt,  int? lastFlowScale,  double? lastFlowRateLps,  SpringPhoto? photo,  SpringOwner? owner)  $default,) {final _that = this;
 switch (_that) {
 case _SpringDetail():
-return $default(_that.documentId,_that.name,_that.position,_that.status,_that.description,_that.statusUpdatedAt,_that.lastFlowScale,_that.lastFlowRateLps,_that.photo,_that.owner);case _:
+return $default(_that.documentId,_that.name,_that.position,_that.status,_that.description,_that.servedLanguageTag,_that.statusUpdatedAt,_that.lastFlowScale,_that.lastFlowRateLps,_that.photo,_that.owner);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -224,10 +228,10 @@ return $default(_that.documentId,_that.name,_that.position,_that.status,_that.de
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String documentId,  String name,  LatLng position,  SpringStatus status,  String? description,  DateTime? statusUpdatedAt,  int? lastFlowScale,  double? lastFlowRateLps,  SpringPhoto? photo,  SpringOwner? owner)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String documentId,  String name,  LatLng position,  SpringStatus status,  String? description,  String? servedLanguageTag,  DateTime? statusUpdatedAt,  int? lastFlowScale,  double? lastFlowRateLps,  SpringPhoto? photo,  SpringOwner? owner)?  $default,) {final _that = this;
 switch (_that) {
 case _SpringDetail() when $default != null:
-return $default(_that.documentId,_that.name,_that.position,_that.status,_that.description,_that.statusUpdatedAt,_that.lastFlowScale,_that.lastFlowRateLps,_that.photo,_that.owner);case _:
+return $default(_that.documentId,_that.name,_that.position,_that.status,_that.description,_that.servedLanguageTag,_that.statusUpdatedAt,_that.lastFlowScale,_that.lastFlowRateLps,_that.photo,_that.owner);case _:
   return null;
 
 }
@@ -239,7 +243,7 @@ return $default(_that.documentId,_that.name,_that.position,_that.status,_that.de
 
 
 class _SpringDetail implements SpringDetail {
-  const _SpringDetail({required this.documentId, required this.name, required this.position, required this.status, this.description, this.statusUpdatedAt, this.lastFlowScale, this.lastFlowRateLps, this.photo, this.owner});
+  const _SpringDetail({required this.documentId, required this.name, required this.position, required this.status, this.description, this.servedLanguageTag, this.statusUpdatedAt, this.lastFlowScale, this.lastFlowRateLps, this.photo, this.owner});
   
 
 @override final  String documentId;
@@ -247,6 +251,10 @@ class _SpringDetail implements SpringDetail {
 @override final  LatLng position;
 @override final  SpringStatus status;
 @override final  String? description;
+/// Locale of the complete detail selected by backend fallback. Keeping it
+/// prevents future caches/diagnostics from assuming the requested locale
+/// was served, as required by the API migration contract.
+@override final  String? servedLanguageTag;
 @override final  DateTime? statusUpdatedAt;
 @override final  int? lastFlowScale;
 @override final  double? lastFlowRateLps;
@@ -263,16 +271,16 @@ _$SpringDetailCopyWith<_SpringDetail> get copyWith => __$SpringDetailCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringDetail&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt)&&(identical(other.lastFlowScale, lastFlowScale) || other.lastFlowScale == lastFlowScale)&&(identical(other.lastFlowRateLps, lastFlowRateLps) || other.lastFlowRateLps == lastFlowRateLps)&&(identical(other.photo, photo) || other.photo == photo)&&(identical(other.owner, owner) || other.owner == owner));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringDetail&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.servedLanguageTag, servedLanguageTag) || other.servedLanguageTag == servedLanguageTag)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt)&&(identical(other.lastFlowScale, lastFlowScale) || other.lastFlowScale == lastFlowScale)&&(identical(other.lastFlowRateLps, lastFlowRateLps) || other.lastFlowRateLps == lastFlowRateLps)&&(identical(other.photo, photo) || other.photo == photo)&&(identical(other.owner, owner) || other.owner == owner));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,documentId,name,position,status,description,statusUpdatedAt,lastFlowScale,lastFlowRateLps,photo,owner);
+int get hashCode => Object.hash(runtimeType,documentId,name,position,status,description,servedLanguageTag,statusUpdatedAt,lastFlowScale,lastFlowRateLps,photo,owner);
 
 @override
 String toString() {
-  return 'SpringDetail(documentId: $documentId, name: $name, position: $position, status: $status, description: $description, statusUpdatedAt: $statusUpdatedAt, lastFlowScale: $lastFlowScale, lastFlowRateLps: $lastFlowRateLps, photo: $photo, owner: $owner)';
+  return 'SpringDetail(documentId: $documentId, name: $name, position: $position, status: $status, description: $description, servedLanguageTag: $servedLanguageTag, statusUpdatedAt: $statusUpdatedAt, lastFlowScale: $lastFlowScale, lastFlowRateLps: $lastFlowRateLps, photo: $photo, owner: $owner)';
 }
 
 
@@ -283,7 +291,7 @@ abstract mixin class _$SpringDetailCopyWith<$Res> implements $SpringDetailCopyWi
   factory _$SpringDetailCopyWith(_SpringDetail value, $Res Function(_SpringDetail) _then) = __$SpringDetailCopyWithImpl;
 @override @useResult
 $Res call({
- String documentId, String name, LatLng position, SpringStatus status, String? description, DateTime? statusUpdatedAt, int? lastFlowScale, double? lastFlowRateLps, SpringPhoto? photo, SpringOwner? owner
+ String documentId, String name, LatLng position, SpringStatus status, String? description, String? servedLanguageTag, DateTime? statusUpdatedAt, int? lastFlowScale, double? lastFlowRateLps, SpringPhoto? photo, SpringOwner? owner
 });
 
 
@@ -300,13 +308,14 @@ class __$SpringDetailCopyWithImpl<$Res>
 
 /// Create a copy of SpringDetail
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? documentId = null,Object? name = null,Object? position = null,Object? status = null,Object? description = freezed,Object? statusUpdatedAt = freezed,Object? lastFlowScale = freezed,Object? lastFlowRateLps = freezed,Object? photo = freezed,Object? owner = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? documentId = null,Object? name = null,Object? position = null,Object? status = null,Object? description = freezed,Object? servedLanguageTag = freezed,Object? statusUpdatedAt = freezed,Object? lastFlowScale = freezed,Object? lastFlowRateLps = freezed,Object? photo = freezed,Object? owner = freezed,}) {
   return _then(_SpringDetail(
 documentId: null == documentId ? _self.documentId : documentId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as LatLng,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as SpringStatus,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,servedLanguageTag: freezed == servedLanguageTag ? _self.servedLanguageTag : servedLanguageTag // ignore: cast_nullable_to_non_nullable
 as String?,statusUpdatedAt: freezed == statusUpdatedAt ? _self.statusUpdatedAt : statusUpdatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,lastFlowScale: freezed == lastFlowScale ? _self.lastFlowScale : lastFlowScale // ignore: cast_nullable_to_non_nullable
 as int?,lastFlowRateLps: freezed == lastFlowRateLps ? _self.lastFlowRateLps : lastFlowRateLps // ignore: cast_nullable_to_non_nullable
