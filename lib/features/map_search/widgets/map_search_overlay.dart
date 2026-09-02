@@ -121,7 +121,7 @@ class MapSearchOverlay extends StatelessWidget {
                             child: CircularProgressIndicator.adaptive(
                               strokeWidth: 2,
                               valueColor: AlwaysStoppedAnimation(
-                                colors.textHint,
+                                colors.primaryMain,
                               ),
                             ),
                           ),

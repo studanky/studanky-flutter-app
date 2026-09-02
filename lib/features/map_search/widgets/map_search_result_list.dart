@@ -74,11 +74,7 @@ class _ResultRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         child: Row(
           children: [
-            Icon(
-              _iconFor(result.type),
-              size: 20,
-              color: colors.primaryInteractive,
-            ),
+            Icon(_iconFor(result.type), size: 20, color: colors.primaryMain),
             const SizedBox(width: 12),
             Expanded(
               child: Column(

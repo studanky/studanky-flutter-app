@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_source_provider.dart';
+import 'package:studanky_flutter_app/features/map_search/widgets/map_search_result_list.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
@@ -67,6 +70,15 @@ void main() {
 
     expect(container.read(mapSearchProvider).searchResults.isLoading, isTrue);
     expect(progressIndicator, findsOneWidget);
+    expect(
+      tester
+          .widget<CircularProgressIndicator>(
+            find.byType(CircularProgressIndicator),
+          )
+          .valueColor
+          ?.value,
+      Styles.appColors.primaryMain,
+    );
 
     // Rebuild with another full locale before the original 300 ms debounce.
     await tester.pumpWidget(app(englishAu));
@@ -79,5 +91,30 @@ void main() {
     expect(find.text('o'), findsOneWidget);
     expect(progressIndicator, findsNothing);
     expect(container.read(mapSearchProvider).searchResults.value, isEmpty);
+  });
+
+  testWidgets('result type icons use the shared brand accent', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: MapSearchResultList(
+            results: const [
+              MapSearchResult(
+                label: 'Studánka',
+                subtitle: 'Jeseníky',
+                position: LatLng(50, 17),
+                type: MapSearchResultType.spring,
+              ),
+            ],
+            onTap: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    final icon = tester.widget<Icon>(find.byIcon(Icons.water_drop_rounded));
+    expect(icon.color, Styles.appColors.primaryMain);
   });
 }

@@ -6,6 +6,20 @@ import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
+const double _northEpsilonRad = math.pi / 180;
+const double _activeLocationFillOpacity = 0.92;
+
+double _signedRotation(double radians) {
+  const fullTurn = math.pi * 2;
+  final normalized = radians % fullTurn;
+  if (normalized > math.pi) return normalized - fullTurn;
+  if (normalized < -math.pi) return normalized + fullTurn;
+  return normalized;
+}
+
+bool _isNorthUp(double rotationRad) =>
+    _signedRotation(rotationRad).abs() <= _northEpsilonRad;
+
 /// Left vertical stack of floating glass controls over the map (zadání §7),
 /// ordered as help, favourites, then compass/location. The right edge is
 /// reserved for the zoom slider.
@@ -33,6 +47,7 @@ class MapControlStack extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Styles.appColors;
     final l10n = context.l10n;
+    final locationIsActive = !isLocating && centered && _isNorthUp(rotationRad);
 
     // The location/compass control has one job at a time. Rotation wins: if
     // north is not up, the red outlined navigation arrow means "tap to reset
@@ -70,10 +85,15 @@ class MapControlStack extends StatelessWidget {
         GlassIconButton(
           semanticLabel: l10n.map_my_location,
           onTap: isLocating ? null : onLocation,
+          // The brand blue clears the graphics contrast floor against this
+          // almost-opaque surface while staying consistent with map/search
+          // accents. Other controls retain the regular translucent glass.
+          fill: locationIsActive
+              ? colors.onNeutral.withValues(alpha: _activeLocationFillOpacity)
+              : null,
           child: isLocating
-              // primaryInteractive over the glass tile: the brand blue only
-              // reached ~2.8:1 there, under the 3:1 floor for meaningful
-              // graphics in the active centered state.
+              // The regular glass stays under this transient state, so retain
+              // the deeper blue that clears the graphics contrast floor.
               ? SizedBox(
                   width: 20,
                   height: 20,
@@ -95,13 +115,15 @@ class MapControlStack extends StatelessWidget {
 /// 44×44 **circular** frosted-glass button built on the shared [GlassSurface]
 /// (same blur, edge and shadow as the search bar and zoom slider). Round rather
 /// than the squircle tile the other surfaces use — the map controls read as
-/// classic floating map buttons. A neutral glass tile in every state.
+/// classic floating map buttons. [fill] allows a stateful control to strengthen
+/// its surface without changing the shared glass construction.
 class GlassIconButton extends StatelessWidget {
   const GlassIconButton({
     super.key,
     required this.child,
     required this.semanticLabel,
     this.onTap,
+    this.fill,
   });
 
   static const double _diameter = 44;
@@ -109,6 +131,7 @@ class GlassIconButton extends StatelessWidget {
   final Widget child;
   final String semanticLabel;
   final VoidCallback? onTap;
+  final Color? fill;
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +140,7 @@ class GlassIconButton extends StatelessWidget {
       label: semanticLabel,
       child: GlassSurface(
         borderRadius: const BorderRadius.all(Radius.circular(_diameter / 2)),
+        fill: fill,
         child: Material(
           type: MaterialType.transparency,
           child: InkWell(
@@ -143,7 +167,6 @@ class _NavigationCompassIcon extends StatelessWidget {
   final bool centered;
 
   static const double _size = 24;
-  static const double _northEpsilonRad = math.pi / 180;
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +182,7 @@ class _NavigationCompassIcon extends StatelessWidget {
       color = colors.errorText;
     } else if (centered) {
       icon = Icons.navigation_rounded;
-      color = colors.primaryInteractive;
+      color = colors.primaryMain;
     } else {
       icon = Icons.navigation_outlined;
       color = colors.neutral700;
@@ -169,13 +192,5 @@ class _NavigationCompassIcon extends StatelessWidget {
       angle: northUp ? 0 : rotation,
       child: Icon(icon, size: _size, color: color),
     );
-  }
-
-  double _signedRotation(double radians) {
-    const fullTurn = math.pi * 2;
-    final normalized = radians % fullTurn;
-    if (normalized > math.pi) return normalized - fullTurn;
-    if (normalized < -math.pi) return normalized + fullTurn;
-    return normalized;
   }
 }
