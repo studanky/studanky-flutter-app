@@ -10,9 +10,9 @@ import 'package:studanky_flutter_app/core/widgets/scroll_edge_effect.dart';
 import 'package:studanky_flutter_app/features/favorites/providers/favorites_provider.dart';
 import 'package:studanky_flutter_app/features/favorites/widgets/swipe_to_delete_tile.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
-import 'package:studanky_flutter_app/features/spring_detail/utils/spring_formatters.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/status_visuals.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
+import 'package:studanky_flutter_app/features/springs/presentation/formatters/spring_formatters.dart';
+import 'package:studanky_flutter_app/features/springs/presentation/widgets/spring_status_visuals.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// Opens the favourites list as an iOS-style floating dialog over a blurred
@@ -76,7 +76,7 @@ class _FavoriteTile extends ConsumerWidget {
     final l10n = context.l10n;
     final colors = Styles.appColors;
     final config = ref.watch(platformConfigControllerProvider);
-    final visual = headerStatusVisual(
+    final visual = springStatusVisual(
       config.iconFor(spring.status.wireValue, spring.statusUpdatedAt),
       colors,
       l10n,
@@ -111,7 +111,7 @@ class _FavoriteTileSurface extends StatelessWidget {
   });
 
   final SpringMarkerEntity spring;
-  final StatusVisual visual;
+  final SpringStatusVisual visual;
   final String subtitle;
 
   @override
@@ -168,7 +168,7 @@ class _FavoriteTileSurface extends StatelessWidget {
 class _FavoriteStatusBadge extends StatelessWidget {
   const _FavoriteStatusBadge({required this.visual});
 
-  final StatusVisual visual;
+  final SpringStatusVisual visual;
 
   @override
   Widget build(BuildContext context) {

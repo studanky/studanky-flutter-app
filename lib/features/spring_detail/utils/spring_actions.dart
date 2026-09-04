@@ -5,7 +5,7 @@ import 'package:logging/logging.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:studanky_flutter_app/core/navigation/deep_links.dart';
-import 'package:studanky_flutter_app/features/spring_detail/utils/spring_formatters.dart';
+import 'package:studanky_flutter_app/features/springs/presentation/formatters/spring_formatters.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 

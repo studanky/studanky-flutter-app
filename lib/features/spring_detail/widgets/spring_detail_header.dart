@@ -3,10 +3,11 @@ import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
 import 'package:studanky_flutter_app/features/spring_detail/entities/water_clarity.dart';
-import 'package:studanky_flutter_app/features/spring_detail/utils/spring_formatters.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/formatters/water_clarity_label.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/detail_section.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/segment_scale.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/status_visuals.dart';
+import 'package:studanky_flutter_app/features/springs/presentation/formatters/spring_formatters.dart';
+import 'package:studanky_flutter_app/features/springs/presentation/widgets/spring_status_visuals.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// Everything above the history list: the hero block (name · favourite · status
@@ -56,7 +57,7 @@ class SpringDetailHeader extends StatelessWidget {
     final l10n = context.l10n;
     final colors = Styles.appColors;
     final text = Styles.textStyles;
-    final status = headerStatusVisual(statusIcon, colors, l10n);
+    final status = springStatusVisual(statusIcon, colors, l10n);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +95,7 @@ class SpringDetailHeader extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
           child: Row(
             children: [
-              StatusChip(visual: status),
+              SpringStatusChip(visual: status),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
