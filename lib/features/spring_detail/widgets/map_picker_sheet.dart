@@ -1,9 +1,10 @@
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
-import 'package:map_launcher/map_launcher.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/features/spring_detail/data/services/spring_map_service.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/sheet_grabber.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// Max width on large screens (tablets); below this it stretches to the
@@ -17,12 +18,12 @@ const double _maxSheetWidth = 640;
 /// Only meant for 2+ maps; the caller shortcuts the 0/1 cases so the user never
 /// sees an empty or single-item list. Mirrors the detail sheet's full-bleed
 /// frosted backdrop (no dim) so it reads as the same glass language.
-Future<SupportedMap?> showMapPickerSheet(
+Future<SpringMapOption?> showMapPickerSheet(
   BuildContext context, {
-  required List<SupportedMap> maps,
+  required List<SpringMapOption> maps,
 }) {
   final topInset = MediaQuery.viewPaddingOf(context).top;
-  return showModalBottomSheet<SupportedMap>(
+  return showModalBottomSheet<SpringMapOption>(
     context: context,
     isScrollControlled: true,
     useSafeArea: false,
@@ -91,7 +92,7 @@ class _PickerBackdrop extends StatelessWidget {
 class _MapPickerSheet extends StatelessWidget {
   const _MapPickerSheet({required this.maps});
 
-  final List<SupportedMap> maps;
+  final List<SpringMapOption> maps;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +111,7 @@ class _MapPickerSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const _Grabber(),
+              const SheetGrabber(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 2, 20, 8),
                 child: Text(
@@ -138,7 +139,7 @@ class _MapPickerSheet extends StatelessWidget {
 class _MapTile extends StatelessWidget {
   const _MapTile({required this.map});
 
-  final SupportedMap map;
+  final SpringMapOption map;
 
   @override
   Widget build(BuildContext context) {
@@ -175,29 +176,6 @@ class _MapTile extends StatelessWidget {
                 color: colors.neutral700,
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// The drag handle, identical to the detail sheet's grabber.
-class _Grabber extends StatelessWidget {
-  const _Grabber();
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Center(
-        child: Container(
-          width: 40,
-          height: 4,
-          decoration: BoxDecoration(
-            color: colors.neutral300,
-            borderRadius: BorderRadius.circular(100),
           ),
         ),
       ),

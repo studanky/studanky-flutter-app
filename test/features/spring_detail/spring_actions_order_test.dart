@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:map_launcher/map_launcher.dart';
-import 'package:studanky_flutter_app/features/spring_detail/utils/spring_actions.dart';
+import 'package:studanky_flutter_app/features/spring_detail/data/services/spring_map_service.dart';
 
 SupportedMap _map(MapApp map) => SupportedMap(map: map, isInstalled: true);
 
@@ -8,11 +8,11 @@ List<String> _ids(List<SupportedMap> maps) =>
     maps.map((supported) => supported.map.id).toList();
 
 void main() {
-  group('SpringActions.orderForDisplay', () {
+  group('MapLauncherSpringMapService.orderForDisplay', () {
     test(
       'puts Mapy.com and outdoor apps first, regardless of install order',
       () {
-        final result = SpringActions.orderForDisplay([
+        final result = MapLauncherSpringMapService.orderForDisplay([
           _map(MapApp.google),
           _map(MapApp.osmand),
           _map(MapApp.mapyCz),
@@ -29,7 +29,7 @@ void main() {
         _map(MapApp.here),
       ];
 
-      final result = SpringActions.orderForDisplay(input);
+      final result = MapLauncherSpringMapService.orderForDisplay(input);
 
       expect(result, hasLength(input.length));
       expect(result.first.map, MapApp.mapyCz);
@@ -39,7 +39,7 @@ void main() {
     test(
       'non-preferred apps follow the preferred ones in their original order',
       () {
-        final result = SpringActions.orderForDisplay([
+        final result = MapLauncherSpringMapService.orderForDisplay([
           _map(MapApp.yandexMaps),
           _map(MapApp.apple), // preferred (anchor)
           _map(MapApp.here),
@@ -51,7 +51,7 @@ void main() {
     );
 
     test('returns empty for empty input', () {
-      expect(SpringActions.orderForDisplay([]), isEmpty);
+      expect(MapLauncherSpringMapService.orderForDisplay([]), isEmpty);
     });
   });
 }
