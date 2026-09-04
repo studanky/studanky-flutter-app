@@ -41,6 +41,8 @@ import 'package:studanky_flutter_app/features/map_search/widgets/map_search_stat
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
+import 'package:studanky_flutter_app/features/spring_detail/entities/spring_detail.dart';
+import 'package:studanky_flutter_app/features/spring_detail/providers/spring_detail_provider.dart';
 import 'package:studanky_flutter_app/features/spring_detail/spring_detail_overlay.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
@@ -195,6 +197,17 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   _MapEmptyOverlayMode _mapEmptyOverlayMode = _MapEmptyOverlayMode.hidden;
   int _searchSelectionToken = 0;
 
+  /// A public link carries only the spring id, so its authoritative position
+  /// arrives asynchronously with the detail. Keep one route-scoped listener
+  /// shared with the detail sheet and defer the camera move until FlutterMap is
+  /// ready. The id guards prevent a late response from moving a different
+  /// route, and keep locale/rebuild refreshes from refocusing the same spring.
+  ProviderSubscription<AsyncValue<SpringDetail>>? _deepLinkedSpringSubscription;
+  ({String documentId, String languageTag})? _deepLinkedSpringSubscriptionKey;
+  ({String documentId, LatLng position})? _pendingDeepLinkedSpringFocus;
+  String? _focusedDeepLinkedSpringId;
+  bool _deepLinkedSpringFocusScheduled = false;
+
   /// Last integer zoom level a slider-drag haptic fired at, so the continuous
   /// drag ticks once per crossed level (a detent) instead of every frame.
   int? _lastZoomDetent;
@@ -250,6 +263,7 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     if (previousLanguageTag == languageTag) return;
     final shouldReloadCamera = previousLanguageTag != null && _isMapReady;
     _activeLanguageTag = languageTag;
+    _syncDeepLinkedSpringSubscription();
 
     if (shouldReloadCamera) _cameraDebounceTimer?.cancel();
     // Riverpod state must not be changed while didChangeDependencies is part
@@ -262,8 +276,23 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
   }
 
   @override
+  void didUpdateWidget(MapPageContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final oldDeepLinkedSpringId = oldWidget.detailMarker == null
+        ? oldWidget.detailDocumentId
+        : null;
+    if (oldDeepLinkedSpringId != _deepLinkedSpringId) {
+      _pendingDeepLinkedSpringFocus = null;
+      _focusedDeepLinkedSpringId = null;
+      _deepLinkedSpringFocusScheduled = false;
+    }
+    _syncDeepLinkedSpringSubscription();
+  }
+
+  @override
   void dispose() {
     _lifecycleListener.dispose();
+    _deepLinkedSpringSubscription?.close();
     _cameraDebounceTimer?.cancel();
     _emptyStateRevealTimer?.cancel();
     _animator.dispose();
@@ -297,11 +326,90 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
     // First load is immediate; subsequent camera changes are debounced.
     _emitCamera();
     _updateCompass();
+    _schedulePendingDeepLinkedSpringFocus();
     if (ref.read(userLocationProvider).activated) {
-      unawaited(_centerOnUserLocation());
+      if (widget.detailDocumentId == null) {
+        unawaited(_centerOnUserLocation());
+      }
     } else {
       unawaited(_activateLocationIfPermissionAlreadyGranted());
     }
+  }
+
+  String? get _deepLinkedSpringId =>
+      widget.detailMarker == null ? widget.detailDocumentId : null;
+
+  /// Starts (or replaces) the detail listener for the current public-link
+  /// route. `listenManual` can fire the cached value immediately, which matters
+  /// when a link is reopened before this auto-disposed provider leaves cache.
+  void _syncDeepLinkedSpringSubscription() {
+    final documentId = _deepLinkedSpringId;
+    final languageTag = _activeLanguageTag;
+    final key = documentId == null || languageTag == null
+        ? null
+        : (documentId: documentId, languageTag: languageTag);
+    if (_deepLinkedSpringSubscriptionKey == key) return;
+
+    _deepLinkedSpringSubscription?.close();
+    _deepLinkedSpringSubscription = null;
+    _deepLinkedSpringSubscriptionKey = key;
+    if (key == null) return;
+
+    _deepLinkedSpringSubscription = ref.listenManual<AsyncValue<SpringDetail>>(
+      springDetailProvider(key.documentId, languageTag: key.languageTag),
+      (_, next) {
+        final detail = next.value;
+        if (detail != null) {
+          _queueDeepLinkedSpringFocus(key.documentId, detail.position);
+        }
+      },
+      fireImmediately: true,
+    );
+  }
+
+  void _queueDeepLinkedSpringFocus(String documentId, LatLng position) {
+    if (!mounted ||
+        _deepLinkedSpringId != documentId ||
+        _focusedDeepLinkedSpringId == documentId) {
+      return;
+    }
+    _pendingDeepLinkedSpringFocus = (
+      documentId: documentId,
+      position: position,
+    );
+    _schedulePendingDeepLinkedSpringFocus();
+  }
+
+  /// Camera access is valid only after FlutterMap's ready callback. The actual
+  /// move runs after the current frame so provider delivery never mutates the
+  /// map while its widget tree is building.
+  void _schedulePendingDeepLinkedSpringFocus() {
+    if (!_isMapReady ||
+        _pendingDeepLinkedSpringFocus == null ||
+        _deepLinkedSpringFocusScheduled) {
+      return;
+    }
+    _deepLinkedSpringFocusScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _deepLinkedSpringFocusScheduled = false;
+      final pending = _pendingDeepLinkedSpringFocus;
+      if (!mounted ||
+          !_isMapReady ||
+          pending == null ||
+          _deepLinkedSpringId != pending.documentId ||
+          _focusedDeepLinkedSpringId == pending.documentId) {
+        return;
+      }
+
+      _pendingDeepLinkedSpringFocus = null;
+      _focusedDeepLinkedSpringId = pending.documentId;
+      unawaited(
+        _animator.animateTo(
+          center: _detailFocusCenter(pending.position, zoom: _springSearchZoom),
+          zoom: _springSearchZoom,
+        ),
+      );
+    });
   }
 
   Future<void> _activateLocationIfPermissionAlreadyGranted() async {
@@ -480,7 +588,11 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
 
     final location = await ref.read(userLocationProvider.notifier).firstFix();
 
-    if (!mounted) return;
+    // This is startup-only automatic centering. A spring route may have opened
+    // while the GPS fix was pending; its explicit target takes priority. The
+    // location button uses `_recenterOnUser` and remains an intentional
+    // user-controlled override.
+    if (!mounted || widget.detailDocumentId != null) return;
 
     if (location != null) {
       _mapController.move(location, _defaultZoom);
@@ -750,6 +862,9 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
       ..listen<UserLocationState>(userLocationProvider, (previous, next) {
         if (!_isMapReady || !next.activated) return;
         if (previous?.activated == true) return;
+        // An opened spring is the explicit camera target. Location activation
+        // may still enable the blue dot, but must not steal the camera.
+        if (widget.detailDocumentId != null) return;
         // A tap on "my location" already owns the first-fix camera move via
         // _recenterOnUser(); don't also run the onboarding-startup recenter.
         if (_isLocating) return;
