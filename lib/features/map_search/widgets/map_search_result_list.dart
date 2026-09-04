@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/core/widgets/scroll_edge_effect.dart';
@@ -66,7 +67,13 @@ class _ResultRow extends StatelessWidget {
     final text = Styles.textStyles;
     // Prefer the API's parent location (e.g. region) to tell apart places that
     // share a name; fall back to a generic type descriptor when it's absent.
-    final secondary = result.subtitle ?? _descriptorFor(context, result.type);
+    final descriptor = _descriptorFor(context, result.type);
+    final distance = result.distanceMeters == null
+        ? null
+        : _formatDistance(context, result.distanceMeters!);
+    final secondary =
+        result.subtitle ??
+        (distance == null ? descriptor : '$descriptor • $distance');
 
     return InkWell(
       onTap: () => onTap(result),
@@ -104,6 +111,17 @@ class _ResultRow extends StatelessWidget {
       ),
     );
   }
+}
+
+String _formatDistance(BuildContext context, int meters) {
+  final locale = Localizations.localeOf(context).toLanguageTag();
+  if (meters < 1000) {
+    return '${NumberFormat.decimalPattern(locale).format(meters)} m';
+  }
+
+  final kilometers = meters / 1000;
+  final format = NumberFormat(kilometers < 10 ? '0.0' : '0', locale);
+  return '${format.format(kilometers)} km';
 }
 
 /// Icon per Mapy.com suggest result type (chosen for at-a-glance recognition).

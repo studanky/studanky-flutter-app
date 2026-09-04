@@ -23,6 +23,9 @@ abstract class MapSearchResult with _$MapSearchResult {
     /// Present for first-party spring matches. Lets the map open the spring
     /// detail directly after moving the camera.
     SpringMarkerEntity? spring,
+
+    /// Optional first-party distance used by the presentation formatter.
+    int? distanceMeters,
   }) = _MapSearchResult;
 }
 

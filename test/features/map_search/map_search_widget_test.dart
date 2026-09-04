@@ -1,31 +1,29 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
-import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_search_repository.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
+import 'package:studanky_flutter_app/features/map_search/providers/map_search_dependencies.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
-import 'package:studanky_flutter_app/features/map_search/providers/map_search_source_provider.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_result_list.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
-class _RecordingSearchSource implements MapSearchSource {
+class _RecordingSearchSource implements MapSearchRepository {
   final List<String> queries = [];
 
   @override
-  Future<List<MapSearchResult>> search(
-    String query, {
-    LatLng? origin,
-    CancelToken? cancelToken,
-  }) async {
+  Future<List<MapSearchResult>> search(String query, {LatLng? origin}) async {
     queries.add(query);
     return const [];
   }
+
+  @override
+  void cancel() {}
 }
 
 void main() {
@@ -38,8 +36,8 @@ void main() {
     final englishSource = _RecordingSearchSource();
     final container = ProviderContainer(
       overrides: [
-        mapSearchSourceProvider(czech).overrideWithValue(czechSource),
-        mapSearchSourceProvider(englishAu).overrideWithValue(englishSource),
+        mapSearchRepositoryProvider(czech).overrideWithValue(czechSource),
+        mapSearchRepositoryProvider(englishAu).overrideWithValue(englishSource),
       ],
     );
     addTearDown(container.dispose);
@@ -116,5 +114,32 @@ void main() {
 
     final icon = tester.widget<Icon>(find.byIcon(Icons.water_drop_rounded));
     expect(icon.color, Styles.appColors.primaryMain);
+  });
+
+  testWidgets('formats structured spring distance in the active locale', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('cs'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: MapSearchResultList(
+            results: const [
+              MapSearchResult(
+                label: 'Ostružná',
+                position: LatLng(50.18, 17.05),
+                type: MapSearchResultType.spring,
+                distanceMeters: 2310,
+              ),
+            ],
+            onTap: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Studánka • 2,3 km'), findsOneWidget);
   });
 }
