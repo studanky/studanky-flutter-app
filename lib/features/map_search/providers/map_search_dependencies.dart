@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:studanky_flutter_app/core/api/interceptors/connectivity_interceptor.dart';
 import 'package:studanky_flutter_app/core/api/interceptors/logging_interceptor.dart';
+import 'package:studanky_flutter_app/core/connectivity/platform_connectivity_service.dart';
 import 'package:studanky_flutter_app/core/env.dart';
 import 'package:studanky_flutter_app/features/map_search/constants/map_search_constants.dart';
 import 'package:studanky_flutter_app/features/map_search/data/composite_map_search_source.dart';
@@ -17,14 +18,19 @@ part 'map_search_dependencies.g.dart';
 /// Isolated client for Mapy.com; the backend bearer token is never attached.
 @Riverpod(keepAlive: true)
 Dio mapSuggestDio(Ref ref) {
-  final dio = Dio(
-    BaseOptions(
-      baseUrl: MapSearchConstants.suggestBaseUrl,
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      sendTimeout: const Duration(seconds: 10),
-    ),
-  )..interceptors.addAll([ConnectivityInterceptor(ref), LoggingInterceptor()]);
+  final dio =
+      Dio(
+          BaseOptions(
+            baseUrl: MapSearchConstants.suggestBaseUrl,
+            connectTimeout: const Duration(seconds: 10),
+            receiveTimeout: const Duration(seconds: 10),
+            sendTimeout: const Duration(seconds: 10),
+          ),
+        )
+        ..interceptors.addAll([
+          ConnectivityInterceptor(ref.watch(connectivityServiceProvider)),
+          LoggingInterceptor(),
+        ]);
 
   ref.onDispose(dio.close);
   return dio;

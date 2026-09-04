@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:studanky_flutter_app/core/api/config/api_config.dart';
+import 'package:studanky_flutter_app/core/api/dio/dio_provider.dart';
 import 'package:studanky_flutter_app/core/api/dtos/user_dto.dart';
-import 'package:studanky_flutter_app/core/api/models/auth_models.dart';
+import 'package:studanky_flutter_app/features/auth/domain/models/auth_models.dart';
 
 part 'auth_api.g.dart';
 
@@ -31,3 +33,6 @@ abstract class AuthApi {
   @GET(ApiConfig.meEndpoint)
   Future<UserDto> getCurrentUser();
 }
+
+@Riverpod(keepAlive: true)
+AuthApi authApi(Ref ref) => AuthApi(ref.watch(authDioProvider));

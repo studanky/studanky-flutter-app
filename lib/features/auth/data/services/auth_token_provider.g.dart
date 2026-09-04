@@ -11,9 +11,9 @@ part of 'auth_token_provider.dart';
 /// In-memory holder for the current bearer token.
 ///
 /// Deliberately depends on **nothing** so both the auth-stack Dio and the main
-/// Dio can read the token without creating a provider cycle. `AuthService` is
-/// the sole writer; the Dio interceptors are readers. This is what breaks the
-/// former `dioProvider → authServiceProvider → authApiProvider → dioProvider`
+/// Dio can read the token without creating a provider cycle. The auth
+/// repository is the sole writer; the Dio interceptors are readers. This
+/// breaks the former `dioProvider → auth controller → auth API → dioProvider`
 /// circular dependency.
 
 @ProviderFor(AuthToken)
@@ -22,17 +22,17 @@ final authTokenProvider = AuthTokenProvider._();
 /// In-memory holder for the current bearer token.
 ///
 /// Deliberately depends on **nothing** so both the auth-stack Dio and the main
-/// Dio can read the token without creating a provider cycle. `AuthService` is
-/// the sole writer; the Dio interceptors are readers. This is what breaks the
-/// former `dioProvider → authServiceProvider → authApiProvider → dioProvider`
+/// Dio can read the token without creating a provider cycle. The auth
+/// repository is the sole writer; the Dio interceptors are readers. This
+/// breaks the former `dioProvider → auth controller → auth API → dioProvider`
 /// circular dependency.
 final class AuthTokenProvider extends $NotifierProvider<AuthToken, String?> {
   /// In-memory holder for the current bearer token.
   ///
   /// Deliberately depends on **nothing** so both the auth-stack Dio and the main
-  /// Dio can read the token without creating a provider cycle. `AuthService` is
-  /// the sole writer; the Dio interceptors are readers. This is what breaks the
-  /// former `dioProvider → authServiceProvider → authApiProvider → dioProvider`
+  /// Dio can read the token without creating a provider cycle. The auth
+  /// repository is the sole writer; the Dio interceptors are readers. This
+  /// breaks the former `dioProvider → auth controller → auth API → dioProvider`
   /// circular dependency.
   AuthTokenProvider._()
     : super(
@@ -66,9 +66,9 @@ String _$authTokenHash() => r'4e5d627361b728be8a0849a496c00faadf18be71';
 /// In-memory holder for the current bearer token.
 ///
 /// Deliberately depends on **nothing** so both the auth-stack Dio and the main
-/// Dio can read the token without creating a provider cycle. `AuthService` is
-/// the sole writer; the Dio interceptors are readers. This is what breaks the
-/// former `dioProvider → authServiceProvider → authApiProvider → dioProvider`
+/// Dio can read the token without creating a provider cycle. The auth
+/// repository is the sole writer; the Dio interceptors are readers. This
+/// breaks the former `dioProvider → auth controller → auth API → dioProvider`
 /// circular dependency.
 
 abstract class _$AuthToken extends $Notifier<String?> {

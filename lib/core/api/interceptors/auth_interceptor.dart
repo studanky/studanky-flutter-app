@@ -1,28 +1,26 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studanky_flutter_app/core/api/config/api_config.dart';
-import 'package:studanky_flutter_app/core/api/services/auth_service.dart';
-import 'package:studanky_flutter_app/core/api/services/auth_token_provider.dart';
 
 /// Injects the bearer token on outgoing requests and, on a 401, performs a
 /// single de-duplicated re-authentication before replaying the request.
 ///
-/// The token is read from the dependency-free [authTokenProvider] (not from
-/// [AuthService]) so this read adds no edge back to a Dio. [AuthService] is only
-/// touched for re-authentication on a 401; because the auth stack now runs on a
-/// separate Dio, that read no longer closes a provider cycle.
+/// Dependencies are injected as narrow callbacks, keeping this network utility
+/// independent from Riverpod and the auth presentation layer.
 class AuthInterceptor extends Interceptor {
-  AuthInterceptor({required this.dio, required this.ref});
+  AuthInterceptor({
+    required this.dio,
+    required this.readToken,
+    required this.reAuthenticate,
+  });
 
   static const _retryExtraKey = 'studanky__retried';
 
   final Dio dio;
-  final Ref ref;
+  final String? Function() readToken;
+  final Future<void> Function() reAuthenticate;
   Completer<void>? _refreshCompleter;
-
-  AuthService get _authService => ref.read(authServiceProvider.notifier);
 
   @override
   Future<void> onRequest(
@@ -34,7 +32,7 @@ class AuthInterceptor extends Interceptor {
       return;
     }
 
-    final token = ref.read(authTokenProvider);
+    final token = readToken();
 
     if (token != null && token.isNotEmpty) {
       options.headers.addAll(ApiConfig.authHeaders(token));
@@ -60,7 +58,7 @@ class AuthInterceptor extends Interceptor {
       return;
     }
 
-    final token = ref.read(authTokenProvider);
+    final token = readToken();
     if (token == null || token.isEmpty) {
       handler.next(err);
       return;
@@ -93,7 +91,7 @@ class AuthInterceptor extends Interceptor {
 
     () async {
       try {
-        await _authService.reAuthenticate();
+        await reAuthenticate();
         completer.complete();
       } catch (error, stackTrace) {
         if (!completer.isCompleted) {
