@@ -1,41 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:studanky_flutter_app/core/api/utils/api_result.dart';
+import 'package:studanky_flutter_app/features/springs/data/spring_marker_repository.dart';
 import 'package:studanky_flutter_app/features/springs/data/spring_repository.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 
+export 'package:studanky_flutter_app/features/springs/data/spring_marker_repository.dart';
+
 part 'cached_spring_marker_repository.g.dart';
-
-/// Fetch strategy for map markers **and the bookkeeping of what is already
-/// covered**. The single place that decides when the network is touched, so the
-/// layers above it (session store, cluster index, map page) never deal with
-/// bounding boxes at all.
-///
-/// [covers] and [hasDataFor] are deliberately *synchronous*, and deliberately
-/// separate: the first answers "does this need a request", the second "do we
-/// have an answer to show". They differ for data that is present but past its
-/// time-to-live — that area still draws its markers while a refresh runs
-/// behind it.
-abstract class SpringMarkerRepository {
-  /// Whether [bounds] is fully fetched **and still fresh** for [languageTag].
-  /// False means [load] has work to do.
-  bool covers(SpringBounds bounds, {required String languageTag});
-
-  /// Whether [bounds] has been fetched for [languageTag] at all, however long
-  /// ago. Drives "there are no springs here": a stale answer is still an
-  /// answer, while data from the previous locale remains only a drawable
-  /// placeholder during the replacement fetch.
-  bool hasDataFor(SpringBounds bounds, {required String languageTag});
-
-  /// Fetches whatever [bounds] still needs for [languageTag] and returns
-  /// **all** markers known afterwards — never just the new ones, so callers can
-  /// treat the result as the complete dataset.
-  Future<ApiResult<List<SpringMarkerEntity>>> load(
-    SpringBounds bounds, {
-    required String languageTag,
-  });
-}
 
 /// Viewport cache keyed by a fixed lat/lng grid.
 ///

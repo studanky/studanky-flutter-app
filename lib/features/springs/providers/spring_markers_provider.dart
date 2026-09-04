@@ -1,13 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/core/api/utils/api_result.dart';
 import 'package:studanky_flutter_app/features/springs/data/cached_spring_marker_repository.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
-import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
+import 'package:studanky_flutter_app/features/springs/providers/spring_markers_state.dart';
 
-part 'spring_markers_provider.freezed.dart';
+export 'package:studanky_flutter_app/features/springs/providers/spring_markers_state.dart';
 
 /// Deliberately **not** `autoDispose`: this is the session cache. The map page
 /// and its cluster index come and go with the route, the fetched springs do
@@ -16,26 +15,6 @@ final springMarkersProvider =
     NotifierProvider<SpringMarkersNotifier, SpringMarkersState>(
       SpringMarkersNotifier.new,
     );
-
-@freezed
-abstract class SpringMarkersState with _$SpringMarkersState {
-  const factory SpringMarkersState({
-    /// Loading/error of the fetch. [springs] stays intact while one runs, so
-    /// this is a thin status channel, not the source of markers.
-    @Default(AsyncValue<void>.data(null)) AsyncValue<void> status,
-
-    /// Every spring fetched so far. Which *areas* those cover is the source's
-    /// business — ask [SpringMarkersNotifier.hasDataFor] rather than inferring
-    /// coverage from this list, because an area that genuinely holds no springs
-    /// contributes nothing to it.
-    @Default(<SpringMarkerEntity>[]) List<SpringMarkerEntity> springs,
-
-    /// Active request locale. Kept with the session state so projections can
-    /// evaluate locale-specific tile coverage without their own initialization
-    /// invariant or duplicate mutable field.
-    String? languageTag,
-  }) = _SpringMarkersState;
-}
 
 /// Owns the fetched springs for the whole app session and coalesces the
 /// requests that fill them, delegating cache and fetch policy to

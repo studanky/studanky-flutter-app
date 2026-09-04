@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'map_marker_provider.dart';
+part of 'map_marker_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,20 +13,9 @@ part of 'map_marker_provider.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$MapMarkerState implements DiagnosticableTreeMixin {
+mixin _$MapMarkerState {
 
-/// Loading/error of the background fetch, mirrored from
-/// [springMarkersProvider]. Items stay visible while a fetch runs, so this
-/// is a thin status channel, not the source of markers.
- AsyncValue<void> get status;/// Clustered, drawable items for the most recent camera.
- List<MapClusterItem> get items;/// True once the visible camera bounds are covered by fetched marker data.
-/// Lets the UI distinguish a real empty viewport from one that is still
-/// waiting for its first fetch. Prefetch-ring coverage is deliberately not
-/// part of this presentation flag.
- bool get visibleBoundsLoaded;/// Whether at least one drawable marker or cluster anchor is inside the
-/// exact visible camera bounds. [items] deliberately spans the padded data
-/// window, so its non-emptiness cannot answer whether the user sees data.
- bool get hasVisibleMarkers;
+ AsyncValue<void> get status; List<MapClusterItem> get items; bool get visibleBoundsLoaded; bool get hasVisibleMarkers;
 /// Create a copy of MapMarkerState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -34,13 +23,6 @@ mixin _$MapMarkerState implements DiagnosticableTreeMixin {
 $MapMarkerStateCopyWith<MapMarkerState> get copyWith => _$MapMarkerStateCopyWithImpl<MapMarkerState>(this as MapMarkerState, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  final _this = this as MapMarkerState;
-  properties
-    ..add(DiagnosticsProperty('type', 'MapMarkerState'))
-    ..add(DiagnosticsProperty('status', _this.status))..add(DiagnosticsProperty('items', _this.items))..add(DiagnosticsProperty('visibleBoundsLoaded', _this.visibleBoundsLoaded))..add(DiagnosticsProperty('hasVisibleMarkers', _this.hasVisibleMarkers));
-}
 
 @override
 bool operator ==(Object other) {
@@ -56,7 +38,7 @@ int get hashCode {
 }
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   final _this = this as MapMarkerState;
   return 'MapMarkerState(status: ${_this.status}, items: ${_this.items}, visibleBoundsLoaded: ${_this.visibleBoundsLoaded}, hasVisibleMarkers: ${_this.hasVisibleMarkers})';
 }
@@ -232,31 +214,19 @@ return $default(_that.status,_that.items,_that.visibleBoundsLoaded,_that.hasVisi
 /// @nodoc
 
 
-class _MapMarkerState with DiagnosticableTreeMixin implements MapMarkerState {
+class _MapMarkerState implements MapMarkerState {
   const _MapMarkerState({this.status = const AsyncValue<void>.data(null),  List<MapClusterItem> items = const <MapClusterItem>[], this.visibleBoundsLoaded = false, this.hasVisibleMarkers = false}): _items = items;
   
 
-/// Loading/error of the background fetch, mirrored from
-/// [springMarkersProvider]. Items stay visible while a fetch runs, so this
-/// is a thin status channel, not the source of markers.
 @override@JsonKey() final  AsyncValue<void> status;
-/// Clustered, drawable items for the most recent camera.
  final  List<MapClusterItem> _items;
-/// Clustered, drawable items for the most recent camera.
 @override@JsonKey() List<MapClusterItem> get items {
   if (_items is EqualUnmodifiableListView) return _items;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_items);
 }
 
-/// True once the visible camera bounds are covered by fetched marker data.
-/// Lets the UI distinguish a real empty viewport from one that is still
-/// waiting for its first fetch. Prefetch-ring coverage is deliberately not
-/// part of this presentation flag.
 @override@JsonKey() final  bool visibleBoundsLoaded;
-/// Whether at least one drawable marker or cluster anchor is inside the
-/// exact visible camera bounds. [items] deliberately spans the padded data
-/// window, so its non-emptiness cannot answer whether the user sees data.
 @override@JsonKey() final  bool hasVisibleMarkers;
 
 /// Create a copy of MapMarkerState
@@ -266,12 +236,6 @@ class _MapMarkerState with DiagnosticableTreeMixin implements MapMarkerState {
 _$MapMarkerStateCopyWith<_MapMarkerState> get copyWith => __$MapMarkerStateCopyWithImpl<_MapMarkerState>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    properties
-    ..add(DiagnosticsProperty('type', 'MapMarkerState'))
-    ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('items', items))..add(DiagnosticsProperty('visibleBoundsLoaded', visibleBoundsLoaded))..add(DiagnosticsProperty('hasVisibleMarkers', hasVisibleMarkers));
-}
 
 @override
 bool operator ==(Object other) {
@@ -285,7 +249,7 @@ int get hashCode {
 }
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
     return 'MapMarkerState(status: $status, items: $items, visibleBoundsLoaded: $visibleBoundsLoaded, hasVisibleMarkers: $hasVisibleMarkers)';
 }
 

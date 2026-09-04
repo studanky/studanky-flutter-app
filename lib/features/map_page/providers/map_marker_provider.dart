@@ -3,44 +3,20 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_marker_state.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/features/springs/providers/spring_markers_provider.dart';
 import 'package:supercluster/supercluster.dart';
 
-part 'map_marker_provider.freezed.dart';
+export 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_marker_state.dart';
 
 final mapMarkerProvider =
     NotifierProvider.autoDispose<MapMarkerNotifier, MapMarkerState>(
       MapMarkerNotifier.new,
     );
-
-@freezed
-abstract class MapMarkerState with _$MapMarkerState {
-  const factory MapMarkerState({
-    /// Loading/error of the background fetch, mirrored from
-    /// [springMarkersProvider]. Items stay visible while a fetch runs, so this
-    /// is a thin status channel, not the source of markers.
-    @Default(AsyncValue<void>.data(null)) AsyncValue<void> status,
-
-    /// Clustered, drawable items for the most recent camera.
-    @Default(<MapClusterItem>[]) List<MapClusterItem> items,
-
-    /// True once the visible camera bounds are covered by fetched marker data.
-    /// Lets the UI distinguish a real empty viewport from one that is still
-    /// waiting for its first fetch. Prefetch-ring coverage is deliberately not
-    /// part of this presentation flag.
-    @Default(false) bool visibleBoundsLoaded,
-
-    /// Whether at least one drawable marker or cluster anchor is inside the
-    /// exact visible camera bounds. [items] deliberately spans the padded data
-    /// window, so its non-emptiness cannot answer whether the user sees data.
-    @Default(false) bool hasVisibleMarkers,
-  }) = _MapMarkerState;
-}
 
 /// Projects (dataset × camera) onto the drawable marker items, and asks
 /// [springMarkersProvider] to make sure the camera's padded data window is

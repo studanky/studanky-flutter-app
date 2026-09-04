@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'spring_markers_provider.dart';
+part of 'spring_markers_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,18 +13,9 @@ part of 'spring_markers_provider.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$SpringMarkersState implements DiagnosticableTreeMixin {
+mixin _$SpringMarkersState {
 
-/// Loading/error of the fetch. [springs] stays intact while one runs, so
-/// this is a thin status channel, not the source of markers.
- AsyncValue<void> get status;/// Every spring fetched so far. Which *areas* those cover is the source's
-/// business — ask [SpringMarkersNotifier.hasDataFor] rather than inferring
-/// coverage from this list, because an area that genuinely holds no springs
-/// contributes nothing to it.
- List<SpringMarkerEntity> get springs;/// Active request locale. Kept with the session state so projections can
-/// evaluate locale-specific tile coverage without their own initialization
-/// invariant or duplicate mutable field.
- String? get languageTag;
+ AsyncValue<void> get status; List<SpringMarkerEntity> get springs; String? get languageTag;
 /// Create a copy of SpringMarkersState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -32,13 +23,6 @@ mixin _$SpringMarkersState implements DiagnosticableTreeMixin {
 $SpringMarkersStateCopyWith<SpringMarkersState> get copyWith => _$SpringMarkersStateCopyWithImpl<SpringMarkersState>(this as SpringMarkersState, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  final _this = this as SpringMarkersState;
-  properties
-    ..add(DiagnosticsProperty('type', 'SpringMarkersState'))
-    ..add(DiagnosticsProperty('status', _this.status))..add(DiagnosticsProperty('springs', _this.springs))..add(DiagnosticsProperty('languageTag', _this.languageTag));
-}
 
 @override
 bool operator ==(Object other) {
@@ -54,7 +38,7 @@ int get hashCode {
 }
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   final _this = this as SpringMarkersState;
   return 'SpringMarkersState(status: ${_this.status}, springs: ${_this.springs}, languageTag: ${_this.languageTag})';
 }
@@ -229,31 +213,18 @@ return $default(_that.status,_that.springs,_that.languageTag);case _:
 /// @nodoc
 
 
-class _SpringMarkersState with DiagnosticableTreeMixin implements SpringMarkersState {
+class _SpringMarkersState implements SpringMarkersState {
   const _SpringMarkersState({this.status = const AsyncValue<void>.data(null),  List<SpringMarkerEntity> springs = const <SpringMarkerEntity>[], this.languageTag}): _springs = springs;
   
 
-/// Loading/error of the fetch. [springs] stays intact while one runs, so
-/// this is a thin status channel, not the source of markers.
 @override@JsonKey() final  AsyncValue<void> status;
-/// Every spring fetched so far. Which *areas* those cover is the source's
-/// business — ask [SpringMarkersNotifier.hasDataFor] rather than inferring
-/// coverage from this list, because an area that genuinely holds no springs
-/// contributes nothing to it.
  final  List<SpringMarkerEntity> _springs;
-/// Every spring fetched so far. Which *areas* those cover is the source's
-/// business — ask [SpringMarkersNotifier.hasDataFor] rather than inferring
-/// coverage from this list, because an area that genuinely holds no springs
-/// contributes nothing to it.
 @override@JsonKey() List<SpringMarkerEntity> get springs {
   if (_springs is EqualUnmodifiableListView) return _springs;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_springs);
 }
 
-/// Active request locale. Kept with the session state so projections can
-/// evaluate locale-specific tile coverage without their own initialization
-/// invariant or duplicate mutable field.
 @override final  String? languageTag;
 
 /// Create a copy of SpringMarkersState
@@ -263,12 +234,6 @@ class _SpringMarkersState with DiagnosticableTreeMixin implements SpringMarkersS
 _$SpringMarkersStateCopyWith<_SpringMarkersState> get copyWith => __$SpringMarkersStateCopyWithImpl<_SpringMarkersState>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    properties
-    ..add(DiagnosticsProperty('type', 'SpringMarkersState'))
-    ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('springs', springs))..add(DiagnosticsProperty('languageTag', languageTag));
-}
 
 @override
 bool operator ==(Object other) {
@@ -282,7 +247,7 @@ int get hashCode {
 }
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
     return 'SpringMarkersState(status: $status, springs: $springs, languageTag: $languageTag)';
 }
 
