@@ -25,7 +25,7 @@ class StatusBarScrim extends StatelessWidget {
     if (height <= 0) return const SizedBox.shrink();
 
     final blurEnabled = BackdropBlurScope.enabledOf(context);
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final isDark = colors.brightness == Brightness.dark;
     final wash = isDark ? colors.background : colors.onNeutral;
 

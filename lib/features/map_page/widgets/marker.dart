@@ -111,7 +111,7 @@ class _SpringMarkerPin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final isDark = colors.brightness == Brightness.dark;
     final visual = _visualFor(icon, colors);
     // Mirror SpringMarkerIcon's colour logic so the tail matches the coin: a
@@ -258,7 +258,7 @@ class SpringMarkerIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final isDark = colors.brightness == Brightness.dark;
     final visual = _visualFor(icon, colors);
     // The selected pin is always a solid green coin — even the hollow

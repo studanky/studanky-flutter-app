@@ -136,7 +136,7 @@ class _ScrollEdgeOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final isDark = colors.brightness == Brightness.dark;
     final baseTint = tint ?? (isDark ? colors.background : colors.onNeutral);
     final shade = isDark ? Colors.black : colors.neutral900;

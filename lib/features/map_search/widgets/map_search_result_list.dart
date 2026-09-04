@@ -22,7 +22,7 @@ class MapSearchResultList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final height = (results.length * 60.0).clamp(0, 300).toDouble();
 
     return GlassSurface(
@@ -63,8 +63,8 @@ class _ResultRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
     // Prefer the API's parent location (e.g. region) to tell apart places that
     // share a name; fall back to a generic type descriptor when it's absent.
     final descriptor = _descriptorFor(context, result.type);

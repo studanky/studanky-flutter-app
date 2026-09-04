@@ -13,7 +13,7 @@ class SheetGrabber extends StatelessWidget {
           width: 40,
           height: 4,
           decoration: BoxDecoration(
-            color: Styles.appColors.neutral300,
+            color: context.appColors.neutral300,
             borderRadius: BorderRadius.circular(100),
           ),
         ),

@@ -60,8 +60,8 @@ Widget _historyContent(
         child: _CenteredPadding(
           child: Text(
             context.l10n.spring_detail_history_empty,
-            style: Styles.textStyles.body2.copyWith(
-              color: Styles.appColors.neutral700,
+            style: context.appTextStyles.body2.copyWith(
+              color: context.appColors.neutral700,
             ),
           ),
         ),
@@ -70,7 +70,7 @@ Widget _historyContent(
   }
 
   final reports = state.reports;
-  final colors = Styles.appColors;
+  final colors = context.appColors;
 
   return SliverPadding(
     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -109,8 +109,8 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
     final title = context.l10n.spring_detail_history_title.toUpperCase();
 
     return Padding(
@@ -194,7 +194,7 @@ class _Spinner extends StatelessWidget {
       height: 28,
       child: CircularProgressIndicator(
         strokeWidth: 2.5,
-        color: Styles.appColors.primaryMain,
+        color: context.appColors.primaryMain,
       ),
     );
   }
@@ -208,8 +208,8 @@ class _InlineError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

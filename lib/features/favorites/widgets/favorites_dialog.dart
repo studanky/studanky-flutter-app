@@ -30,7 +30,7 @@ class _FavoritesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
 
     return AppDialogCard(
       icon: Icons.bookmark_rounded,
@@ -74,7 +74,7 @@ class _FavoriteTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final config = ref.watch(platformConfigControllerProvider);
     final visual = springStatusVisual(
       config.iconFor(spring.status.wireValue, spring.statusUpdatedAt),
@@ -116,8 +116,8 @@ class _FavoriteTileSurface extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
 
     return Material(
       color: colors.onNeutral,

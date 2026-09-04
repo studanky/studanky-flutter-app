@@ -5,7 +5,7 @@ import 'package:studanky_flutter_app/core/styles/colors/app_colors_scheme.dart';
 
 /// Dark theme — deep "night water" palette. Token *roles* match the light
 /// scheme (e.g. [neutral900] is still the strongest text, [onNeutral] is still
-/// the surface/card colour) so every existing `Styles.appColors.xxx` usage
+/// the surface/card colour) so every existing `context.appColors.xxx` usage
 /// renders correctly without changes — only the values flip for a dark surface.
 class AppColorsDark extends AppColorsScheme {
   @override

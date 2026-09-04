@@ -24,8 +24,8 @@ class DetailSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
@@ -69,7 +69,7 @@ class DetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
 
     // A Material (not a plain Container) so InkWell ripples from rows inside the
     // card — copy coordinates, expand a report — render on the card surface and
@@ -108,8 +108,8 @@ class DetailMetricRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
 
     return Padding(
       padding: padding,
@@ -118,7 +118,9 @@ class DetailMetricRow extends StatelessWidget {
         children: [
           Text(label, style: text.body2.copyWith(color: colors.neutral700)),
           const SizedBox(width: 12),
-          Expanded(child: Align(alignment: Alignment.centerRight, child: value)),
+          Expanded(
+            child: Align(alignment: Alignment.centerRight, child: value),
+          ),
         ],
       ),
     );

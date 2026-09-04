@@ -49,8 +49,8 @@ class _GlassSnackBarContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
     final hasAction = actionLabel != null && onAction != null;
 
     return GlassSurface(
@@ -69,7 +69,10 @@ class _GlassSnackBarContent extends StatelessWidget {
             TextButton(
               onPressed: onAction,
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),

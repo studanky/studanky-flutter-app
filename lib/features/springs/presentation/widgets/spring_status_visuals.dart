@@ -72,8 +72,8 @@ class SpringStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = Styles.textStyles;
-    final colors = Styles.appColors;
+    final text = context.appTextStyles;
+    final colors = context.appColors;
     final foreground = Color.lerp(visual.color, colors.neutral900, 0.4)!;
 
     return Container(

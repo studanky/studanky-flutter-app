@@ -187,7 +187,7 @@ class _ThumbDragIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
 
     return CustomPaint(
       painter: _ThumbDragIndicatorPainter(

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/core/styles/colors/app_colors.dart';
+import 'package:studanky_flutter_app/core/styles/colors/app_colors_light.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_repository.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
@@ -75,7 +76,7 @@ void main() {
           )
           .valueColor
           ?.value,
-      Styles.appColors.primaryMain,
+      AppColors.fromScheme(AppColorsLight()).primaryMain,
     );
 
     // Rebuild with another full locale before the original 300 ms debounce.
@@ -113,7 +114,7 @@ void main() {
     );
 
     final icon = tester.widget<Icon>(find.byIcon(Icons.water_drop_rounded));
-    expect(icon.color, Styles.appColors.primaryMain);
+    expect(icon.color, AppColors.fromScheme(AppColorsLight()).primaryMain);
   });
 
   testWidgets('formats structured spring distance in the active locale', (

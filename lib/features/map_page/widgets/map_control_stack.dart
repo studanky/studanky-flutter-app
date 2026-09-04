@@ -45,7 +45,7 @@ class MapControlStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final l10n = context.l10n;
     final locationIsActive = !isLocating && centered && _isNorthUp(rotationRad);
 
@@ -170,7 +170,7 @@ class _NavigationCompassIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final rotation = _signedRotation(rotationRad);
     final northUp = rotation.abs() <= _northEpsilonRad;
 

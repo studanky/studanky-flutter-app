@@ -30,8 +30,8 @@ class AppStateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
     final accent = tone == AppStateTone.error
         ? colors.error
         : colors.primaryMain;

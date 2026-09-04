@@ -59,14 +59,14 @@ class MapSearchOverlay extends StatelessWidget {
                   Icon(
                     Icons.error_outline_rounded,
                     size: 18,
-                    color: Styles.appColors.errorText,
+                    color: context.appColors.errorText,
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       context.l10n.map_search_error,
-                      style: Styles.textStyles.body2.copyWith(
-                        color: Styles.appColors.neutral900,
+                      style: context.appTextStyles.body2.copyWith(
+                        color: context.appColors.neutral900,
                       ),
                     ),
                   ),

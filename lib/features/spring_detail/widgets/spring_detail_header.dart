@@ -55,8 +55,8 @@ class SpringDetailHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
     final status = springStatusVisual(statusIcon, colors, l10n);
 
     return Column(
@@ -188,8 +188,8 @@ class _CurrentStateSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
 
     final isStale = statusIcon == SpringIcon.stale;
     // Stale: slate scale + muted value, matching the marker/chip. Fresh: the
@@ -279,7 +279,7 @@ class _ScaleValue extends StatelessWidget {
         const SizedBox(width: 10),
         Text(
           label,
-          style: Styles.textStyles.title2.copyWith(color: labelColor),
+          style: context.appTextStyles.title2.copyWith(color: labelColor),
         ),
       ],
     );
@@ -295,7 +295,7 @@ class _FavoriteButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = Styles.appColors;
+    final colors = context.appColors;
 
     // Apple-style "save to my list" (matching the map control): an outline
     // bookmark that fills with the gold "saved" accent once saved. The filled
@@ -340,8 +340,8 @@ class _HeroCoordinates extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
 
     // The row keeps its small, quiet visual — but the tappable area is grown
     // to the 44px minimum (Apple HIG); the old padded text was a ~22px target.

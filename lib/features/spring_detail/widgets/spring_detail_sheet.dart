@@ -62,7 +62,7 @@ class _SpringDetailSheetState extends State<SpringDetailSheet> {
             top: Radius.circular(kRadiusCard),
           ),
           child: Material(
-            color: Styles.appColors.background,
+            color: context.appColors.background,
             child: SpringDetailView(
               documentId: widget.documentId,
               marker: widget.marker,

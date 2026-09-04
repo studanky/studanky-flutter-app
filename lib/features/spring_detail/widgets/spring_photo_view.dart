@@ -17,7 +17,7 @@ class SpringPhotoView extends StatelessWidget {
     final current = photo;
     if (current == null) return const SizedBox.shrink();
 
-    final colors = Styles.appColors;
+    final colors = context.appColors;
 
     return SizedBox(
       height: height,

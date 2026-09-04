@@ -43,8 +43,8 @@ class AppDialogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
     final maxHeight = MediaQuery.sizeOf(context).height * maxHeightFactor;
 
     return ConstrainedBox(

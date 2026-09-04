@@ -38,8 +38,8 @@ class _ReportTileState extends State<ReportTile> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
     final report = widget.report;
     final status = reportStatusVisual(report.isFlowing, colors, l10n);
     final canExpand = report.hasDetails;
@@ -150,8 +150,8 @@ class _ReportDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
     final clarity = report.waterClarity;
     final odor = report.hasOdor;
     final valueStyle = text.title2.copyWith(color: colors.neutral900);
@@ -238,8 +238,8 @@ class _ScaleValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
 
     return Row(
       mainAxisSize: MainAxisSize.min,

@@ -56,10 +56,10 @@ class MapAttribution extends StatelessWidget {
               //   behavior: HitTestBehavior.translucent,
               //   child: Text(
               //     _copyrightText,
-              //     style: Styles.textStyles.body2.copyWith(
-              //       color: Styles.appColors.neutral900,
+              //     style: context.appTextStyles.body2.copyWith(
+              //       color: context.appColors.neutral900,
               //       decoration: TextDecoration.underline,
-              //       decorationColor: Styles.appColors.neutral900,
+              //       decorationColor: context.appColors.neutral900,
               //       fontSize: 10,
               //     ),
               //   ),

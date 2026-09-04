@@ -25,8 +25,8 @@ class _AboutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
     final l10n = context.l10n;
 
     return AppDialogCard(
@@ -192,8 +192,8 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: Styles.textStyles.title1.copyWith(
-        color: Styles.appColors.neutral900,
+      style: context.appTextStyles.title1.copyWith(
+        color: context.appColors.neutral900,
       ),
     );
   }
@@ -207,7 +207,7 @@ class _LegendRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -221,7 +221,7 @@ class _LegendRow extends StatelessWidget {
               padding: const EdgeInsets.only(top: 6),
               child: Text(
                 label,
-                style: Styles.textStyles.body2.copyWith(
+                style: context.appTextStyles.body2.copyWith(
                   color: colors.neutral700,
                 ),
               ),

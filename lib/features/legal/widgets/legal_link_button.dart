@@ -18,7 +18,7 @@ class LegalLinkButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
 
     return Align(
       alignment: Alignment.centerLeft,
@@ -28,7 +28,7 @@ class LegalLinkButton extends StatelessWidget {
         label: Text(label),
         style: TextButton.styleFrom(
           foregroundColor: colors.primaryInteractive,
-          textStyle: Styles.textStyles.button,
+          textStyle: context.appTextStyles.button,
           padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           alignment: Alignment.centerLeft,

@@ -47,7 +47,7 @@ class _ClusterBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final isDark = colors.brightness == Brightness.dark;
     final label = count >= 1000 ? '${(count / 1000).floor()}k+' : '$count';
 

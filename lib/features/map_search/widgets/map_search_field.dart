@@ -29,7 +29,7 @@ class MapSearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final searchResults = state.searchResults;
     final showStatus = status != null && !focusNode.hasFocus;
     final duration = MediaQuery.disableAnimationsOf(context)
@@ -61,13 +61,13 @@ class MapSearchField extends StatelessWidget {
                       focusNode: focusNode,
                       onChanged: onQueryChanged,
                       textInputAction: TextInputAction.search,
-                      style: Styles.textStyles.body1.copyWith(
+                      style: context.appTextStyles.body1.copyWith(
                         color: colors.neutral900,
                       ),
                       cursorColor: colors.primaryMain,
                       decoration: InputDecoration(
                         hintText: hintText,
-                        hintStyle: Styles.textStyles.body1.copyWith(
+                        hintStyle: context.appTextStyles.body1.copyWith(
                           color: colors.textHint,
                         ),
                         border: InputBorder.none,

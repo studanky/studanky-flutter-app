@@ -158,8 +158,8 @@ class _OnboardingStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
-    final text = Styles.textStyles;
+    final colors = context.appColors;
+    final text = context.appTextStyles;
     final iconColor = accent ? colors.secondaryVariant1 : colors.primaryMain;
     final iconBackground = accent ? colors.secondaryBeige : colors.primary100;
 
@@ -202,7 +202,7 @@ class _Bullet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -218,7 +218,9 @@ class _Bullet extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: Styles.textStyles.body2.copyWith(color: colors.neutral800),
+              style: context.appTextStyles.body2.copyWith(
+                color: colors.neutral800,
+              ),
             ),
           ),
         ],
@@ -235,7 +237,7 @@ class _Dots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

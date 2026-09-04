@@ -94,7 +94,7 @@ class MapPageView extends StatelessWidget {
         icon: Icons.wifi_off_rounded,
         title: l10n.offline_banner_title,
         message: l10n.offline_banner_message,
-        accent: Styles.appColors.secondaryVariant1,
+        accent: context.appColors.secondaryVariant1,
       );
     } else if (emptyState.isVisible) {
       searchStatus = MapSearchStatus(
@@ -102,7 +102,7 @@ class MapPageView extends StatelessWidget {
         icon: Icons.search_off_rounded,
         title: l10n.map_empty_title,
         message: l10n.map_empty_message,
-        accent: Styles.appColors.primaryMain,
+        accent: context.appColors.primaryMain,
         busy: emptyState.isRefreshing,
       );
     } else {

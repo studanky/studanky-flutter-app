@@ -106,7 +106,7 @@ class _SwipeToDeleteTileState extends State<SwipeToDeleteTile> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
 
     return LayoutBuilder(
       builder: (context, constraints) {

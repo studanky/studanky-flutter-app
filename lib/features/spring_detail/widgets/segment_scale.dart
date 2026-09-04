@@ -31,7 +31,7 @@ class SegmentScale extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final fill = color ?? colors.primaryMain;
     // 0.28, not 0.16: the empty segments show the scale's maximum, so they
     // must stay visible against the sheet (0.16 measured ~1.2:1 on white).
