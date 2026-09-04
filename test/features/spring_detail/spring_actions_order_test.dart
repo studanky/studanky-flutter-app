@@ -2,56 +2,53 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:studanky_flutter_app/features/spring_detail/utils/spring_actions.dart';
 
-AvailableMap _map(MapType type) =>
-    AvailableMap(mapName: type.name, mapType: type, icon: '');
+SupportedMap _map(MapApp map) => SupportedMap(map: map, isInstalled: true);
 
-List<MapType> _types(List<AvailableMap> maps) =>
-    maps.map((m) => m.mapType).toList();
+List<String> _ids(List<SupportedMap> maps) =>
+    maps.map((supported) => supported.map.id).toList();
 
 void main() {
   group('SpringActions.orderForDisplay', () {
-    test('puts Mapy.com and outdoor apps first, regardless of install order', () {
-      final result = SpringActions.orderForDisplay([
-        _map(MapType.google),
-        _map(MapType.osmand),
-        _map(MapType.mapyCz),
-      ]);
+    test(
+      'puts Mapy.com and outdoor apps first, regardless of install order',
+      () {
+        final result = SpringActions.orderForDisplay([
+          _map(MapApp.google),
+          _map(MapApp.osmand),
+          _map(MapApp.mapyCz),
+        ]);
 
-      expect(_types(result), [MapType.mapyCz, MapType.osmand, MapType.google]);
-    });
+        expect(_ids(result), ['mapyCz', 'osmand', 'google']);
+      },
+    );
 
-    test('keeps every installed app — nothing is filtered out (Waze included)', () {
+    test('does not filter maps supplied by capability discovery', () {
       final input = [
-        _map(MapType.waze),
-        _map(MapType.mapyCz),
-        _map(MapType.citymapper),
+        _map(MapApp.yandexMaps),
+        _map(MapApp.mapyCz),
+        _map(MapApp.here),
       ];
 
       final result = SpringActions.orderForDisplay(input);
 
       expect(result, hasLength(input.length));
-      expect(result.first.mapType, MapType.mapyCz);
-      expect(
-        _types(result),
-        containsAll([MapType.waze, MapType.citymapper]),
-      );
+      expect(result.first.map, MapApp.mapyCz);
+      expect(_ids(result), containsAll(['yandexMaps', 'here']));
     });
 
-    test('non-preferred apps follow the preferred ones in their original order', () {
-      final result = SpringActions.orderForDisplay([
-        _map(MapType.waze),
-        _map(MapType.apple), // preferred (anchor)
-        _map(MapType.citymapper),
-        _map(MapType.mapyCz), // preferred (first)
-      ]);
+    test(
+      'non-preferred apps follow the preferred ones in their original order',
+      () {
+        final result = SpringActions.orderForDisplay([
+          _map(MapApp.yandexMaps),
+          _map(MapApp.apple), // preferred (anchor)
+          _map(MapApp.here),
+          _map(MapApp.mapyCz), // preferred (first)
+        ]);
 
-      expect(_types(result), [
-        MapType.mapyCz,
-        MapType.apple,
-        MapType.waze,
-        MapType.citymapper,
-      ]);
-    });
+        expect(_ids(result), ['mapyCz', 'apple', 'yandexMaps', 'here']);
+      },
+    );
 
     test('returns empty for empty input', () {
       expect(SpringActions.orderForDisplay([]), isEmpty);

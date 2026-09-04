@@ -1,7 +1,6 @@
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
@@ -18,12 +17,12 @@ const double _maxSheetWidth = 640;
 /// Only meant for 2+ maps; the caller shortcuts the 0/1 cases so the user never
 /// sees an empty or single-item list. Mirrors the detail sheet's full-bleed
 /// frosted backdrop (no dim) so it reads as the same glass language.
-Future<AvailableMap?> showMapPickerSheet(
+Future<SupportedMap?> showMapPickerSheet(
   BuildContext context, {
-  required List<AvailableMap> maps,
+  required List<SupportedMap> maps,
 }) {
   final topInset = MediaQuery.viewPaddingOf(context).top;
-  return showModalBottomSheet<AvailableMap>(
+  return showModalBottomSheet<SupportedMap>(
     context: context,
     isScrollControlled: true,
     useSafeArea: false,
@@ -67,8 +66,7 @@ class _PickerBackdrop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final animation =
-        ModalRoute.of(context)?.animation ??
-        const AlwaysStoppedAnimation(1.0);
+        ModalRoute.of(context)?.animation ?? const AlwaysStoppedAnimation(1.0);
 
     return GestureDetector(
       onTap: onTapOutside,
@@ -93,7 +91,7 @@ class _PickerBackdrop extends StatelessWidget {
 class _MapPickerSheet extends StatelessWidget {
   const _MapPickerSheet({required this.maps});
 
-  final List<AvailableMap> maps;
+  final List<SupportedMap> maps;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +99,9 @@ class _MapPickerSheet extends StatelessWidget {
     final text = Styles.textStyles;
 
     return ClipRSuperellipse(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(kRadiusCard)),
+      borderRadius: const BorderRadius.vertical(
+        top: Radius.circular(kRadiusCard),
+      ),
       child: Material(
         color: colors.background,
         child: SafeArea(
@@ -138,7 +138,7 @@ class _MapPickerSheet extends StatelessWidget {
 class _MapTile extends StatelessWidget {
   const _MapTile({required this.map});
 
-  final AvailableMap map;
+  final SupportedMap map;
 
   @override
   Widget build(BuildContext context) {
@@ -155,16 +155,12 @@ class _MapTile extends StatelessWidget {
             children: [
               ClipRSuperellipse(
                 borderRadius: BorderRadius.circular(kRadiusChip),
-                child: SvgPicture.asset(
-                  map.icon,
-                  width: 38,
-                  height: 38,
-                ),
+                child: Image.memory(map.iconBytes, width: 38, height: 38),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
-                  map.mapName,
+                  map.name,
                   style: text.body1.copyWith(color: colors.neutral900),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

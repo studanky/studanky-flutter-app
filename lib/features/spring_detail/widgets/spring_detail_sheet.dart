@@ -329,10 +329,13 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
   /// Shows the picker only when there is a real choice: 0 installed → silent
   /// Mapy.cz web fallback, 1 → open it directly, 2+ → let the user pick.
   Future<void> _openInMap(String name, LatLng position) async {
-    final maps = await SpringActions.installedMaps();
+    final maps = await SpringActions.installedMaps(
+      position: position,
+      title: name,
+    );
     if (!mounted) return;
 
-    final AvailableMap chosen;
+    final SupportedMap chosen;
     if (maps.isEmpty) {
       final opened = await SpringActions.openInBrowser(position);
       if (!opened && mounted) {
@@ -350,11 +353,7 @@ class _SpringDetailBodyState extends ConsumerState<_SpringDetailBody> {
       chosen = picked;
     }
 
-    final opened = await SpringActions.showMarker(
-      chosen,
-      position: position,
-      title: name,
-    );
+    final opened = await SpringActions.showMarker(chosen);
     if (!opened && mounted) {
       showGlassSnackBar(
         context,

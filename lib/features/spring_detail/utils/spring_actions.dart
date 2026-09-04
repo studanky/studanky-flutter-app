@@ -39,22 +39,35 @@ class SpringActions {
     await SharePlus.instance.share(ShareParams(text: text, subject: name));
   }
 
-  /// Preferred display order. A spring is reached on foot or by bike, so
-  /// outdoor/hiking/cycling maps lead — Mapy.com first, then OsmAnd and Maps.me
-  /// — with Apple and Google Maps as universal anchors. This only *orders* the
-  /// list; nothing is filtered out, so the user always picks from every maps app
-  /// they have installed. Apps not listed keep their order and follow after.
+  /// Maps that can show a spring marker and that the app intentionally supports.
+  /// Keeping this list explicit lets `map_launcher` tree-shake every unused map
+  /// integration and keeps the iOS URL-scheme allowlist minimal.
   ///
   /// Note: dedicated outdoor apps (Komoot, Locus Map, …) are not in
   /// `map_launcher`'s catalogue, so they cannot be detected at all — among the
   /// supported apps only Mapy.com, OsmAnd and Maps.me are outdoor-capable.
-  static const List<MapType> _preferredOrder = [
-    MapType.mapyCz, // Mapy.com — Czech outdoor (turistická/cyklo), first
-    MapType.osmand, // OsmAnd — offline topo, hiking & cycling
-    MapType.osmandplus, // OsmAnd+
-    MapType.mapswithme, // Maps.me — OSM, outdoor-friendly, offline
-    MapType.apple, // anchor (always present on iOS)
-    MapType.google, // anchor (common everywhere)
+  static const List<MapApp> _markerMaps = [
+    MapApp.mapyCz, // Mapy.com — Czech outdoor (turistická/cyklo), first
+    MapApp.osmand, // OsmAnd — offline topo, hiking & cycling
+    MapApp.osmandplus, // OsmAnd+ (Android)
+    MapApp.mapswithme, // Maps.me — OSM, outdoor-friendly, offline
+    MapApp.apple, // anchor (always present on iOS)
+    MapApp.google, // anchor (common everywhere)
+    MapApp.here,
+    MapApp.yandexMaps,
+    MapApp.yandexNavi,
+    MapApp.copilot,
+  ];
+
+  /// Preferred display order. Apps not listed keep their relative order and
+  /// follow after the outdoor-first choices and platform anchors.
+  static const List<MapApp> _preferredOrder = [
+    MapApp.mapyCz,
+    MapApp.osmand,
+    MapApp.osmandplus,
+    MapApp.mapswithme,
+    MapApp.apple,
+    MapApp.google,
   ];
 
   /// Orders [installed] outdoor-first by [_preferredOrder]; apps not listed keep
@@ -62,44 +75,48 @@ class SpringActions {
   /// nothing — the user chooses from every installed maps app. Pure (no platform
   /// calls) so it can be unit-tested.
   @visibleForTesting
-  static List<AvailableMap> orderForDisplay(List<AvailableMap> installed) {
-    final byType = {for (final map in installed) map.mapType: map};
-    final preferredTypes = _preferredOrder.toSet();
+  static List<SupportedMap> orderForDisplay(List<SupportedMap> installed) {
+    final byId = {for (final map in installed) map.map.id: map};
+    final preferredIds = _preferredOrder.map((map) => map.id).toSet();
     return [
-      for (final type in _preferredOrder) ?byType[type],
+      for (final map in _preferredOrder) ?byId[map.id],
       for (final map in installed)
-        if (!preferredTypes.contains(map.mapType)) map,
+        if (!preferredIds.contains(map.map.id)) map,
     ];
   }
 
-  /// Every maps app actually installed on the device, ordered outdoor-first.
-  /// Already limited to what the user has, so they only ever see apps they can
-  /// open. Empty when no maps app is installed (or on failure), so the caller
-  /// can fall back to the web link.
-  static Future<List<AvailableMap>> installedMaps() async {
+  /// Supported maps that can show this marker and are actually installed on the
+  /// device, ordered outdoor-first. Universal-link browser fallbacks returned
+  /// by `map_launcher` are excluded because this flow has one explicit web
+  /// fallback. Empty on failure so the caller can use that fallback.
+  static Future<List<SupportedMap>> installedMaps({
+    required LatLng position,
+    required String title,
+  }) async {
     try {
-      return orderForDisplay(await MapLauncher.installedMaps);
+      final request = MapLauncher.marker(
+        Location.coords(position.latitude, position.longitude, title: title),
+        zoom: 17,
+      );
+      final supported = await request.getSupportedMaps(_markerMaps);
+      return orderForDisplay(
+        supported.where((map) => map.isInstalled).toList(),
+      );
     } catch (error, stackTrace) {
       _logger.warning('Failed to query installed maps', error, stackTrace);
       return const [];
     }
   }
 
-  /// Opens the spring as a pinned marker (not turn-by-turn navigation) in [map],
-  /// labelled with [title]. Returns false if the app could not be launched.
-  static Future<bool> showMarker(
-    AvailableMap map, {
-    required LatLng position,
-    required String title,
-  }) async {
+  /// Opens the spring as a pinned marker (not turn-by-turn navigation) in [map].
+  /// The marker request is retained by the launchable map returned above.
+  /// Returns false if the app could not be launched.
+  static Future<bool> showMarker(SupportedMap map) async {
     try {
-      await map.showMarker(
-        coords: Coords(position.latitude, position.longitude),
-        title: title,
-      );
+      await map.show();
       return true;
     } catch (error, stackTrace) {
-      _logger.warning('Failed to open ${map.mapName}', error, stackTrace);
+      _logger.warning('Failed to open ${map.name}', error, stackTrace);
       return false;
     }
   }
