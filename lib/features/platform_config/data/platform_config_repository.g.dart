@@ -55,4 +55,4 @@ final class PlatformConfigRepositoryProvider
 }
 
 String _$platformConfigRepositoryHash() =>
-    r'7f6e58c95269980211ec71411a8ebc4136262a99';
+    r'3a4c86e3d1f12dfac2c060c15bf29248ad871f1b';

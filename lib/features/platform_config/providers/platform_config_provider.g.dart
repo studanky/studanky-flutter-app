@@ -8,55 +8,6 @@ part of 'platform_config_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-
-@ProviderFor(platformConfigCache)
-final platformConfigCacheProvider = PlatformConfigCacheProvider._();
-
-final class PlatformConfigCacheProvider
-    extends
-        $FunctionalProvider<
-          PlatformConfigCache,
-          PlatformConfigCache,
-          PlatformConfigCache
-        >
-    with $Provider<PlatformConfigCache> {
-  PlatformConfigCacheProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'platformConfigCacheProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$platformConfigCacheHash();
-
-  @$internal
-  @override
-  $ProviderElement<PlatformConfigCache> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  PlatformConfigCache create(Ref ref) {
-    return platformConfigCache(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(PlatformConfigCache value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<PlatformConfigCache>(value),
-    );
-  }
-}
-
-String _$platformConfigCacheHash() =>
-    r'ab2144de57358f37f55c19c3956c0e3b49e0c79e';
-
 /// App-wide platform configuration, initialised right after startup.
 ///
 /// Non-blocking by design (spec §14): [build] returns the cached config (or the
@@ -115,7 +66,7 @@ final class PlatformConfigControllerProvider
 }
 
 String _$platformConfigControllerHash() =>
-    r'e42b39d7572f36e53e4e918edad3f732ecdb3b09';
+    r'd99d98a3c039d849bb81bd5e4691e6a54e1b7548';
 
 /// App-wide platform configuration, initialised right after startup.
 ///

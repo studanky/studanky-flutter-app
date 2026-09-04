@@ -5,7 +5,7 @@ import 'package:studanky_flutter_app/features/springs/data/spring_repository.dar
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 
-part 'spring_marker_source.g.dart';
+part 'cached_spring_marker_repository.g.dart';
 
 /// Fetch strategy for map markers **and the bookkeeping of what is already
 /// covered**. The single place that decides when the network is touched, so the
@@ -17,7 +17,7 @@ part 'spring_marker_source.g.dart';
 /// have an answer to show". They differ for data that is present but past its
 /// time-to-live — that area still draws its markers while a refresh runs
 /// behind it.
-abstract class SpringMarkerSource {
+abstract class SpringMarkerRepository {
   /// Whether [bounds] is fully fetched **and still fresh** for [languageTag].
   /// False means [load] has work to do.
   bool covers(SpringBounds bounds, {required String languageTag});
@@ -48,8 +48,8 @@ abstract class SpringMarkerSource {
 /// Each tile carries its request locale and fetch timestamp, so locale/age
 /// staleness expires per area rather than creating an immortal full cache per
 /// locale. A long-running session refreshes only what the user actually views.
-class TileGridSpringMarkerSource implements SpringMarkerSource {
-  TileGridSpringMarkerSource(
+class CachedSpringMarkerRepository implements SpringMarkerRepository {
+  CachedSpringMarkerRepository(
     this._repository, {
     DateTime Function()? clock,
     this.maxAge = defaultMaxAge,
@@ -97,9 +97,8 @@ class TileGridSpringMarkerSource implements SpringMarkerSource {
 
   @override
   bool hasDataFor(SpringBounds bounds, {required String languageTag}) =>
-      _tilesIn(
-        bounds,
-      ).every((tile) => _tiles[tile]?.languageTag == languageTag);
+      _tilesIn(bounds)
+          .every((tile) => _tiles[tile]?.languageTag == languageTag);
 
   @override
   Future<ApiResult<List<SpringMarkerEntity>>> load(
@@ -311,5 +310,5 @@ class _TileRect {
 }
 
 @Riverpod(keepAlive: true)
-SpringMarkerSource springMarkerSource(Ref ref) =>
-    TileGridSpringMarkerSource(ref.watch(springRepositoryProvider));
+SpringMarkerRepository springMarkerRepository(Ref ref) =>
+    CachedSpringMarkerRepository(ref.watch(springRepositoryProvider));

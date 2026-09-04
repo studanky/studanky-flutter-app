@@ -8,10 +8,10 @@ import 'package:studanky_flutter_app/core/api/utils/api_result.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/map_marker_provider.dart'
     as map_marker_providers;
-import 'package:studanky_flutter_app/features/springs/data/spring_marker_source.dart'
-    as marker_sources;
-import 'package:studanky_flutter_app/features/springs/data/spring_marker_source.dart'
-    show SpringMarkerSource, TileGridSpringMarkerSource;
+import 'package:studanky_flutter_app/features/springs/data/cached_spring_marker_repository.dart'
+    as marker_repositories;
+import 'package:studanky_flutter_app/features/springs/data/cached_spring_marker_repository.dart'
+    show CachedSpringMarkerRepository, SpringMarkerRepository;
 import 'package:studanky_flutter_app/features/springs/data/spring_repository.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
@@ -23,7 +23,8 @@ import 'package:studanky_flutter_app/features/springs/providers/spring_markers_p
 const _languageTag = 'cs';
 final mapMarkerProvider = map_marker_providers.mapMarkerProvider;
 final springMarkersProvider = spring_marker_providers.springMarkersProvider;
-final springMarkerSourceProvider = marker_sources.springMarkerSourceProvider;
+final springMarkerRepositoryProvider =
+    marker_repositories.springMarkerRepositoryProvider;
 
 extension _MapMarkerNotifierTestApi on map_marker_providers.MapMarkerNotifier {
   Future<void> reportCamera(LatLngBounds bounds, double zoom, {String? tag}) =>
@@ -144,12 +145,13 @@ class _LocaleControlledRepository implements SpringRepository {
 
 ProviderContainer _containerWith(
   _FakeSpringRepository repository, {
-  SpringMarkerSource? source,
+  SpringMarkerRepository? repositoryOverride,
 }) {
   final container = ProviderContainer(
     overrides: [
       springRepositoryProvider.overrideWithValue(repository),
-      if (source != null) springMarkerSourceProvider.overrideWithValue(source),
+      if (repositoryOverride != null)
+        springMarkerRepositoryProvider.overrideWithValue(repositoryOverride),
     ],
   );
   addTearDown(container.dispose);
@@ -356,7 +358,7 @@ void main() {
     var now = DateTime(2026, 7, 21, 12);
     final container = _containerWith(
       repository,
-      source: TileGridSpringMarkerSource(
+      repositoryOverride: CachedSpringMarkerRepository(
         repository,
         clock: () => now,
         maxAge: const Duration(minutes: 5),
@@ -394,7 +396,10 @@ void main() {
       var now = DateTime(2026, 7, 21, 12);
       final container = _containerWith(
         repository,
-        source: TileGridSpringMarkerSource(repository, clock: () => now),
+        repositoryOverride: CachedSpringMarkerRepository(
+          repository,
+          clock: () => now,
+        ),
       );
       final notifier = container.read(mapMarkerProvider.notifier);
 
@@ -493,95 +498,88 @@ void main() {
     },
   );
 
-  test(
-    'locale switch resolves stale loading before a new camera is queued',
-    () async {
-      final repository = _LocaleControlledRepository();
-      final container = ProviderContainer(
-        overrides: [springRepositoryProvider.overrideWithValue(repository)],
-      );
-      addTearDown(container.dispose);
+  test('locale switch resolves stale loading before a new camera is queued', () async {
+    final repository = _LocaleControlledRepository();
+    final container = ProviderContainer(
+      overrides: [springRepositoryProvider.overrideWithValue(repository)],
+    );
+    addTearDown(container.dispose);
 
-      container.listen(mapMarkerProvider, (_, _) {});
-      final notifier = container.read(mapMarkerProvider.notifier);
+    container.listen(mapMarkerProvider, (_, _) {});
+    final notifier = container.read(mapMarkerProvider.notifier);
 
-      final initialLoad = notifier.reportCamera(_pragueBounds, 18, tag: 'cs');
-      repository.requests['cs']!.complete(
-        ApiResult.success([_spring('czech', 50.080, 14.420)]),
-      );
-      await initialLoad;
-      expect(
-        container
-            .read(mapMarkerProvider)
-            .items
-            .whereType<SpringPoint>()
-            .single
-            .spring
-            .documentId,
-        'czech',
-      );
+    final initialLoad = notifier.reportCamera(_pragueBounds, 18, tag: 'cs');
+    repository.requests['cs']!.complete(
+      ApiResult.success([_spring('czech', 50.080, 14.420)]),
+    );
+    await initialLoad;
+    expect(
+      container
+          .read(mapMarkerProvider)
+          .items
+          .whereType<SpringPoint>()
+          .single
+          .spring
+          .documentId,
+      'czech',
+    );
 
-      // Start a Czech refresh, then switch locale while that request is still
-      // running. Deliberately do not queue the English camera yet: this is the
-      // production window between didChangeDependencies and its post-frame
-      // callback that previously left status stuck at loading.
-      final czechRefresh = notifier.refreshForTest(tag: 'cs');
-      notifier.onLanguageTagChanged('en-AU');
-      expect(
-        container
-            .read(mapMarkerProvider)
-            .items
-            .whereType<SpringPoint>()
-            .single
-            .spring
-            .documentId,
-        'czech',
-      );
-      expect(container.read(mapMarkerProvider).visibleBoundsLoaded, isFalse);
+    // Start a Czech refresh, then switch locale while that request is still
+    // running. Deliberately do not queue the English camera yet: this is the
+    // production window between didChangeDependencies and its post-frame
+    // callback that previously left status stuck at loading.
+    final czechRefresh = notifier.refreshForTest(tag: 'cs');
+    notifier.onLanguageTagChanged('en-AU');
+    expect(
+      container
+          .read(mapMarkerProvider)
+          .items
+          .whereType<SpringPoint>()
+          .single
+          .spring
+          .documentId,
+      'czech',
+    );
+    expect(container.read(mapMarkerProvider).visibleBoundsLoaded, isFalse);
 
-      repository.requests['cs']!.complete(
-        ApiResult.success([_spring('late-czech', 50.080, 14.420)]),
-      );
-      await czechRefresh;
+    repository.requests['cs']!.complete(
+      ApiResult.success([_spring('late-czech', 50.080, 14.420)]),
+    );
+    await czechRefresh;
 
-      // The late completion is cached as stale tile data, but cannot replace the
-      // active visible state or strand the loading status. No request is queued
-      // until the post-frame camera callback below actually arrives.
-      expect(
-        container
-            .read(mapMarkerProvider)
-            .items
-            .whereType<SpringPoint>()
-            .single
-            .spring
-            .documentId,
-        'czech',
-      );
-      expect(container.read(mapMarkerProvider).status.isLoading, isFalse);
-      expect(container.read(springMarkersProvider).status.isLoading, isFalse);
-      expect(repository.requests, isNot(contains('en-AU')));
+    // The late completion is cached as stale tile data, but cannot replace the
+    // active visible state or strand the loading status. No request is queued
+    // until the post-frame camera callback below actually arrives.
+    expect(
+      container
+          .read(mapMarkerProvider)
+          .items
+          .whereType<SpringPoint>()
+          .single
+          .spring
+          .documentId,
+      'czech',
+    );
+    expect(container.read(mapMarkerProvider).status.isLoading, isFalse);
+    expect(container.read(springMarkersProvider).status.isLoading, isFalse);
+    expect(repository.requests, isNot(contains('en-AU')));
 
-      final englishLoad = notifier.reportCamera(
-        _pragueBounds,
-        18,
-        tag: 'en-AU',
-      );
-      repository.requests['en-AU']!.complete(
-        ApiResult.success([_spring('english', 50.080, 14.420)]),
-      );
-      await englishLoad;
+    final englishLoad = notifier.reportCamera(_pragueBounds, 18, tag: 'en-AU');
+    repository.requests['en-AU']!.complete(
+      ApiResult.success([_spring('english', 50.080, 14.420)]),
+    );
+    await englishLoad;
 
-      expect(
-        container
-            .read(mapMarkerProvider)
-            .items
-            .whereType<SpringPoint>()
-            .single
-            .spring
-            .documentId,
-        'english',
-      );
-      expect(container.read(mapMarkerProvider).visibleBoundsLoaded, isTrue);
-    },
-  );
+    expect(
+      container
+          .read(mapMarkerProvider)
+          .items
+          .whereType<SpringPoint>()
+          .single
+          .spring
+          .documentId,
+      'english',
+    );
+    expect(container.read(mapMarkerProvider).visibleBoundsLoaded, isTrue);
+  });
 }

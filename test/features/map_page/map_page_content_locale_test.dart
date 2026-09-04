@@ -12,14 +12,14 @@ import 'package:studanky_flutter_app/core/providers/shared_preferences_provider.
 import 'package:studanky_flutter_app/features/map_page/map_page_content.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/platform_config.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
-import 'package:studanky_flutter_app/features/springs/data/spring_marker_source.dart';
+import 'package:studanky_flutter_app/features/springs/data/cached_spring_marker_repository.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_status.dart';
 import 'package:studanky_flutter_app/features/springs/providers/spring_markers_provider.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
-class _EmptyMarkerSource implements SpringMarkerSource {
+class _EmptyMarkerRepository implements SpringMarkerRepository {
   final Set<String> loadedLanguageTags = {};
 
   @override
@@ -64,7 +64,7 @@ void main() {
       await _cacheMapAttributionLogo();
       addTearDown(svg.cache.clear);
       final preferences = await SharedPreferences.getInstance();
-      final markerSource = _EmptyMarkerSource();
+      final markerRepository = _EmptyMarkerRepository();
       const detailMarker = SpringMarkerEntity(
         documentId: 'test',
         name: 'Test spring',
@@ -80,7 +80,7 @@ void main() {
           connectivityStatusProvider.overrideWith(
             _OnlineConnectivityController.new,
           ),
-          springMarkerSourceProvider.overrideWithValue(markerSource),
+          springMarkerRepositoryProvider.overrideWithValue(markerRepository),
         ],
       );
       addTearDown(container.dispose);

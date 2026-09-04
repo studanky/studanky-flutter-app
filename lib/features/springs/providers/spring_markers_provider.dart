@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/core/api/utils/api_result.dart';
-import 'package:studanky_flutter_app/features/springs/data/spring_marker_source.dart';
+import 'package:studanky_flutter_app/features/springs/data/cached_spring_marker_repository.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 
@@ -38,7 +38,8 @@ abstract class SpringMarkersState with _$SpringMarkersState {
 }
 
 /// Owns the fetched springs for the whole app session and coalesces the
-/// requests that fill them, delegating *when* to fetch to [SpringMarkerSource].
+/// requests that fill them, delegating cache and fetch policy to
+/// [SpringMarkerRepository].
 ///
 /// Everything here is about not disturbing the map: a covered area returns
 /// without touching state, an unchanged refresh keeps the previous list
@@ -46,7 +47,8 @@ abstract class SpringMarkersState with _$SpringMarkersState {
 class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
   final Logger _logger = Logger('SpringMarkersNotifier');
 
-  SpringMarkerSource get _source => ref.read(springMarkerSourceProvider);
+  SpringMarkerRepository get _repository =>
+      ref.read(springMarkerRepositoryProvider);
 
   /// The running drain, so concurrent callers join it instead of stacking.
   Future<void>? _inFlight;
@@ -78,7 +80,7 @@ class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
 
   /// Whether [bounds] already has data to draw, however old.
   bool hasDataFor(SpringBounds bounds, {required String languageTag}) =>
-      _source.hasDataFor(bounds, languageTag: languageTag);
+      _repository.hasDataFor(bounds, languageTag: languageTag);
 
   /// Ensures the springs inside [bounds] are loaded, and completes once they
   /// are. A no-op — no request, no state write — when the area is already
@@ -99,7 +101,7 @@ class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
     bool force = false,
   }) {
     updateLanguageTag(languageTag);
-    if (!force && _source.covers(bounds, languageTag: languageTag)) {
+    if (!force && _repository.covers(bounds, languageTag: languageTag)) {
       return Future<void>.value();
     }
 
@@ -121,7 +123,9 @@ class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
 
       // The round that just finished may already have covered this camera —
       // a wide fetch usually subsumes the pan that was queued behind it.
-      if (!force && _source.covers(bounds, languageTag: languageTag)) continue;
+      if (!force && _repository.covers(bounds, languageTag: languageTag)) {
+        continue;
+      }
 
       await _load(bounds, languageTag);
     }
@@ -130,7 +134,7 @@ class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
   Future<void> _load(SpringBounds bounds, String languageTag) async {
     state = state.copyWith(status: const AsyncValue<void>.loading());
 
-    final result = await _source.load(bounds, languageTag: languageTag);
+    final result = await _repository.load(bounds, languageTag: languageTag);
 
     // A locale flip can happen while the old request is on the wire. The
     // source may cache that complete old-locale response, but it is stale for

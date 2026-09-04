@@ -19,13 +19,13 @@ import 'package:studanky_flutter_app/features/spring_detail/data/spring_detail_r
 import 'package:studanky_flutter_app/features/spring_detail/entities/report_page.dart';
 import 'package:studanky_flutter_app/features/spring_detail/entities/spring_detail.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
-import 'package:studanky_flutter_app/features/springs/data/spring_marker_source.dart';
+import 'package:studanky_flutter_app/features/springs/data/cached_spring_marker_repository.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_status.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
-class _EmptyMarkerSource implements SpringMarkerSource {
+class _EmptyMarkerRepository implements SpringMarkerRepository {
   final Set<String> loadedLanguageTags = {};
 
   @override
@@ -168,7 +168,9 @@ Future<ProviderContainer> _container({
       connectivityStatusProvider.overrideWith(
         _OnlineConnectivityController.new,
       ),
-      springMarkerSourceProvider.overrideWithValue(_EmptyMarkerSource()),
+      springMarkerRepositoryProvider.overrideWithValue(
+        _EmptyMarkerRepository(),
+      ),
       springDetailRepositoryProvider.overrideWithValue(repository),
       if (locationService != null)
         userLocationServiceProvider.overrideWithValue(locationService),
