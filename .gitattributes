@@ -1,0 +1,3 @@
+# Keep third-party source identical to upstream and exclude it from repository
+# language statistics and local whitespace policy.
+third_party/** linguist-vendored -whitespace

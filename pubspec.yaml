@@ -41,6 +41,14 @@ dependencies:
   supercluster: ^3.2.0
   url_launcher: ^6.3.2
 
+# geolocator_apple 2.3.14 exposes requestAlwaysAuthorization when built with
+# SwiftPM even though this app only requests foreground location. Keep this
+# local patch until https://github.com/Baseflow/flutter-geolocator/issues/1763
+# is fixed in a stable release.
+dependency_overrides:
+  geolocator_apple:
+    path: third_party/geolocator_apple
+
 dev_dependencies:
   build_runner: ^2.4.9
   flutter_launcher_icons: ^0.14.4
