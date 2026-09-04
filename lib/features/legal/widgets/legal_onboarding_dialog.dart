@@ -2,13 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:studanky_flutter_app/core/styles/dimens.dart';
-import 'package:studanky_flutter_app/core/styles/shapes.dart';
-import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
 import 'package:studanky_flutter_app/core/widgets/blurred_dialog.dart';
-import 'package:studanky_flutter_app/core/widgets/scroll_edge_effect.dart';
 import 'package:studanky_flutter_app/features/legal/providers/legal_onboarding_provider.dart';
+import 'package:studanky_flutter_app/features/legal/widgets/legal_onboarding_progress_dots.dart';
+import 'package:studanky_flutter_app/features/legal/widgets/legal_onboarding_step.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 Future<void> showLegalOnboardingDialog(BuildContext context) {
@@ -82,7 +80,10 @@ class _LegalOnboardingCardState extends ConsumerState<_LegalOnboardingCard> {
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
             child: Column(
               children: [
-                _Dots(count: _steps(context).length, index: _index),
+                LegalOnboardingProgressDots(
+                  count: _steps(context).length,
+                  index: _index,
+                ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
@@ -117,7 +118,7 @@ class _LegalOnboardingCardState extends ConsumerState<_LegalOnboardingCard> {
     final l10n = context.l10n;
 
     return [
-      _OnboardingStep(
+      LegalOnboardingStep(
         icon: Icons.volunteer_activism_rounded,
         title: l10n.legal_onboarding_step_welcome_title,
         body: l10n.legal_onboarding_step_welcome_body,
@@ -126,7 +127,7 @@ class _LegalOnboardingCardState extends ConsumerState<_LegalOnboardingCard> {
           l10n.legal_onboarding_step_welcome_bullet_feedback,
         ],
       ),
-      _OnboardingStep(
+      LegalOnboardingStep(
         icon: Icons.warning_amber_rounded,
         title: l10n.legal_onboarding_step_water_title,
         body: l10n.legal_onboarding_step_water_body,
@@ -138,123 +139,5 @@ class _LegalOnboardingCardState extends ConsumerState<_LegalOnboardingCard> {
         accent: true,
       ),
     ];
-  }
-}
-
-class _OnboardingStep extends StatelessWidget {
-  const _OnboardingStep({
-    required this.icon,
-    required this.title,
-    required this.body,
-    this.bullets = const [],
-    this.accent = false,
-  });
-
-  final IconData icon;
-  final String title;
-  final String body;
-  final List<String> bullets;
-  final bool accent;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.appColors;
-    final text = context.appTextStyles;
-    final iconColor = accent ? colors.secondaryVariant1 : colors.primaryMain;
-    final iconBackground = accent ? colors.secondaryBeige : colors.primary100;
-
-    return ScrollEdgeEffect(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: ShapeDecoration(
-                color: iconBackground,
-                shape: squircleBorder(kRadiusControl),
-              ),
-              child: Icon(icon, color: iconColor),
-            ),
-            const SizedBox(height: 18),
-            Text(title, style: text.h5.copyWith(color: colors.neutral900)),
-            const SizedBox(height: 10),
-            Text(body, style: text.body1.copyWith(color: colors.neutral700)),
-            if (bullets.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              for (final bullet in bullets)
-                _Bullet(text: bullet, accent: accent),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Bullet extends StatelessWidget {
-  const _Bullet({required this.text, required this.accent});
-
-  final String text;
-  final bool accent;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.appColors;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.check_circle_rounded,
-            size: 18,
-            color: accent ? colors.secondaryVariant1 : colors.primaryMain,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: context.appTextStyles.body2.copyWith(
-                color: colors.neutral800,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Dots extends StatelessWidget {
-  const _Dots({required this.count, required this.index});
-
-  final int count;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.appColors;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        for (var i = 0; i < count; i++)
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOutCubic,
-            width: i == index ? 18 : 7,
-            height: 7,
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            decoration: BoxDecoration(
-              color: i == index ? colors.primaryMain : colors.neutral300,
-              borderRadius: BorderRadius.circular(kRadiusPill),
-            ),
-          ),
-      ],
-    );
   }
 }

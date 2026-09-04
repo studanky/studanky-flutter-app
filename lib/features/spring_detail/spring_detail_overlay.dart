@@ -1,9 +1,5 @@
-import 'dart:ui' show ImageFilter;
-
-import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
-import 'package:studanky_flutter_app/core/styles/dimens.dart';
-import 'package:studanky_flutter_app/core/widgets/backdrop_blur_scope.dart';
+import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_frost_backdrop.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 
@@ -141,7 +137,10 @@ class _SpringDetailOverlayState extends State<SpringDetailOverlay>
     return Stack(
       children: [
         Positioned.fill(
-          child: _FrostBackdrop(animation: _entrance, extent: _sheetExtent),
+          child: SpringDetailFrostBackdrop(
+            animation: _entrance,
+            extent: _sheetExtent,
+          ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
@@ -167,52 +166,6 @@ class _SpringDetailOverlayState extends State<SpringDetailOverlay>
           ),
         ),
       ],
-    );
-  }
-}
-
-/// Frost between the map and the sheet: off while the sheet rests at its
-/// half-open detent (the map is the context there), fading in as the sheet is
-/// dragged towards full height, and out again with the exit slide. Ignores
-/// pointers — the map below stays interactive.
-class _FrostBackdrop extends StatelessWidget {
-  const _FrostBackdrop({required this.animation, required this.extent});
-
-  final Animation<double> animation;
-  final ValueListenable<double> extent;
-
-  /// Shared with the dialogs (`kBackdropBlurSigma`) so every frosted backdrop
-  /// reads identically. Light by design — the map stays legible, just softened.
-  static const double _maxSigma = kBackdropBlurSigma;
-
-  /// Extent band over which the frost fades in: none up to just above the
-  /// half-open detent, full strength shortly before full screen.
-  static const double _frostStartExtent = 0.65;
-  static const double _frostFullExtent = 0.95;
-
-  @override
-  Widget build(BuildContext context) {
-    final blurEnabled = BackdropBlurScope.enabledOf(context);
-
-    return IgnorePointer(
-      child: AnimatedBuilder(
-        animation: Listenable.merge([animation, extent]),
-        builder: (context, _) {
-          final frostT =
-              ((extent.value - _frostStartExtent) /
-                      (_frostFullExtent - _frostStartExtent))
-                  .clamp(0.0, 1.0);
-          final sigma = _maxSigma * animation.value * frostT;
-          // Skip the BackdropFilter entirely while there is nothing to frost —
-          // a 0-sigma filter still costs a saveLayer over the whole map.
-          if (sigma == 0) return const SizedBox.expand();
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
-            enabled: blurEnabled,
-            child: const SizedBox.expand(),
-          );
-        },
-      ),
     );
   }
 }

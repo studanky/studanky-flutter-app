@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:studanky_flutter_app/core/legal/legal_config.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:studanky_flutter_app/core/platform/url_launcher_external_url_launcher.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 
-class LegalLinkButton extends StatelessWidget {
+class LegalLinkButton extends ConsumerWidget {
   const LegalLinkButton({
     super.key,
     required this.icon,
@@ -17,13 +18,14 @@ class LegalLinkButton extends StatelessWidget {
   final Uri uri;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.appColors;
 
     return Align(
       alignment: Alignment.centerLeft,
       child: TextButton.icon(
-        onPressed: () => unawaited(LegalConfig.open(uri)),
+        onPressed: () =>
+            unawaited(ref.read(externalUrlLauncherProvider).open(uri)),
         icon: Icon(icon, size: 18),
         label: Text(label),
         style: TextButton.styleFrom(

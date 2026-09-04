@@ -1,30 +1,29 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logging/logging.dart';
-// import 'package:studanky_flutter_app/core/styles/styles.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:studanky_flutter_app/core/platform/url_launcher_external_url_launcher.dart';
 
 /// Mandatory Mapy.com attribution: a clickable logo plus the copyright text,
 /// kept visible over the map as required by the API terms
 /// (developer.mapy.com/.../atribution). Applies to the free tier too.
-class MapAttribution extends StatelessWidget {
+class MapAttribution extends ConsumerWidget {
   const MapAttribution({super.key});
 
   static const String _logoUrl = 'https://api.mapy.com/img/api/logo.svg';
-  static const String _mapyUrl = 'https://mapy.com/';
+  static final Uri _mapyUri = Uri.parse('https://mapy.com/');
   // static const String _copyrightUrl = 'https://api.mapy.com/copyright';
   // static const String _copyrightText = 'Seznam.cz a.s. a další';
 
   static final Logger _logger = Logger('MapAttribution');
 
-  Future<void> _open(String url) async {
-    final uri = Uri.parse(url);
+  Future<void> _open(WidgetRef ref) async {
     try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      await ref.read(externalUrlLauncherProvider).open(_mapyUri);
     } catch (error, stackTrace) {
-      _logger.warning('Failed to open $url', error, stackTrace);
+      _logger.warning('Failed to open $_mapyUri', error, stackTrace);
     }
   }
 
@@ -32,7 +31,7 @@ class MapAttribution extends StatelessWidget {
   static const double _watermarkOpacity = 0.65;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Opacity(
@@ -42,7 +41,7 @@ class MapAttribution extends StatelessWidget {
           child: Column(
             children: [
               GestureDetector(
-                onTap: () => unawaited(_open(_mapyUrl)),
+                onTap: () => unawaited(_open(ref)),
                 behavior: HitTestBehavior.translucent,
                 child: SvgPicture.network(
                   _logoUrl,

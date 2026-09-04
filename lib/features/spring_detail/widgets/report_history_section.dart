@@ -3,16 +3,15 @@ import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_reports_provider.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/detail_section.dart';
+import 'package:studanky_flutter_app/features/spring_detail/widgets/centered_content.dart';
+import 'package:studanky_flutter_app/features/spring_detail/widgets/inline_retry_message.dart';
+import 'package:studanky_flutter_app/features/spring_detail/widgets/report_history_card.dart';
+import 'package:studanky_flutter_app/features/spring_detail/widgets/report_history_footer.dart';
+import 'package:studanky_flutter_app/features/spring_detail/widgets/report_history_section_title.dart';
+import 'package:studanky_flutter_app/features/spring_detail/widgets/report_history_spinner.dart';
 import 'package:studanky_flutter_app/features/spring_detail/widgets/report_tile.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
-/// Builds the "Historie záznamů" section as slivers so it shares the sheet's
-/// single scroll view (and thus the drag-to-expand gesture). The records sit in
-/// one rounded grouped card to match the detail's other sections.
-///
-/// Renders the right state from [state]: a first-page spinner, an error with
-/// retry, an empty message, or the accumulated list with a load-more footer.
 List<Widget> buildReportHistorySlivers(
   BuildContext context, {
   required SpringReportsState state,
@@ -21,10 +20,13 @@ List<Widget> buildReportHistorySlivers(
   required VoidCallback onRetryLoadMore,
 }) {
   return [
-    SliverToBoxAdapter(child: _SectionTitle(total: state.total)),
+    SliverToBoxAdapter(child: ReportHistorySectionTitle(total: state.total)),
     _historyContent(context, state, maxFlowScale, onRetry),
     SliverToBoxAdapter(
-      child: _Footer(state: state, onRetryLoadMore: onRetryLoadMore),
+      child: ReportHistoryFooter(
+        state: state,
+        onRetryLoadMore: onRetryLoadMore,
+      ),
     ),
   ];
 }
@@ -37,15 +39,17 @@ Widget _historyContent(
 ) {
   if (state.isInitialLoading) {
     return const SliverToBoxAdapter(
-      child: _CardWrap(child: _CenteredPadding(child: _Spinner())),
+      child: ReportHistoryCard(
+        child: CenteredContent(child: ReportHistorySpinner()),
+      ),
     );
   }
 
   if (state.hasInitialError) {
     return SliverToBoxAdapter(
-      child: _CardWrap(
-        child: _CenteredPadding(
-          child: _InlineError(
+      child: ReportHistoryCard(
+        child: CenteredContent(
+          child: InlineRetryMessage(
             message: context.l10n.spring_detail_history_error,
             onRetry: onRetry,
           ),
@@ -56,8 +60,8 @@ Widget _historyContent(
 
   if (state.isEmpty) {
     return SliverToBoxAdapter(
-      child: _CardWrap(
-        child: _CenteredPadding(
+      child: ReportHistoryCard(
+        child: CenteredContent(
           child: Text(
             context.l10n.spring_detail_history_empty,
             style: context.appTextStyles.body2.copyWith(
@@ -71,7 +75,6 @@ Widget _historyContent(
 
   final reports = state.reports;
   final colors = context.appColors;
-
   return SliverPadding(
     padding: const EdgeInsets.symmetric(horizontal: 16),
     sliver: DecoratedSliver(
@@ -98,133 +101,4 @@ Widget _historyContent(
       ),
     ),
   );
-}
-
-/// Section caption shared with [DetailSection]: uppercase, muted, with the
-/// total count appended.
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.total});
-
-  final int total;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.appColors;
-    final text = context.appTextStyles;
-    final title = context.l10n.spring_detail_history_title.toUpperCase();
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(22, 18, 16, 8),
-      // textHint — matches DetailSection's caption for the same reason.
-      child: Text(
-        total > 0 ? '$title ($total)' : title,
-        style: text.body2.copyWith(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.6,
-          color: colors.textHint,
-        ),
-      ),
-    );
-  }
-}
-
-/// Wraps a one-off state (spinner / error / empty) in the same card the list
-/// uses, with side margins, so every history state reads consistently.
-class _CardWrap extends StatelessWidget {
-  const _CardWrap({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: DetailCard(padding: EdgeInsets.zero, child: child),
-    );
-  }
-}
-
-class _Footer extends StatelessWidget {
-  const _Footer({required this.state, required this.onRetryLoadMore});
-
-  final SpringReportsState state;
-  final VoidCallback onRetryLoadMore;
-
-  @override
-  Widget build(BuildContext context) {
-    if (state.isLoadingMore) {
-      return const _CenteredPadding(child: _Spinner());
-    }
-
-    if (state.loadMoreError != null) {
-      return _CenteredPadding(
-        child: _InlineError(
-          message: context.l10n.spring_detail_history_load_more_error,
-          onRetry: onRetryLoadMore,
-        ),
-      );
-    }
-
-    return const SizedBox.shrink();
-  }
-}
-
-class _CenteredPadding extends StatelessWidget {
-  const _CenteredPadding({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-      child: Center(child: child),
-    );
-  }
-}
-
-class _Spinner extends StatelessWidget {
-  const _Spinner();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 28,
-      height: 28,
-      child: CircularProgressIndicator(
-        strokeWidth: 2.5,
-        color: context.appColors.primaryMain,
-      ),
-    );
-  }
-}
-
-class _InlineError extends StatelessWidget {
-  const _InlineError({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.appColors;
-    final text = context.appTextStyles;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          message,
-          textAlign: TextAlign.center,
-          style: text.body2.copyWith(color: colors.neutral700),
-        ),
-        const SizedBox(height: 8),
-        TextButton(
-          onPressed: onRetry,
-          child: Text(context.l10n.error_widget_default_try_again),
-        ),
-      ],
-    );
-  }
 }

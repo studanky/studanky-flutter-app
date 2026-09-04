@@ -1,9 +1,5 @@
-import 'package:url_launcher/url_launcher.dart';
-
-/// Central place for public legal routes used by the app UI.
-class LegalConfig {
-  const LegalConfig._();
-
+/// Public project and legal-document URLs used by the app UI.
+abstract final class LegalLinks {
   static final Uri websiteUrl = Uri.parse('https://studankyapp.cz');
   static final Uri termsUrl = Uri.parse('https://studankyapp.cz/terms-of-use');
   static final Uri privacyUrl = Uri.parse(
@@ -19,8 +15,4 @@ class LegalConfig {
   static final Uri mapyCopyrightUrl = Uri.parse(
     'https://api.mapy.com/copyright',
   );
-
-  static Future<bool> open(Uri uri) {
-    return launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
 }
