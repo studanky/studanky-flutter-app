@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'map_marker_provider.dart';
@@ -9,6 +9,7 @@ part of 'map_marker_provider.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -35,23 +36,29 @@ $MapMarkerStateCopyWith<MapMarkerState> get copyWith => _$MapMarkerStateCopyWith
 
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  final _this = this as MapMarkerState;
   properties
     ..add(DiagnosticsProperty('type', 'MapMarkerState'))
-    ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('items', items))..add(DiagnosticsProperty('visibleBoundsLoaded', visibleBoundsLoaded))..add(DiagnosticsProperty('hasVisibleMarkers', hasVisibleMarkers));
+    ..add(DiagnosticsProperty('status', _this.status))..add(DiagnosticsProperty('items', _this.items))..add(DiagnosticsProperty('visibleBoundsLoaded', _this.visibleBoundsLoaded))..add(DiagnosticsProperty('hasVisibleMarkers', _this.hasVisibleMarkers));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapMarkerState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.visibleBoundsLoaded, visibleBoundsLoaded) || other.visibleBoundsLoaded == visibleBoundsLoaded)&&(identical(other.hasVisibleMarkers, hasVisibleMarkers) || other.hasVisibleMarkers == hasVisibleMarkers));
+  final _this = this as MapMarkerState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapMarkerState&&(identical(other.status, _this.status) || other.status == _this.status)&&const DeepCollectionEquality().equals(other.items, _this.items)&&(identical(other.visibleBoundsLoaded, _this.visibleBoundsLoaded) || other.visibleBoundsLoaded == _this.visibleBoundsLoaded)&&(identical(other.hasVisibleMarkers, _this.hasVisibleMarkers) || other.hasVisibleMarkers == _this.hasVisibleMarkers));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(items),visibleBoundsLoaded,hasVisibleMarkers);
+int get hashCode {
+  final _this = this as MapMarkerState;
+  return Object.hash(runtimeType,_this.status,const DeepCollectionEquality().hash(_this.items),_this.visibleBoundsLoaded,_this.hasVisibleMarkers);
+}
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'MapMarkerState(status: $status, items: $items, visibleBoundsLoaded: $visibleBoundsLoaded, hasVisibleMarkers: $hasVisibleMarkers)';
+  final _this = this as MapMarkerState;
+  return 'MapMarkerState(status: ${_this.status}, items: ${_this.items}, visibleBoundsLoaded: ${_this.visibleBoundsLoaded}, hasVisibleMarkers: ${_this.hasVisibleMarkers})';
 }
 
 
@@ -80,7 +87,7 @@ class _$MapMarkerStateCopyWithImpl<$Res>
 /// Create a copy of MapMarkerState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? items = null,Object? visibleBoundsLoaded = null,Object? hasVisibleMarkers = null,}) {
-  return _then(_self.copyWith(
+  return _then(MapMarkerState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as AsyncValue<void>,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
 as List<MapClusterItem>,visibleBoundsLoaded: null == visibleBoundsLoaded ? _self.visibleBoundsLoaded : visibleBoundsLoaded // ignore: cast_nullable_to_non_nullable
@@ -226,7 +233,7 @@ return $default(_that.status,_that.items,_that.visibleBoundsLoaded,_that.hasVisi
 
 
 class _MapMarkerState with DiagnosticableTreeMixin implements MapMarkerState {
-  const _MapMarkerState({this.status = const AsyncValue<void>.data(null), final  List<MapClusterItem> items = const <MapClusterItem>[], this.visibleBoundsLoaded = false, this.hasVisibleMarkers = false}): _items = items;
+  const _MapMarkerState({this.status = const AsyncValue<void>.data(null),  List<MapClusterItem> items = const <MapClusterItem>[], this.visibleBoundsLoaded = false, this.hasVisibleMarkers = false}): _items = items;
   
 
 /// Loading/error of the background fetch, mirrored from
@@ -261,23 +268,25 @@ _$MapMarkerStateCopyWith<_MapMarkerState> get copyWith => __$MapMarkerStateCopyW
 
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
+    properties
     ..add(DiagnosticsProperty('type', 'MapMarkerState'))
     ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('items', items))..add(DiagnosticsProperty('visibleBoundsLoaded', visibleBoundsLoaded))..add(DiagnosticsProperty('hasVisibleMarkers', hasVisibleMarkers));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapMarkerState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.visibleBoundsLoaded, visibleBoundsLoaded) || other.visibleBoundsLoaded == visibleBoundsLoaded)&&(identical(other.hasVisibleMarkers, hasVisibleMarkers) || other.hasVisibleMarkers == hasVisibleMarkers));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapMarkerState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.items, _items)&&(identical(other.visibleBoundsLoaded, visibleBoundsLoaded) || other.visibleBoundsLoaded == visibleBoundsLoaded)&&(identical(other.hasVisibleMarkers, hasVisibleMarkers) || other.hasVisibleMarkers == hasVisibleMarkers));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_items),visibleBoundsLoaded,hasVisibleMarkers);
+int get hashCode {
+    return Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_items),visibleBoundsLoaded,hasVisibleMarkers);
+}
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'MapMarkerState(status: $status, items: $items, visibleBoundsLoaded: $visibleBoundsLoaded, hasVisibleMarkers: $hasVisibleMarkers)';
+    return 'MapMarkerState(status: $status, items: $items, visibleBoundsLoaded: $visibleBoundsLoaded, hasVisibleMarkers: $hasVisibleMarkers)';
 }
 
 

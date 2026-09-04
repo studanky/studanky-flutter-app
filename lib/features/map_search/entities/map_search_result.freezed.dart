@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'map_search_result.dart';
@@ -9,6 +9,7 @@ part of 'map_search_result.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -31,16 +32,21 @@ $MapSearchResultCopyWith<MapSearchResult> get copyWith => _$MapSearchResultCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.bounds, bounds) || other.bounds == bounds)&&(identical(other.spring, spring) || other.spring == spring));
+  final _this = this as MapSearchResult;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchResult&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.position, _this.position) || other.position == _this.position)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.subtitle, _this.subtitle) || other.subtitle == _this.subtitle)&&(identical(other.bounds, _this.bounds) || other.bounds == _this.bounds)&&(identical(other.spring, _this.spring) || other.spring == _this.spring));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,label,position,type,subtitle,bounds,spring);
+int get hashCode {
+  final _this = this as MapSearchResult;
+  return Object.hash(runtimeType,_this.label,_this.position,_this.type,_this.subtitle,_this.bounds,_this.spring);
+}
 
 @override
 String toString() {
-  return 'MapSearchResult(label: $label, position: $position, type: $type, subtitle: $subtitle, bounds: $bounds, spring: $spring)';
+  final _this = this as MapSearchResult;
+  return 'MapSearchResult(label: ${_this.label}, position: ${_this.position}, type: ${_this.type}, subtitle: ${_this.subtitle}, bounds: ${_this.bounds}, spring: ${_this.spring})';
 }
 
 
@@ -69,7 +75,7 @@ class _$MapSearchResultCopyWithImpl<$Res>
 /// Create a copy of MapSearchResult
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? position = null,Object? type = null,Object? subtitle = freezed,Object? bounds = freezed,Object? spring = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(MapSearchResult(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as LatLng,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
@@ -267,16 +273,18 @@ _$MapSearchResultCopyWith<_MapSearchResult> get copyWith => __$MapSearchResultCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.bounds, bounds) || other.bounds == bounds)&&(identical(other.spring, spring) || other.spring == spring));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchResult&&(identical(other.label, label) || other.label == label)&&(identical(other.position, position) || other.position == position)&&(identical(other.type, type) || other.type == type)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.bounds, bounds) || other.bounds == bounds)&&(identical(other.spring, spring) || other.spring == spring));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,label,position,type,subtitle,bounds,spring);
+int get hashCode {
+    return Object.hash(runtimeType,label,position,type,subtitle,bounds,spring);
+}
 
 @override
 String toString() {
-  return 'MapSearchResult(label: $label, position: $position, type: $type, subtitle: $subtitle, bounds: $bounds, spring: $spring)';
+    return 'MapSearchResult(label: $label, position: $position, type: $type, subtitle: $subtitle, bounds: $bounds, spring: $spring)';
 }
 
 
@@ -357,16 +365,21 @@ $MapSearchBoundsCopyWith<MapSearchBounds> get copyWith => _$MapSearchBoundsCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchBounds&&(identical(other.southWest, southWest) || other.southWest == southWest)&&(identical(other.northEast, northEast) || other.northEast == northEast));
+  final _this = this as MapSearchBounds;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapSearchBounds&&(identical(other.southWest, _this.southWest) || other.southWest == _this.southWest)&&(identical(other.northEast, _this.northEast) || other.northEast == _this.northEast));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,southWest,northEast);
+int get hashCode {
+  final _this = this as MapSearchBounds;
+  return Object.hash(runtimeType,_this.southWest,_this.northEast);
+}
 
 @override
 String toString() {
-  return 'MapSearchBounds(southWest: $southWest, northEast: $northEast)';
+  final _this = this as MapSearchBounds;
+  return 'MapSearchBounds(southWest: ${_this.southWest}, northEast: ${_this.northEast})';
 }
 
 
@@ -395,7 +408,7 @@ class _$MapSearchBoundsCopyWithImpl<$Res>
 /// Create a copy of MapSearchBounds
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? southWest = null,Object? northEast = null,}) {
-  return _then(_self.copyWith(
+  return _then(MapSearchBounds(
 southWest: null == southWest ? _self.southWest : southWest // ignore: cast_nullable_to_non_nullable
 as LatLng,northEast: null == northEast ? _self.northEast : northEast // ignore: cast_nullable_to_non_nullable
 as LatLng,
@@ -555,16 +568,18 @@ _$MapSearchBoundsCopyWith<_MapSearchBounds> get copyWith => __$MapSearchBoundsCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchBounds&&(identical(other.southWest, southWest) || other.southWest == southWest)&&(identical(other.northEast, northEast) || other.northEast == northEast));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapSearchBounds&&(identical(other.southWest, southWest) || other.southWest == southWest)&&(identical(other.northEast, northEast) || other.northEast == northEast));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,southWest,northEast);
+int get hashCode {
+    return Object.hash(runtimeType,southWest,northEast);
+}
 
 @override
 String toString() {
-  return 'MapSearchBounds(southWest: $southWest, northEast: $northEast)';
+    return 'MapSearchBounds(southWest: $southWest, northEast: $northEast)';
 }
 
 

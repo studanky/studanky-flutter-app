@@ -6,6 +6,9 @@ analyzer:
     - "**/*.freezed.dart"
     - "**/*.gr.dart"
     - "bricks/**/*.dart"
+    - build/**
+    - android/**
+    - ios/**
 
   # See https://dart.dev/guides/language/analysis-options#enabling-additional-type-checks
   # strong-mode:
@@ -26,7 +29,6 @@ linter:
     - avoid_empty_else
     - avoid_function_literals_in_foreach_calls
     - avoid_init_to_null
-    - avoid_null_checks_in_equality_operators
     - avoid_print
     - avoid_relative_lib_imports
     - avoid_renaming_method_parameters
@@ -78,7 +80,6 @@ linter:
     - prefer_generic_function_type_aliases
     - prefer_if_elements_to_conditional_expressions
     - prefer_if_null_operators
-    - prefer_initializing_formals
     - prefer_interpolation_to_compose_strings
     - prefer_is_empty
     - prefer_is_not_empty
@@ -100,7 +101,6 @@ linter:
     - throw_in_finally
     - type_init_formals
     - unawaited_futures
-    - unnecessary_await_in_return
     - unnecessary_brace_in_string_interps
     - unnecessary_const
     - unnecessary_getters_setters

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'report_page.dart';
@@ -9,6 +9,7 @@ part of 'report_page.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ReportPageCopyWith<ReportPage> get copyWith => _$ReportPageCopyWithImpl<ReportP
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReportPage&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.page, page) || other.page == page)&&(identical(other.pageCount, pageCount) || other.pageCount == pageCount)&&(identical(other.total, total) || other.total == total));
+  final _this = this as ReportPage;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReportPage&&const DeepCollectionEquality().equals(other.items, _this.items)&&(identical(other.page, _this.page) || other.page == _this.page)&&(identical(other.pageCount, _this.pageCount) || other.pageCount == _this.pageCount)&&(identical(other.total, _this.total) || other.total == _this.total));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(items),page,pageCount,total);
+int get hashCode {
+  final _this = this as ReportPage;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.items),_this.page,_this.pageCount,_this.total);
+}
 
 @override
 String toString() {
-  return 'ReportPage(items: $items, page: $page, pageCount: $pageCount, total: $total)';
+  final _this = this as ReportPage;
+  return 'ReportPage(items: ${_this.items}, page: ${_this.page}, pageCount: ${_this.pageCount}, total: ${_this.total})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ReportPageCopyWithImpl<$Res>
 /// Create a copy of ReportPage
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? items = null,Object? page = null,Object? pageCount = null,Object? total = null,}) {
-  return _then(_self.copyWith(
+  return _then(ReportPage(
 items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
 as List<Report>,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
 as int,pageCount: null == pageCount ? _self.pageCount : pageCount // ignore: cast_nullable_to_non_nullable
@@ -209,7 +215,7 @@ return $default(_that.items,_that.page,_that.pageCount,_that.total);case _:
 
 
 class _ReportPage extends ReportPage {
-  const _ReportPage({required final  List<Report> items, required this.page, required this.pageCount, required this.total}): _items = items,super._();
+  const _ReportPage({required  List<Report> items, required this.page, required this.pageCount, required this.total}): _items = items,super._();
   
 
  final  List<Report> _items;
@@ -233,16 +239,18 @@ _$ReportPageCopyWith<_ReportPage> get copyWith => __$ReportPageCopyWithImpl<_Rep
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ReportPage&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.page, page) || other.page == page)&&(identical(other.pageCount, pageCount) || other.pageCount == pageCount)&&(identical(other.total, total) || other.total == total));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ReportPage&&const DeepCollectionEquality().equals(other.items, _items)&&(identical(other.page, page) || other.page == page)&&(identical(other.pageCount, pageCount) || other.pageCount == pageCount)&&(identical(other.total, total) || other.total == total));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),page,pageCount,total);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),page,pageCount,total);
+}
 
 @override
 String toString() {
-  return 'ReportPage(items: $items, page: $page, pageCount: $pageCount, total: $total)';
+    return 'ReportPage(items: $items, page: $page, pageCount: $pageCount, total: $total)';
 }
 
 

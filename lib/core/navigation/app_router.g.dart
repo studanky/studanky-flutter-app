@@ -8,8 +8,11 @@ part of 'app_router.dart';
 
 List<RouteBase> get $appRoutes => [$mapRoute, $springRoute, $shareRoute];
 
-RouteBase get $mapRoute =>
-    GoRouteData.$route(path: '/map', factory: $MapRoute._fromState);
+RouteBase get $mapRoute => GoRouteData.$route(
+  path: '/map',
+  hasOverriddenOnExit: false,
+  factory: $MapRoute._fromState,
+);
 
 mixin $MapRoute on GoRouteData {
   static MapRoute _fromState(GoRouterState state) => const MapRoute();
@@ -33,6 +36,7 @@ mixin $MapRoute on GoRouteData {
 
 RouteBase get $springRoute => GoRouteData.$route(
   path: '/map/spring/:documentId',
+  hasOverriddenOnExit: false,
   factory: $SpringRoute._fromState,
 );
 
@@ -65,8 +69,11 @@ mixin $SpringRoute on GoRouteData {
       context.replace(location, extra: _self.$extra);
 }
 
-RouteBase get $shareRoute =>
-    GoRouteData.$route(path: '/s/:documentId', factory: $ShareRoute._fromState);
+RouteBase get $shareRoute => GoRouteData.$route(
+  path: '/s/:documentId',
+  hasOverriddenOnExit: false,
+  factory: $ShareRoute._fromState,
+);
 
 mixin $ShareRoute on GoRouteData {
   static ShareRoute _fromState(GoRouterState state) =>

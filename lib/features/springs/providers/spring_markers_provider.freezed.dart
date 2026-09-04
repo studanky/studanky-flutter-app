@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'spring_markers_provider.dart';
@@ -9,6 +9,7 @@ part of 'spring_markers_provider.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -33,23 +34,29 @@ $SpringMarkersStateCopyWith<SpringMarkersState> get copyWith => _$SpringMarkersS
 
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  final _this = this as SpringMarkersState;
   properties
     ..add(DiagnosticsProperty('type', 'SpringMarkersState'))
-    ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('springs', springs))..add(DiagnosticsProperty('languageTag', languageTag));
+    ..add(DiagnosticsProperty('status', _this.status))..add(DiagnosticsProperty('springs', _this.springs))..add(DiagnosticsProperty('languageTag', _this.languageTag));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringMarkersState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.springs, springs)&&(identical(other.languageTag, languageTag) || other.languageTag == languageTag));
+  final _this = this as SpringMarkersState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringMarkersState&&(identical(other.status, _this.status) || other.status == _this.status)&&const DeepCollectionEquality().equals(other.springs, _this.springs)&&(identical(other.languageTag, _this.languageTag) || other.languageTag == _this.languageTag));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(springs),languageTag);
+int get hashCode {
+  final _this = this as SpringMarkersState;
+  return Object.hash(runtimeType,_this.status,const DeepCollectionEquality().hash(_this.springs),_this.languageTag);
+}
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'SpringMarkersState(status: $status, springs: $springs, languageTag: $languageTag)';
+  final _this = this as SpringMarkersState;
+  return 'SpringMarkersState(status: ${_this.status}, springs: ${_this.springs}, languageTag: ${_this.languageTag})';
 }
 
 
@@ -78,7 +85,7 @@ class _$SpringMarkersStateCopyWithImpl<$Res>
 /// Create a copy of SpringMarkersState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? springs = null,Object? languageTag = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SpringMarkersState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as AsyncValue<void>,springs: null == springs ? _self.springs : springs // ignore: cast_nullable_to_non_nullable
 as List<SpringMarkerEntity>,languageTag: freezed == languageTag ? _self.languageTag : languageTag // ignore: cast_nullable_to_non_nullable
@@ -223,7 +230,7 @@ return $default(_that.status,_that.springs,_that.languageTag);case _:
 
 
 class _SpringMarkersState with DiagnosticableTreeMixin implements SpringMarkersState {
-  const _SpringMarkersState({this.status = const AsyncValue<void>.data(null), final  List<SpringMarkerEntity> springs = const <SpringMarkerEntity>[], this.languageTag}): _springs = springs;
+  const _SpringMarkersState({this.status = const AsyncValue<void>.data(null),  List<SpringMarkerEntity> springs = const <SpringMarkerEntity>[], this.languageTag}): _springs = springs;
   
 
 /// Loading/error of the fetch. [springs] stays intact while one runs, so
@@ -258,23 +265,25 @@ _$SpringMarkersStateCopyWith<_SpringMarkersState> get copyWith => __$SpringMarke
 
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
+    properties
     ..add(DiagnosticsProperty('type', 'SpringMarkersState'))
     ..add(DiagnosticsProperty('status', status))..add(DiagnosticsProperty('springs', springs))..add(DiagnosticsProperty('languageTag', languageTag));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringMarkersState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._springs, _springs)&&(identical(other.languageTag, languageTag) || other.languageTag == languageTag));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringMarkersState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.springs, _springs)&&(identical(other.languageTag, languageTag) || other.languageTag == languageTag));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_springs),languageTag);
+int get hashCode {
+    return Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_springs),languageTag);
+}
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'SpringMarkersState(status: $status, springs: $springs, languageTag: $languageTag)';
+    return 'SpringMarkersState(status: $status, springs: $springs, languageTag: $languageTag)';
 }
 
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'spring_detail.dart';
@@ -9,6 +9,7 @@ part of 'spring_detail.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -28,16 +29,21 @@ $SpringDetailCopyWith<SpringDetail> get copyWith => _$SpringDetailCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringDetail&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.servedLanguageTag, servedLanguageTag) || other.servedLanguageTag == servedLanguageTag)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt)&&(identical(other.lastFlowScale, lastFlowScale) || other.lastFlowScale == lastFlowScale)&&(identical(other.lastFlowRateLps, lastFlowRateLps) || other.lastFlowRateLps == lastFlowRateLps)&&(identical(other.photo, photo) || other.photo == photo)&&(identical(other.owner, owner) || other.owner == owner));
+  final _this = this as SpringDetail;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringDetail&&(identical(other.documentId, _this.documentId) || other.documentId == _this.documentId)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.position, _this.position) || other.position == _this.position)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.servedLanguageTag, _this.servedLanguageTag) || other.servedLanguageTag == _this.servedLanguageTag)&&(identical(other.statusUpdatedAt, _this.statusUpdatedAt) || other.statusUpdatedAt == _this.statusUpdatedAt)&&(identical(other.lastFlowScale, _this.lastFlowScale) || other.lastFlowScale == _this.lastFlowScale)&&(identical(other.lastFlowRateLps, _this.lastFlowRateLps) || other.lastFlowRateLps == _this.lastFlowRateLps)&&(identical(other.photo, _this.photo) || other.photo == _this.photo)&&(identical(other.owner, _this.owner) || other.owner == _this.owner));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,documentId,name,position,status,description,servedLanguageTag,statusUpdatedAt,lastFlowScale,lastFlowRateLps,photo,owner);
+int get hashCode {
+  final _this = this as SpringDetail;
+  return Object.hash(runtimeType,_this.documentId,_this.name,_this.position,_this.status,_this.description,_this.servedLanguageTag,_this.statusUpdatedAt,_this.lastFlowScale,_this.lastFlowRateLps,_this.photo,_this.owner);
+}
 
 @override
 String toString() {
-  return 'SpringDetail(documentId: $documentId, name: $name, position: $position, status: $status, description: $description, servedLanguageTag: $servedLanguageTag, statusUpdatedAt: $statusUpdatedAt, lastFlowScale: $lastFlowScale, lastFlowRateLps: $lastFlowRateLps, photo: $photo, owner: $owner)';
+  final _this = this as SpringDetail;
+  return 'SpringDetail(documentId: ${_this.documentId}, name: ${_this.name}, position: ${_this.position}, status: ${_this.status}, description: ${_this.description}, servedLanguageTag: ${_this.servedLanguageTag}, statusUpdatedAt: ${_this.statusUpdatedAt}, lastFlowScale: ${_this.lastFlowScale}, lastFlowRateLps: ${_this.lastFlowRateLps}, photo: ${_this.photo}, owner: ${_this.owner})';
 }
 
 
@@ -66,7 +72,7 @@ class _$SpringDetailCopyWithImpl<$Res>
 /// Create a copy of SpringDetail
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? documentId = null,Object? name = null,Object? position = null,Object? status = null,Object? description = freezed,Object? servedLanguageTag = freezed,Object? statusUpdatedAt = freezed,Object? lastFlowScale = freezed,Object? lastFlowRateLps = freezed,Object? photo = freezed,Object? owner = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SpringDetail(
 documentId: null == documentId ? _self.documentId : documentId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
@@ -271,16 +277,18 @@ _$SpringDetailCopyWith<_SpringDetail> get copyWith => __$SpringDetailCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringDetail&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.servedLanguageTag, servedLanguageTag) || other.servedLanguageTag == servedLanguageTag)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt)&&(identical(other.lastFlowScale, lastFlowScale) || other.lastFlowScale == lastFlowScale)&&(identical(other.lastFlowRateLps, lastFlowRateLps) || other.lastFlowRateLps == lastFlowRateLps)&&(identical(other.photo, photo) || other.photo == photo)&&(identical(other.owner, owner) || other.owner == owner));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringDetail&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.servedLanguageTag, servedLanguageTag) || other.servedLanguageTag == servedLanguageTag)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt)&&(identical(other.lastFlowScale, lastFlowScale) || other.lastFlowScale == lastFlowScale)&&(identical(other.lastFlowRateLps, lastFlowRateLps) || other.lastFlowRateLps == lastFlowRateLps)&&(identical(other.photo, photo) || other.photo == photo)&&(identical(other.owner, owner) || other.owner == owner));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,documentId,name,position,status,description,servedLanguageTag,statusUpdatedAt,lastFlowScale,lastFlowRateLps,photo,owner);
+int get hashCode {
+    return Object.hash(runtimeType,documentId,name,position,status,description,servedLanguageTag,statusUpdatedAt,lastFlowScale,lastFlowRateLps,photo,owner);
+}
 
 @override
 String toString() {
-  return 'SpringDetail(documentId: $documentId, name: $name, position: $position, status: $status, description: $description, servedLanguageTag: $servedLanguageTag, statusUpdatedAt: $statusUpdatedAt, lastFlowScale: $lastFlowScale, lastFlowRateLps: $lastFlowRateLps, photo: $photo, owner: $owner)';
+    return 'SpringDetail(documentId: $documentId, name: $name, position: $position, status: $status, description: $description, servedLanguageTag: $servedLanguageTag, statusUpdatedAt: $statusUpdatedAt, lastFlowScale: $lastFlowScale, lastFlowRateLps: $lastFlowRateLps, photo: $photo, owner: $owner)';
 }
 
 

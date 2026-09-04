@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'auth_service.dart';
@@ -9,6 +9,7 @@ part of 'auth_service.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $AuthenticationStateCopyWith<AuthenticationState> get copyWith => _$Authenticati
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthenticationState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isUserAuthenticated, isUserAuthenticated) || other.isUserAuthenticated == isUserAuthenticated)&&(identical(other.isEmailVerified, isEmailVerified) || other.isEmailVerified == isEmailVerified)&&(identical(other.isInitialized, isInitialized) || other.isInitialized == isInitialized)&&(identical(other.user, user) || other.user == user)&&(identical(other.error, error) || other.error == error));
+  final _this = this as AuthenticationState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthenticationState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.isUserAuthenticated, _this.isUserAuthenticated) || other.isUserAuthenticated == _this.isUserAuthenticated)&&(identical(other.isEmailVerified, _this.isEmailVerified) || other.isEmailVerified == _this.isEmailVerified)&&(identical(other.isInitialized, _this.isInitialized) || other.isInitialized == _this.isInitialized)&&(identical(other.user, _this.user) || other.user == _this.user)&&(identical(other.error, _this.error) || other.error == _this.error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,isUserAuthenticated,isEmailVerified,isInitialized,user,error);
+int get hashCode {
+  final _this = this as AuthenticationState;
+  return Object.hash(runtimeType,_this.isLoading,_this.isUserAuthenticated,_this.isEmailVerified,_this.isInitialized,_this.user,_this.error);
+}
 
 @override
 String toString() {
-  return 'AuthenticationState(isLoading: $isLoading, isUserAuthenticated: $isUserAuthenticated, isEmailVerified: $isEmailVerified, isInitialized: $isInitialized, user: $user, error: $error)';
+  final _this = this as AuthenticationState;
+  return 'AuthenticationState(isLoading: ${_this.isLoading}, isUserAuthenticated: ${_this.isUserAuthenticated}, isEmailVerified: ${_this.isEmailVerified}, isInitialized: ${_this.isInitialized}, user: ${_this.user}, error: ${_this.error})';
 }
 
 
@@ -63,7 +69,7 @@ class _$AuthenticationStateCopyWithImpl<$Res>
 /// Create a copy of AuthenticationState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? isUserAuthenticated = null,Object? isEmailVerified = null,Object? isInitialized = null,Object? user = freezed,Object? error = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(AuthenticationState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,isUserAuthenticated: null == isUserAuthenticated ? _self.isUserAuthenticated : isUserAuthenticated // ignore: cast_nullable_to_non_nullable
 as bool,isEmailVerified: null == isEmailVerified ? _self.isEmailVerified : isEmailVerified // ignore: cast_nullable_to_non_nullable
@@ -231,16 +237,18 @@ _$AuthenticationStateCopyWith<_AuthenticationState> get copyWith => __$Authentic
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthenticationState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isUserAuthenticated, isUserAuthenticated) || other.isUserAuthenticated == isUserAuthenticated)&&(identical(other.isEmailVerified, isEmailVerified) || other.isEmailVerified == isEmailVerified)&&(identical(other.isInitialized, isInitialized) || other.isInitialized == isInitialized)&&(identical(other.user, user) || other.user == user)&&(identical(other.error, error) || other.error == error));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthenticationState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isUserAuthenticated, isUserAuthenticated) || other.isUserAuthenticated == isUserAuthenticated)&&(identical(other.isEmailVerified, isEmailVerified) || other.isEmailVerified == isEmailVerified)&&(identical(other.isInitialized, isInitialized) || other.isInitialized == isInitialized)&&(identical(other.user, user) || other.user == user)&&(identical(other.error, error) || other.error == error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,isUserAuthenticated,isEmailVerified,isInitialized,user,error);
+int get hashCode {
+    return Object.hash(runtimeType,isLoading,isUserAuthenticated,isEmailVerified,isInitialized,user,error);
+}
 
 @override
 String toString() {
-  return 'AuthenticationState(isLoading: $isLoading, isUserAuthenticated: $isUserAuthenticated, isEmailVerified: $isEmailVerified, isInitialized: $isInitialized, user: $user, error: $error)';
+    return 'AuthenticationState(isLoading: $isLoading, isUserAuthenticated: $isUserAuthenticated, isEmailVerified: $isEmailVerified, isInitialized: $isInitialized, user: $user, error: $error)';
 }
 
 

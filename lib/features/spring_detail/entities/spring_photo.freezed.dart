@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'spring_photo.dart';
@@ -9,6 +9,7 @@ part of 'spring_photo.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $SpringPhotoCopyWith<SpringPhoto> get copyWith => _$SpringPhotoCopyWithImpl<Spri
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringPhoto&&(identical(other.url, url) || other.url == url)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height));
+  final _this = this as SpringPhoto;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringPhoto&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.thumbnailUrl, _this.thumbnailUrl) || other.thumbnailUrl == _this.thumbnailUrl)&&(identical(other.width, _this.width) || other.width == _this.width)&&(identical(other.height, _this.height) || other.height == _this.height));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,url,thumbnailUrl,width,height);
+int get hashCode {
+  final _this = this as SpringPhoto;
+  return Object.hash(runtimeType,_this.url,_this.thumbnailUrl,_this.width,_this.height);
+}
 
 @override
 String toString() {
-  return 'SpringPhoto(url: $url, thumbnailUrl: $thumbnailUrl, width: $width, height: $height)';
+  final _this = this as SpringPhoto;
+  return 'SpringPhoto(url: ${_this.url}, thumbnailUrl: ${_this.thumbnailUrl}, width: ${_this.width}, height: ${_this.height})';
 }
 
 
@@ -63,7 +69,7 @@ class _$SpringPhotoCopyWithImpl<$Res>
 /// Create a copy of SpringPhoto
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? url = null,Object? thumbnailUrl = freezed,Object? width = freezed,Object? height = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SpringPhoto(
 url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,thumbnailUrl: freezed == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
 as String?,width: freezed == width ? _self.width : width // ignore: cast_nullable_to_non_nullable
@@ -227,16 +233,18 @@ _$SpringPhotoCopyWith<_SpringPhoto> get copyWith => __$SpringPhotoCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringPhoto&&(identical(other.url, url) || other.url == url)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringPhoto&&(identical(other.url, url) || other.url == url)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,url,thumbnailUrl,width,height);
+int get hashCode {
+    return Object.hash(runtimeType,url,thumbnailUrl,width,height);
+}
 
 @override
 String toString() {
-  return 'SpringPhoto(url: $url, thumbnailUrl: $thumbnailUrl, width: $width, height: $height)';
+    return 'SpringPhoto(url: $url, thumbnailUrl: $thumbnailUrl, width: $width, height: $height)';
 }
 
 

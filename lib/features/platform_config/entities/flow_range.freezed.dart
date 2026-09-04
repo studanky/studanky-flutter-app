@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'flow_range.dart';
@@ -9,6 +9,7 @@ part of 'flow_range.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $FlowRangeCopyWith<FlowRange> get copyWith => _$FlowRangeCopyWithImpl<FlowRange>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FlowRange&&(identical(other.scale, scale) || other.scale == scale)&&(identical(other.minLps, minLps) || other.minLps == minLps)&&(identical(other.maxLps, maxLps) || other.maxLps == maxLps));
+  final _this = this as FlowRange;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FlowRange&&(identical(other.scale, _this.scale) || other.scale == _this.scale)&&(identical(other.minLps, _this.minLps) || other.minLps == _this.minLps)&&(identical(other.maxLps, _this.maxLps) || other.maxLps == _this.maxLps));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,scale,minLps,maxLps);
+int get hashCode {
+  final _this = this as FlowRange;
+  return Object.hash(runtimeType,_this.scale,_this.minLps,_this.maxLps);
+}
 
 @override
 String toString() {
-  return 'FlowRange(scale: $scale, minLps: $minLps, maxLps: $maxLps)';
+  final _this = this as FlowRange;
+  return 'FlowRange(scale: ${_this.scale}, minLps: ${_this.minLps}, maxLps: ${_this.maxLps})';
 }
 
 
@@ -63,7 +69,7 @@ class _$FlowRangeCopyWithImpl<$Res>
 /// Create a copy of FlowRange
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? scale = null,Object? minLps = null,Object? maxLps = null,}) {
-  return _then(_self.copyWith(
+  return _then(FlowRange(
 scale: null == scale ? _self.scale : scale // ignore: cast_nullable_to_non_nullable
 as int,minLps: null == minLps ? _self.minLps : minLps // ignore: cast_nullable_to_non_nullable
 as double,maxLps: null == maxLps ? _self.maxLps : maxLps // ignore: cast_nullable_to_non_nullable
@@ -225,16 +231,18 @@ _$FlowRangeCopyWith<_FlowRange> get copyWith => __$FlowRangeCopyWithImpl<_FlowRa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FlowRange&&(identical(other.scale, scale) || other.scale == scale)&&(identical(other.minLps, minLps) || other.minLps == minLps)&&(identical(other.maxLps, maxLps) || other.maxLps == maxLps));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FlowRange&&(identical(other.scale, scale) || other.scale == scale)&&(identical(other.minLps, minLps) || other.minLps == minLps)&&(identical(other.maxLps, maxLps) || other.maxLps == maxLps));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,scale,minLps,maxLps);
+int get hashCode {
+    return Object.hash(runtimeType,scale,minLps,maxLps);
+}
 
 @override
 String toString() {
-  return 'FlowRange(scale: $scale, minLps: $minLps, maxLps: $maxLps)';
+    return 'FlowRange(scale: $scale, minLps: $minLps, maxLps: $maxLps)';
 }
 
 

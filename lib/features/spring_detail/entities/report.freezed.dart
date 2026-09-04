@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'report.dart';
@@ -9,6 +9,7 @@ part of 'report.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ReportCopyWith<Report> get copyWith => _$ReportCopyWithImpl<Report>(this as Rep
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Report&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.isFlowing, isFlowing) || other.isFlowing == isFlowing)&&(identical(other.reportedAt, reportedAt) || other.reportedAt == reportedAt)&&(identical(other.flowScale, flowScale) || other.flowScale == flowScale)&&(identical(other.flowRateLps, flowRateLps) || other.flowRateLps == flowRateLps)&&(identical(other.hasOdor, hasOdor) || other.hasOdor == hasOdor)&&(identical(other.waterClarity, waterClarity) || other.waterClarity == waterClarity)&&(identical(other.note, note) || other.note == note));
+  final _this = this as Report;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Report&&(identical(other.documentId, _this.documentId) || other.documentId == _this.documentId)&&(identical(other.isFlowing, _this.isFlowing) || other.isFlowing == _this.isFlowing)&&(identical(other.reportedAt, _this.reportedAt) || other.reportedAt == _this.reportedAt)&&(identical(other.flowScale, _this.flowScale) || other.flowScale == _this.flowScale)&&(identical(other.flowRateLps, _this.flowRateLps) || other.flowRateLps == _this.flowRateLps)&&(identical(other.hasOdor, _this.hasOdor) || other.hasOdor == _this.hasOdor)&&(identical(other.waterClarity, _this.waterClarity) || other.waterClarity == _this.waterClarity)&&(identical(other.note, _this.note) || other.note == _this.note));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,documentId,isFlowing,reportedAt,flowScale,flowRateLps,hasOdor,waterClarity,note);
+int get hashCode {
+  final _this = this as Report;
+  return Object.hash(runtimeType,_this.documentId,_this.isFlowing,_this.reportedAt,_this.flowScale,_this.flowRateLps,_this.hasOdor,_this.waterClarity,_this.note);
+}
 
 @override
 String toString() {
-  return 'Report(documentId: $documentId, isFlowing: $isFlowing, reportedAt: $reportedAt, flowScale: $flowScale, flowRateLps: $flowRateLps, hasOdor: $hasOdor, waterClarity: $waterClarity, note: $note)';
+  final _this = this as Report;
+  return 'Report(documentId: ${_this.documentId}, isFlowing: ${_this.isFlowing}, reportedAt: ${_this.reportedAt}, flowScale: ${_this.flowScale}, flowRateLps: ${_this.flowRateLps}, hasOdor: ${_this.hasOdor}, waterClarity: ${_this.waterClarity}, note: ${_this.note})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ReportCopyWithImpl<$Res>
 /// Create a copy of Report
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? documentId = null,Object? isFlowing = null,Object? reportedAt = null,Object? flowScale = freezed,Object? flowRateLps = freezed,Object? hasOdor = freezed,Object? waterClarity = freezed,Object? note = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Report(
 documentId: null == documentId ? _self.documentId : documentId // ignore: cast_nullable_to_non_nullable
 as String,isFlowing: null == isFlowing ? _self.isFlowing : isFlowing // ignore: cast_nullable_to_non_nullable
 as bool,reportedAt: null == reportedAt ? _self.reportedAt : reportedAt // ignore: cast_nullable_to_non_nullable
@@ -235,16 +241,18 @@ _$ReportCopyWith<_Report> get copyWith => __$ReportCopyWithImpl<_Report>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Report&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.isFlowing, isFlowing) || other.isFlowing == isFlowing)&&(identical(other.reportedAt, reportedAt) || other.reportedAt == reportedAt)&&(identical(other.flowScale, flowScale) || other.flowScale == flowScale)&&(identical(other.flowRateLps, flowRateLps) || other.flowRateLps == flowRateLps)&&(identical(other.hasOdor, hasOdor) || other.hasOdor == hasOdor)&&(identical(other.waterClarity, waterClarity) || other.waterClarity == waterClarity)&&(identical(other.note, note) || other.note == note));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Report&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.isFlowing, isFlowing) || other.isFlowing == isFlowing)&&(identical(other.reportedAt, reportedAt) || other.reportedAt == reportedAt)&&(identical(other.flowScale, flowScale) || other.flowScale == flowScale)&&(identical(other.flowRateLps, flowRateLps) || other.flowRateLps == flowRateLps)&&(identical(other.hasOdor, hasOdor) || other.hasOdor == hasOdor)&&(identical(other.waterClarity, waterClarity) || other.waterClarity == waterClarity)&&(identical(other.note, note) || other.note == note));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,documentId,isFlowing,reportedAt,flowScale,flowRateLps,hasOdor,waterClarity,note);
+int get hashCode {
+    return Object.hash(runtimeType,documentId,isFlowing,reportedAt,flowScale,flowRateLps,hasOdor,waterClarity,note);
+}
 
 @override
 String toString() {
-  return 'Report(documentId: $documentId, isFlowing: $isFlowing, reportedAt: $reportedAt, flowScale: $flowScale, flowRateLps: $flowRateLps, hasOdor: $hasOdor, waterClarity: $waterClarity, note: $note)';
+    return 'Report(documentId: $documentId, isFlowing: $isFlowing, reportedAt: $reportedAt, flowScale: $flowScale, flowRateLps: $flowRateLps, hasOdor: $hasOdor, waterClarity: $waterClarity, note: $note)';
 }
 
 

@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 1.1.0+3
 
 environment:
-  sdk: ^3.9.2
+  sdk: ^3.13.0
 
 dependencies:
   connectivity_plus: ^7.0.0
@@ -18,21 +18,17 @@ dependencies:
   flutter_map: ^8.2.2
   flutter_map_location_marker: ^10.2.0
   flutter_riverpod: ^3.0.3
-  flutter_secure_storage: ^10.3.1
+  flutter_secure_storage: ^11.0.0
   flutter_svg: ^2.2.1
-  # Prerelease is required, not accidental: stable freezed (<=3.2.5) pins
-  # analyzer <11, but riverpod_generator/json_serializable need analyzer ^12.
-  # 3.2.6-dev.1 is the only freezed compatible with analyzer 12. Do not downgrade.
-  freezed: ^3.2.3
   freezed_annotation: ^3.1.0
   geolocator: ^14.0.2
-  go_router: ^17.0.0
+  go_router: ^18.0.1
   google_fonts: ^8.1.0
   intl: any
   json_annotation: ^4.12.0
   latlong2: ^0.9.1
   logging: ^1.3.0
-  map_launcher: ^4.5.0
+  map_launcher: ^6.0.0
   package_info_plus: ^10.1.0
   retrofit: ^4.9.2
   riverpod_annotation: ^4.0.2
@@ -56,6 +52,7 @@ dev_dependencies:
   flutter_native_splash: ^2.4.8
   flutter_test:
     sdk: flutter
+  freezed: ^4.0.1
   go_router_builder: ^4.3.0
   json_serializable: ^6.7.1
   retrofit_generator: ^10.2.6

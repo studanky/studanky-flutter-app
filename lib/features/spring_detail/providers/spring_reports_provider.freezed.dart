@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'spring_reports_provider.dart';
@@ -9,6 +9,7 @@ part of 'spring_reports_provider.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -34,16 +35,21 @@ $SpringReportsStateCopyWith<SpringReportsState> get copyWith => _$SpringReportsS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringReportsState&&const DeepCollectionEquality().equals(other.reports, reports)&&(identical(other.initialStatus, initialStatus) || other.initialStatus == initialStatus)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.hasMore, hasMore) || other.hasMore == hasMore)&&(identical(other.nextPage, nextPage) || other.nextPage == nextPage)&&(identical(other.total, total) || other.total == total)&&const DeepCollectionEquality().equals(other.loadMoreError, loadMoreError));
+  final _this = this as SpringReportsState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringReportsState&&const DeepCollectionEquality().equals(other.reports, _this.reports)&&(identical(other.initialStatus, _this.initialStatus) || other.initialStatus == _this.initialStatus)&&(identical(other.isLoadingMore, _this.isLoadingMore) || other.isLoadingMore == _this.isLoadingMore)&&(identical(other.hasMore, _this.hasMore) || other.hasMore == _this.hasMore)&&(identical(other.nextPage, _this.nextPage) || other.nextPage == _this.nextPage)&&(identical(other.total, _this.total) || other.total == _this.total)&&const DeepCollectionEquality().equals(other.loadMoreError, _this.loadMoreError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(reports),initialStatus,isLoadingMore,hasMore,nextPage,total,const DeepCollectionEquality().hash(loadMoreError));
+int get hashCode {
+  final _this = this as SpringReportsState;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.reports),_this.initialStatus,_this.isLoadingMore,_this.hasMore,_this.nextPage,_this.total,const DeepCollectionEquality().hash(_this.loadMoreError));
+}
 
 @override
 String toString() {
-  return 'SpringReportsState(reports: $reports, initialStatus: $initialStatus, isLoadingMore: $isLoadingMore, hasMore: $hasMore, nextPage: $nextPage, total: $total, loadMoreError: $loadMoreError)';
+  final _this = this as SpringReportsState;
+  return 'SpringReportsState(reports: ${_this.reports}, initialStatus: ${_this.initialStatus}, isLoadingMore: ${_this.isLoadingMore}, hasMore: ${_this.hasMore}, nextPage: ${_this.nextPage}, total: ${_this.total}, loadMoreError: ${_this.loadMoreError})';
 }
 
 
@@ -72,7 +78,7 @@ class _$SpringReportsStateCopyWithImpl<$Res>
 /// Create a copy of SpringReportsState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? reports = null,Object? initialStatus = null,Object? isLoadingMore = null,Object? hasMore = null,Object? nextPage = null,Object? total = null,Object? loadMoreError = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SpringReportsState(
 reports: null == reports ? _self.reports : reports // ignore: cast_nullable_to_non_nullable
 as List<Report>,initialStatus: null == initialStatus ? _self.initialStatus : initialStatus // ignore: cast_nullable_to_non_nullable
 as AsyncValue<void>,isLoadingMore: null == isLoadingMore ? _self.isLoadingMore : isLoadingMore // ignore: cast_nullable_to_non_nullable
@@ -220,7 +226,7 @@ return $default(_that.reports,_that.initialStatus,_that.isLoadingMore,_that.hasM
 
 
 class _SpringReportsState extends SpringReportsState {
-  const _SpringReportsState({final  List<Report> reports = const <Report>[], this.initialStatus = const AsyncValue<void>.loading(), this.isLoadingMore = false, this.hasMore = false, this.nextPage = 1, this.total = 0, this.loadMoreError}): _reports = reports,super._();
+  const _SpringReportsState({ List<Report> reports = const <Report>[], this.initialStatus = const AsyncValue<void>.loading(), this.isLoadingMore = false, this.hasMore = false, this.nextPage = 1, this.total = 0, this.loadMoreError}): _reports = reports,super._();
   
 
 /// Reports loaded so far, newest first.
@@ -257,16 +263,18 @@ _$SpringReportsStateCopyWith<_SpringReportsState> get copyWith => __$SpringRepor
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringReportsState&&const DeepCollectionEquality().equals(other._reports, _reports)&&(identical(other.initialStatus, initialStatus) || other.initialStatus == initialStatus)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.hasMore, hasMore) || other.hasMore == hasMore)&&(identical(other.nextPage, nextPage) || other.nextPage == nextPage)&&(identical(other.total, total) || other.total == total)&&const DeepCollectionEquality().equals(other.loadMoreError, loadMoreError));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringReportsState&&const DeepCollectionEquality().equals(other.reports, _reports)&&(identical(other.initialStatus, initialStatus) || other.initialStatus == initialStatus)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.hasMore, hasMore) || other.hasMore == hasMore)&&(identical(other.nextPage, nextPage) || other.nextPage == nextPage)&&(identical(other.total, total) || other.total == total)&&const DeepCollectionEquality().equals(other.loadMoreError, loadMoreError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_reports),initialStatus,isLoadingMore,hasMore,nextPage,total,const DeepCollectionEquality().hash(loadMoreError));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_reports),initialStatus,isLoadingMore,hasMore,nextPage,total,const DeepCollectionEquality().hash(loadMoreError));
+}
 
 @override
 String toString() {
-  return 'SpringReportsState(reports: $reports, initialStatus: $initialStatus, isLoadingMore: $isLoadingMore, hasMore: $hasMore, nextPage: $nextPage, total: $total, loadMoreError: $loadMoreError)';
+    return 'SpringReportsState(reports: $reports, initialStatus: $initialStatus, isLoadingMore: $isLoadingMore, hasMore: $hasMore, nextPage: $nextPage, total: $total, loadMoreError: $loadMoreError)';
 }
 
 

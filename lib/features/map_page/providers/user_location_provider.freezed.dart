@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'user_location_provider.dart';
@@ -9,6 +9,7 @@ part of 'user_location_provider.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $UserLocationStateCopyWith<UserLocationState> get copyWith => _$UserLocationStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserLocationState&&(identical(other.status, status) || other.status == status)&&(identical(other.activated, activated) || other.activated == activated));
+  final _this = this as UserLocationState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserLocationState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.activated, _this.activated) || other.activated == _this.activated));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,activated);
+int get hashCode {
+  final _this = this as UserLocationState;
+  return Object.hash(runtimeType,_this.status,_this.activated);
+}
 
 @override
 String toString() {
-  return 'UserLocationState(status: $status, activated: $activated)';
+  final _this = this as UserLocationState;
+  return 'UserLocationState(status: ${_this.status}, activated: ${_this.activated})';
 }
 
 
@@ -63,7 +69,7 @@ class _$UserLocationStateCopyWithImpl<$Res>
 /// Create a copy of UserLocationState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? activated = null,}) {
-  return _then(_self.copyWith(
+  return _then(UserLocationState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as LocationStatus,activated: null == activated ? _self.activated : activated // ignore: cast_nullable_to_non_nullable
 as bool,
@@ -223,16 +229,18 @@ _$UserLocationStateCopyWith<_UserLocationState> get copyWith => __$UserLocationS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserLocationState&&(identical(other.status, status) || other.status == status)&&(identical(other.activated, activated) || other.activated == activated));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserLocationState&&(identical(other.status, status) || other.status == status)&&(identical(other.activated, activated) || other.activated == activated));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,activated);
+int get hashCode {
+    return Object.hash(runtimeType,status,activated);
+}
 
 @override
 String toString() {
-  return 'UserLocationState(status: $status, activated: $activated)';
+    return 'UserLocationState(status: $status, activated: $activated)';
 }
 
 

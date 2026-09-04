@@ -19,7 +19,7 @@ Use the provided env file and include obfuscation with split debug info:
 
 ## build runner
 
-`dart run build_runner build --verbose --delete-conflicting-outputs`
+`dart run build_runner build --verbose`
 
 <!-- ## build dev
 

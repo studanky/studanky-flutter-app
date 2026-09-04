@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'platform_config.dart';
@@ -9,6 +9,7 @@ part of 'platform_config.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -27,16 +28,21 @@ $PlatformConfigCopyWith<PlatformConfig> get copyWith => _$PlatformConfigCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlatformConfig&&(identical(other.freshnessThreshold, freshnessThreshold) || other.freshnessThreshold == freshnessThreshold)&&const DeepCollectionEquality().equals(other.flowScaleRanges, flowScaleRanges));
+  final _this = this as PlatformConfig;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlatformConfig&&(identical(other.freshnessThreshold, _this.freshnessThreshold) || other.freshnessThreshold == _this.freshnessThreshold)&&const DeepCollectionEquality().equals(other.flowScaleRanges, _this.flowScaleRanges));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,freshnessThreshold,const DeepCollectionEquality().hash(flowScaleRanges));
+int get hashCode {
+  final _this = this as PlatformConfig;
+  return Object.hash(runtimeType,_this.freshnessThreshold,const DeepCollectionEquality().hash(_this.flowScaleRanges));
+}
 
 @override
 String toString() {
-  return 'PlatformConfig(freshnessThreshold: $freshnessThreshold, flowScaleRanges: $flowScaleRanges)';
+  final _this = this as PlatformConfig;
+  return 'PlatformConfig(freshnessThreshold: ${_this.freshnessThreshold}, flowScaleRanges: ${_this.flowScaleRanges})';
 }
 
 
@@ -65,7 +71,7 @@ class _$PlatformConfigCopyWithImpl<$Res>
 /// Create a copy of PlatformConfig
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? freshnessThreshold = null,Object? flowScaleRanges = null,}) {
-  return _then(_self.copyWith(
+  return _then(PlatformConfig(
 freshnessThreshold: null == freshnessThreshold ? _self.freshnessThreshold : freshnessThreshold // ignore: cast_nullable_to_non_nullable
 as Duration,flowScaleRanges: null == flowScaleRanges ? _self.flowScaleRanges : flowScaleRanges // ignore: cast_nullable_to_non_nullable
 as List<FlowRange>,
@@ -209,7 +215,7 @@ return $default(_that.freshnessThreshold,_that.flowScaleRanges);case _:
 
 
 class _PlatformConfig extends PlatformConfig {
-  const _PlatformConfig({required this.freshnessThreshold, required final  List<FlowRange> flowScaleRanges}): _flowScaleRanges = flowScaleRanges,super._();
+  const _PlatformConfig({required this.freshnessThreshold, required  List<FlowRange> flowScaleRanges}): _flowScaleRanges = flowScaleRanges,super._();
   
 
 /// Age after which a status is considered "stale" (spec default 14 days).
@@ -234,16 +240,18 @@ _$PlatformConfigCopyWith<_PlatformConfig> get copyWith => __$PlatformConfigCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlatformConfig&&(identical(other.freshnessThreshold, freshnessThreshold) || other.freshnessThreshold == freshnessThreshold)&&const DeepCollectionEquality().equals(other._flowScaleRanges, _flowScaleRanges));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlatformConfig&&(identical(other.freshnessThreshold, freshnessThreshold) || other.freshnessThreshold == freshnessThreshold)&&const DeepCollectionEquality().equals(other.flowScaleRanges, _flowScaleRanges));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,freshnessThreshold,const DeepCollectionEquality().hash(_flowScaleRanges));
+int get hashCode {
+    return Object.hash(runtimeType,freshnessThreshold,const DeepCollectionEquality().hash(_flowScaleRanges));
+}
 
 @override
 String toString() {
-  return 'PlatformConfig(freshnessThreshold: $freshnessThreshold, flowScaleRanges: $flowScaleRanges)';
+    return 'PlatformConfig(freshnessThreshold: $freshnessThreshold, flowScaleRanges: $flowScaleRanges)';
 }
 
 

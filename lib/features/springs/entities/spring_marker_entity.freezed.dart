@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'spring_marker_entity.dart';
@@ -9,6 +9,7 @@ part of 'spring_marker_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -27,16 +28,21 @@ $SpringMarkerEntityCopyWith<SpringMarkerEntity> get copyWith => _$SpringMarkerEn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringMarkerEntity&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.servedLanguageTag, servedLanguageTag) || other.servedLanguageTag == servedLanguageTag)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt));
+  final _this = this as SpringMarkerEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpringMarkerEntity&&(identical(other.documentId, _this.documentId) || other.documentId == _this.documentId)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.position, _this.position) || other.position == _this.position)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.servedLanguageTag, _this.servedLanguageTag) || other.servedLanguageTag == _this.servedLanguageTag)&&(identical(other.statusUpdatedAt, _this.statusUpdatedAt) || other.statusUpdatedAt == _this.statusUpdatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,documentId,name,position,status,servedLanguageTag,statusUpdatedAt);
+int get hashCode {
+  final _this = this as SpringMarkerEntity;
+  return Object.hash(runtimeType,_this.documentId,_this.name,_this.position,_this.status,_this.servedLanguageTag,_this.statusUpdatedAt);
+}
 
 @override
 String toString() {
-  return 'SpringMarkerEntity(documentId: $documentId, name: $name, position: $position, status: $status, servedLanguageTag: $servedLanguageTag, statusUpdatedAt: $statusUpdatedAt)';
+  final _this = this as SpringMarkerEntity;
+  return 'SpringMarkerEntity(documentId: ${_this.documentId}, name: ${_this.name}, position: ${_this.position}, status: ${_this.status}, servedLanguageTag: ${_this.servedLanguageTag}, statusUpdatedAt: ${_this.statusUpdatedAt})';
 }
 
 
@@ -65,7 +71,7 @@ class _$SpringMarkerEntityCopyWithImpl<$Res>
 /// Create a copy of SpringMarkerEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? documentId = null,Object? name = null,Object? position = null,Object? status = null,Object? servedLanguageTag = freezed,Object? statusUpdatedAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SpringMarkerEntity(
 documentId: null == documentId ? _self.documentId : documentId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
@@ -235,16 +241,18 @@ _$SpringMarkerEntityCopyWith<_SpringMarkerEntity> get copyWith => __$SpringMarke
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringMarkerEntity&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.servedLanguageTag, servedLanguageTag) || other.servedLanguageTag == servedLanguageTag)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpringMarkerEntity&&(identical(other.documentId, documentId) || other.documentId == documentId)&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.status, status) || other.status == status)&&(identical(other.servedLanguageTag, servedLanguageTag) || other.servedLanguageTag == servedLanguageTag)&&(identical(other.statusUpdatedAt, statusUpdatedAt) || other.statusUpdatedAt == statusUpdatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,documentId,name,position,status,servedLanguageTag,statusUpdatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,documentId,name,position,status,servedLanguageTag,statusUpdatedAt);
+}
 
 @override
 String toString() {
-  return 'SpringMarkerEntity(documentId: $documentId, name: $name, position: $position, status: $status, servedLanguageTag: $servedLanguageTag, statusUpdatedAt: $statusUpdatedAt)';
+    return 'SpringMarkerEntity(documentId: $documentId, name: $name, position: $position, status: $status, servedLanguageTag: $servedLanguageTag, statusUpdatedAt: $statusUpdatedAt)';
 }
 
 
