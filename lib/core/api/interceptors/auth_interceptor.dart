@@ -14,17 +14,15 @@ import 'package:studanky_flutter_app/core/api/services/auth_token_provider.dart'
 /// touched for re-authentication on a 401; because the auth stack now runs on a
 /// separate Dio, that read no longer closes a provider cycle.
 class AuthInterceptor extends Interceptor {
-  AuthInterceptor({required Dio dio, required Ref ref})
-    : _dio = dio,
-      _ref = ref;
+  AuthInterceptor({required this.dio, required this.ref});
 
   static const _retryExtraKey = 'studanky__retried';
 
-  final Dio _dio;
-  final Ref _ref;
+  final Dio dio;
+  final Ref ref;
   Completer<void>? _refreshCompleter;
 
-  AuthService get _authService => _ref.read(authServiceProvider.notifier);
+  AuthService get _authService => ref.read(authServiceProvider.notifier);
 
   @override
   Future<void> onRequest(
@@ -36,7 +34,7 @@ class AuthInterceptor extends Interceptor {
       return;
     }
 
-    final token = _ref.read(authTokenProvider);
+    final token = ref.read(authTokenProvider);
 
     if (token != null && token.isNotEmpty) {
       options.headers.addAll(ApiConfig.authHeaders(token));
@@ -62,7 +60,7 @@ class AuthInterceptor extends Interceptor {
       return;
     }
 
-    final token = _ref.read(authTokenProvider);
+    final token = ref.read(authTokenProvider);
     if (token == null || token.isEmpty) {
       handler.next(err);
       return;
@@ -75,7 +73,7 @@ class AuthInterceptor extends Interceptor {
     requestOptions.extra[_retryExtraKey] = true;
 
     try {
-      final response = await _dio.fetch<dynamic>(requestOptions);
+      final response = await dio.fetch<dynamic>(requestOptions);
       handler.resolve(response);
     } catch (_) {
       handler.next(err);

@@ -11,16 +11,15 @@ import 'package:latlong2/latlong.dart';
 /// 350° → 0° reset turns +10° rather than spinning -350°.
 class MapCameraAnimator {
   MapCameraAnimator({
-    required MapController mapController,
+    required this.mapController,
     required TickerProvider vsync,
     this.defaultDuration = const Duration(milliseconds: 850),
     // Linear easing for the whole move — a constant-speed glide across the map,
     // as requested, rather than accelerating/decelerating.
     this.defaultCurve = Curves.linear,
-  }) : _mapController = mapController,
-       _controller = AnimationController(vsync: vsync);
+  }) : _controller = AnimationController(vsync: vsync);
 
-  final MapController _mapController;
+  final MapController mapController;
   final Duration defaultDuration;
   final Curve defaultCurve;
   final AnimationController _controller;
@@ -39,7 +38,7 @@ class MapCameraAnimator {
     Curve? curve,
   }) async {
     if (_disposed) return;
-    final camera = _mapController.camera;
+    final camera = mapController.camera;
     final beginCenter = camera.center;
     final beginZoom = camera.zoom;
     final beginRotation = camera.rotation;
@@ -68,7 +67,7 @@ class MapCameraAnimator {
 
     void tick() {
       final t = progress.value;
-      _mapController.moveAndRotate(
+      mapController.moveAndRotate(
         LatLng(latTween.transform(t), lngTween.transform(t)),
         zoomTween.transform(t),
         rotationTween.transform(t),
@@ -84,7 +83,7 @@ class MapCameraAnimator {
       await _controller.forward(from: 0);
       // Settle on the exact, normalised target (e.g. 360° collapses to 0°) so
       // the stored camera rotation stays canonical.
-      _mapController.moveAndRotate(
+      mapController.moveAndRotate(
         endCenter,
         endZoom,
         _normalize(targetRotation),

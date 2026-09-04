@@ -7,11 +7,10 @@ import 'package:logging/logging.dart';
 /// secret headers (e.g. `Authorization`), secret query parameters (e.g. the
 /// Mapy.com `apikey`) and secret body fields (passwords, tokens).
 class LoggingInterceptor extends Interceptor {
-  LoggingInterceptor({bool logPayloads = kDebugMode})
-    : _logPayloads = logPayloads;
+  LoggingInterceptor({this.logPayloads = kDebugMode});
 
   final Logger _logger = Logger('ApiClient');
-  final bool _logPayloads;
+  final bool logPayloads;
 
   static const _redacted = '***redacted***';
 
@@ -84,7 +83,7 @@ class LoggingInterceptor extends Interceptor {
       () => 'REQUEST: ${options.method} ${_redactUri(options.uri)}',
     );
 
-    if (_logPayloads) {
+    if (logPayloads) {
       _log(Level.FINE, () => 'Headers: ${_redactHeaders(options.headers)}');
       if (options.data != null) {
         _log(Level.FINE, () => 'Body: ${_redactData(options.data)}');
@@ -102,7 +101,7 @@ class LoggingInterceptor extends Interceptor {
           'RESPONSE: ${response.statusCode} '
           '${_redactUri(response.requestOptions.uri)}',
     );
-    if (_logPayloads) {
+    if (logPayloads) {
       _log(Level.FINE, () => 'Response data: ${_redactData(response.data)}');
     }
 
@@ -119,7 +118,7 @@ class LoggingInterceptor extends Interceptor {
           'status=${err.response?.statusCode ?? '-'}',
     );
 
-    if (_logPayloads && err.response != null) {
+    if (logPayloads && err.response != null) {
       _log(
         Level.SEVERE,
         () =>
