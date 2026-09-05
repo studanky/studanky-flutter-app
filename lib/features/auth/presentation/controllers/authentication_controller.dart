@@ -12,6 +12,10 @@ import 'package:studanky_flutter_app/features/auth/presentation/controllers/auth
 part 'authentication_controller.g.dart';
 
 /// Presentation controller for authentication flows.
+///
+/// It intentionally has no production UI consumer yet. The lower-level
+/// session refresher is active in the API interceptor; this controller becomes
+/// the UI entrypoint when login and registration screens are introduced.
 @Riverpod(keepAlive: true)
 class AuthenticationController extends _$AuthenticationController {
   late AuthRepository _repository;
