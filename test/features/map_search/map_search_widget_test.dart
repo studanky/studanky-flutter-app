@@ -8,10 +8,10 @@ import 'package:studanky_flutter_app/core/styles/colors/app_colors_light.dart';
 import 'package:studanky_flutter_app/features/map_search/data/map_search_repository.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
+import 'package:studanky_flutter_app/features/map_search/presentation/widgets/map_search_result_list.dart';
+import 'package:studanky_flutter_app/features/map_search/presentation/widgets/map_search_widget.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_dependencies.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_result_list.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
 class _RecordingSearchSource implements MapSearchRepository {

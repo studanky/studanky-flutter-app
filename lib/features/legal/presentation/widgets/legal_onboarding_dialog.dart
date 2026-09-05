@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
 import 'package:studanky_flutter_app/core/widgets/blurred_dialog.dart';
+import 'package:studanky_flutter_app/features/legal/presentation/widgets/legal_onboarding_progress_dots.dart';
+import 'package:studanky_flutter_app/features/legal/presentation/widgets/legal_onboarding_step.dart';
 import 'package:studanky_flutter_app/features/legal/providers/legal_onboarding_provider.dart';
-import 'package:studanky_flutter_app/features/legal/widgets/legal_onboarding_progress_dots.dart';
-import 'package:studanky_flutter_app/features/legal/widgets/legal_onboarding_step.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 Future<void> showLegalOnboardingDialog(BuildContext context) {

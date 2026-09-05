@@ -3,7 +3,7 @@ import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/scroll_edge_effect.dart';
-import 'package:studanky_flutter_app/features/legal/widgets/legal_onboarding_bullet.dart';
+import 'package:studanky_flutter_app/features/legal/presentation/widgets/legal_onboarding_bullet.dart';
 
 class LegalOnboardingStep extends StatelessWidget {
   const LegalOnboardingStep({

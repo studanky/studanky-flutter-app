@@ -11,7 +11,7 @@ import 'package:studanky_flutter_app/features/map_page/presentation/views/map_pa
 import 'package:studanky_flutter_app/features/map_page/presentation/widgets/map_canvas.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/widgets/map_overlay_controls.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/widgets/spring_marker_layer.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_status.dart';
+import 'package:studanky_flutter_app/features/map_search/presentation/widgets/map_search_status.dart';
 import 'package:studanky_flutter_app/features/spring_detail/spring_detail_overlay.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 

@@ -9,7 +9,7 @@ import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/core/navigation/app_router.dart';
 import 'package:studanky_flutter_app/core/providers/connectivity_status_provider.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
-import 'package:studanky_flutter_app/features/favorites/widgets/favorites_dialog.dart';
+import 'package:studanky_flutter_app/features/favorites/presentation/widgets/favorites_dialog.dart';
 import 'package:studanky_flutter_app/features/legal/providers/legal_onboarding_provider.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/controllers/deep_link_spring_focus_controller.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_backdrop_blur_controller.dart';

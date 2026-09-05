@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_search/presentation/widgets/map_search_overlay.dart';
+import 'package:studanky_flutter_app/features/map_search/presentation/widgets/map_search_status.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_overlay.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_status.dart';
 
 class MapSearchWidget extends ConsumerStatefulWidget {
   const MapSearchWidget({

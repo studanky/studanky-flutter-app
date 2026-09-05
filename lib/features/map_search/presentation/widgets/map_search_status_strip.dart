@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_status.dart';
+import 'package:studanky_flutter_app/features/map_search/presentation/widgets/map_search_status.dart';
 
 class MapSearchStatusStrip extends StatelessWidget {
   const MapSearchStatusStrip({required this.status, super.key});

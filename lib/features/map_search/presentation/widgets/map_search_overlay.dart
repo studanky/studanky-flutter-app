@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
+import 'package:studanky_flutter_app/features/map_search/presentation/widgets/map_search_field.dart';
+import 'package:studanky_flutter_app/features/map_search/presentation/widgets/map_search_result_list.dart';
+import 'package:studanky_flutter_app/features/map_search/presentation/widgets/map_search_status.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_field.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_result_list.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_status.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 class MapSearchOverlay extends StatelessWidget {

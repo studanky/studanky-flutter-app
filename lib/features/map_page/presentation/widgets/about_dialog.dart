@@ -8,7 +8,7 @@ import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/app_dialog_card.dart';
 import 'package:studanky_flutter_app/core/widgets/blurred_dialog.dart';
 import 'package:studanky_flutter_app/core/widgets/scroll_edge_effect.dart';
-import 'package:studanky_flutter_app/features/legal/widgets/legal_link_button.dart';
+import 'package:studanky_flutter_app/features/legal/presentation/widgets/legal_link_button.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/widgets/about_section_title.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/widgets/spring_legend_row.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';

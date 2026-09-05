@@ -11,8 +11,8 @@ import 'package:studanky_flutter_app/features/map_page/presentation/widgets/map_
 import 'package:studanky_flutter_app/features/map_page/presentation/widgets/map_zoom_slider.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/widgets/status_bar_scrim.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_status.dart';
-import 'package:studanky_flutter_app/features/map_search/widgets/map_search_widget.dart';
+import 'package:studanky_flutter_app/features/map_search/presentation/widgets/map_search_status.dart';
+import 'package:studanky_flutter_app/features/map_search/presentation/widgets/map_search_widget.dart';
 
 /// Floating controls and legal chrome above the full-bleed map surface.
 class MapOverlayControls extends StatelessWidget {
