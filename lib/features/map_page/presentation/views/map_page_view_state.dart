@@ -27,4 +27,29 @@ class MapPageViewState {
   final bool isLocating;
   final String? detailDocumentId;
   final SpringMarkerEntity? detailMarker;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MapPageViewState &&
+          markers == other.markers &&
+          platformConfig == other.platformConfig &&
+          location == other.location &&
+          emptyMode == other.emptyMode &&
+          isOffline == other.isOffline &&
+          isLocating == other.isLocating &&
+          detailDocumentId == other.detailDocumentId &&
+          detailMarker == other.detailMarker;
+
+  @override
+  int get hashCode => Object.hash(
+    markers,
+    platformConfig,
+    location,
+    emptyMode,
+    isOffline,
+    isLocating,
+    detailDocumentId,
+    detailMarker,
+  );
 }

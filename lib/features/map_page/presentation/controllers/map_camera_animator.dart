@@ -81,6 +81,7 @@ class MapCameraAnimator {
 
     try {
       await _controller.forward(from: 0);
+      if (_disposed) return;
       // Settle on the exact, normalised target (e.g. 360° collapses to 0°) so
       // the stored camera rotation stays canonical.
       mapController.moveAndRotate(
