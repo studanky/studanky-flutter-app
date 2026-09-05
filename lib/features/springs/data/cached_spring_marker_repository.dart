@@ -83,28 +83,28 @@ class CachedSpringMarkerRepository implements SpringMarkerRepository {
   @override
   bool covers(SpringBounds bounds, {required String languageTag}) {
     final now = _now();
-    _purgeExpired(now);
     final deadline = now.subtract(maxAge);
     var containsTile = false;
+    var allFresh = true;
     for (final tile in _tilesIn(bounds)) {
       containsTile = true;
       final data = _touch(tile);
       if (!(data?.isFreshAt(deadline, languageTag: languageTag) ?? false)) {
-        return false;
+        allFresh = false;
       }
     }
-    return containsTile;
+    return containsTile && allFresh;
   }
 
   @override
   bool hasDataFor(SpringBounds bounds, {required String languageTag}) {
-    _purgeExpired(_now());
     var containsTile = false;
+    var allPresent = true;
     for (final tile in _tilesIn(bounds)) {
       containsTile = true;
-      if (_touch(tile)?.languageTag != languageTag) return false;
+      if (_touch(tile)?.languageTag != languageTag) allPresent = false;
     }
-    return containsTile;
+    return containsTile && allPresent;
   }
 
   @override
@@ -140,7 +140,6 @@ class CachedSpringMarkerRepository implements SpringMarkerRepository {
   /// could not see.
   _TileRect? _requestRect(SpringBounds bounds, String languageTag) {
     final now = _now();
-    _purgeExpired(now);
     final tiles = _tilesIn(bounds).toList(growable: false);
     if (tiles.isEmpty) return null;
 
@@ -165,6 +164,9 @@ class CachedSpringMarkerRepository implements SpringMarkerRepository {
     String languageTag,
   ) {
     final fetchedAt = _now();
+    // Retention is memory housekeeping, not coverage logic. Amortize its O(n)
+    // scan onto successful cache writes instead of every camera/state query.
+    _purgeExpired(fetchedAt);
     final grouped = <_Tile, List<SpringMarkerEntity>>{};
 
     for (final spring in data) {

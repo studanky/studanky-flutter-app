@@ -54,7 +54,7 @@ void main() {
       expect(cache.covers(third, languageTag: testLanguageTag), isTrue);
     });
 
-    test('purges stale tiles after the retention window', () async {
+    test('purges stale tiles on the next successful cache write', () async {
       final source = FakeSpringRepository([]);
       var now = DateTime(2026, 9, 5, 12);
       final cache = CachedSpringMarkerRepository(
@@ -68,8 +68,14 @@ void main() {
       expect(cache.hasDataFor(first, languageTag: testLanguageTag), isTrue);
 
       now = now.add(const Duration(minutes: 31));
+      expect(cache.covers(first, languageTag: testLanguageTag), isFalse);
+      // Retention cleanup is deliberately amortized onto a successful write;
+      // hasDataFor means drawable data exists, however old.
+      expect(cache.hasDataFor(first, languageTag: testLanguageTag), isTrue);
+      await cache.load(second, languageTag: testLanguageTag);
 
       expect(cache.hasDataFor(first, languageTag: testLanguageTag), isFalse);
+      expect(cache.hasDataFor(second, languageTag: testLanguageTag), isTrue);
     });
   });
 
