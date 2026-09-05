@@ -15,34 +15,40 @@ part 'authentication_controller.g.dart';
 @Riverpod(keepAlive: true)
 class AuthenticationController extends _$AuthenticationController {
   late AuthRepository _repository;
-  bool _hasInitialized = false;
 
   @override
   AuthenticationState build() {
-    _repository = ref.watch(authRepositoryProvider);
-    final subscription = _repository.sessionChanges.listen(_applySession);
+    final repository = ref.watch(authRepositoryProvider);
+    _repository = repository;
+    final subscription = repository.sessionChanges.listen(
+      (session) => _applySession(repository, session),
+    );
     ref.onDispose(subscription.cancel);
 
-    if (!_hasInitialized) {
-      _hasInitialized = true;
-      unawaited(_initialize());
-    }
+    unawaited(_initialize(repository));
     return const AuthenticationState(isLoading: true);
   }
 
-  void _applySession(AuthenticationSession session) {
+  void _applySession(AuthRepository repository, AuthenticationSession session) {
+    if (!identical(_repository, repository)) return;
     state = AuthenticationState.fromSession(
       session,
       isInitialized: state.isInitialized,
     );
   }
 
-  Future<void> _initialize() async {
+  Future<void> _initialize(AuthRepository repository) async {
     try {
-      final session = await _repository.restore();
+      final session = await repository.restore();
+      if (!identical(_repository, repository)) return;
       state = AuthenticationState.fromSession(session, isInitialized: true);
+    } catch (error) {
+      if (!identical(_repository, repository)) return;
+      state = state.copyWith(error: error.toString());
     } finally {
-      state = state.copyWith(isInitialized: true, isLoading: false);
+      if (identical(_repository, repository)) {
+        state = state.copyWith(isInitialized: true, isLoading: false);
+      }
     }
   }
 
