@@ -6,28 +6,34 @@ import 'package:studanky_flutter_app/features/springs/data/spring_repository.dar
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 
-export 'package:studanky_flutter_app/features/springs/data/spring_marker_repository.dart';
-
 part 'cached_spring_marker_repository.g.dart';
 
 /// Viewport cache keyed by a fixed lat/lng grid.
 ///
 /// Coverage is a *set of tiles*, not a rectangle. That distinction is the whole
 /// point: a single "last fetched bounds" rectangle is destroyed by the next pan,
-/// so returning to an area you already visited re-fetches it. A tile set only
-/// grows, so a pan back is free — while the camera still never pulls more than
-/// the area it is actually looking at.
+/// so returning to an area you already visited re-fetches it. Independently
+/// retained tiles make a pan back free while they remain inside the session
+/// cache — and the camera still never pulls more than the area it is looking at.
 ///
 /// Each tile carries its request locale and fetch timestamp, so locale/age
 /// staleness expires per area rather than creating an immortal full cache per
-/// locale. A long-running session refreshes only what the user actually views.
+/// locale. Retention and an LRU capacity bound keep a long-running session from
+/// accumulating every area the user has ever visited.
 class CachedSpringMarkerRepository implements SpringMarkerRepository {
   CachedSpringMarkerRepository(
     this._repository, {
     DateTime Function()? clock,
     this.maxAge = defaultMaxAge,
     this.tileSize = defaultTileSize,
-  }) : _now = clock ?? DateTime.now;
+    Duration? retentionAge,
+    this.maxTileCount = defaultMaxTileCount,
+  }) : _now = clock ?? DateTime.now,
+       retentionAge = retentionAge ?? maxAge * defaultRetentionMultiplier,
+       assert(tileSize > 0),
+       assert(maxAge > Duration.zero),
+       assert(retentionAge == null || retentionAge >= maxAge),
+       assert(maxTileCount > 0);
 
   /// Grid step in degrees. At Czech latitudes one tile is roughly 55 × 36 km —
   /// far larger than a viewport at browsing zoom, so ordinary panning stays
@@ -52,26 +58,54 @@ class CachedSpringMarkerRepository implements SpringMarkerRepository {
   /// stays honest regardless of how long the tile was cached.
   static const Duration defaultMaxAge = Duration(minutes: 5);
 
+  /// Stale tiles may remain useful during a short back-and-forth map session,
+  /// but retaining them indefinitely only grows memory. Six cache lifetimes
+  /// keeps that navigation cheap while old regions disappear after 30 minutes
+  /// with the default TTL.
+  static const int defaultRetentionMultiplier = 6;
+
+  /// Hard safety bound for session memory. This is deliberately well above a
+  /// padded phone/tablet viewport at the minimum supported zoom, so normal
+  /// camera loads are retained as a whole while an unusually long journey is
+  /// still bounded.
+  static const int defaultMaxTileCount = 32768;
+
   final SpringRepository _repository;
   final DateTime Function() _now;
   final Duration maxAge;
   final double tileSize;
+  final Duration retentionAge;
+  final int maxTileCount;
 
   final Map<_Tile, _TileData> _tiles = {};
+  int _accessSequence = 0;
 
   @override
   bool covers(SpringBounds bounds, {required String languageTag}) {
-    final deadline = _now().subtract(maxAge);
-    return _tilesIn(bounds).every(
-      (tile) =>
-          _tiles[tile]?.isFreshAt(deadline, languageTag: languageTag) ?? false,
-    );
+    final now = _now();
+    _purgeExpired(now);
+    final deadline = now.subtract(maxAge);
+    var containsTile = false;
+    for (final tile in _tilesIn(bounds)) {
+      containsTile = true;
+      final data = _touch(tile);
+      if (!(data?.isFreshAt(deadline, languageTag: languageTag) ?? false)) {
+        return false;
+      }
+    }
+    return containsTile;
   }
 
   @override
-  bool hasDataFor(SpringBounds bounds, {required String languageTag}) =>
-      _tilesIn(bounds)
-          .every((tile) => _tiles[tile]?.languageTag == languageTag);
+  bool hasDataFor(SpringBounds bounds, {required String languageTag}) {
+    _purgeExpired(_now());
+    var containsTile = false;
+    for (final tile in _tilesIn(bounds)) {
+      containsTile = true;
+      if (_touch(tile)?.languageTag != languageTag) return false;
+    }
+    return containsTile;
+  }
 
   @override
   Future<ApiResult<List<SpringMarkerEntity>>> load(
@@ -80,8 +114,8 @@ class CachedSpringMarkerRepository implements SpringMarkerRepository {
   }) async {
     final rect = _requestRect(bounds, languageTag);
     // No tiles to aim at — a box that wraps the antimeridian, which this
-    // grid does not model. [covers] already reports such a camera as covered,
-    // so only a forced probe can land here; there is nothing to request.
+    // Czech-focused grid does not model. It remains uncovered rather than
+    // being cached as an empty successful area.
     if (rect == null) return ApiResult.success(_allSprings());
 
     final result = await _repository.fetchMapMarkers(
@@ -105,14 +139,16 @@ class CachedSpringMarkerRepository implements SpringMarkerRepository {
   /// request clipped mid-tile would leave a hole that coverage bookkeeping
   /// could not see.
   _TileRect? _requestRect(SpringBounds bounds, String languageTag) {
+    final now = _now();
+    _purgeExpired(now);
     final tiles = _tilesIn(bounds).toList(growable: false);
     if (tiles.isEmpty) return null;
 
-    final deadline = _now().subtract(maxAge);
+    final deadline = now.subtract(maxAge);
     final stale = tiles
         .where(
           (tile) =>
-              !(_tiles[tile]?.isFreshAt(deadline, languageTag: languageTag) ??
+              !(_touch(tile)?.isFreshAt(deadline, languageTag: languageTag) ??
                   false),
         )
         .toList(growable: false);
@@ -148,7 +184,33 @@ class CachedSpringMarkerRepository implements SpringMarkerRepository {
         springs: grouped[tile] ?? const <SpringMarkerEntity>[],
         fetchedAt: fetchedAt,
         languageTag: languageTag,
+        lastAccessOrder: ++_accessSequence,
       );
+    }
+    _enforceCapacity();
+  }
+
+  _TileData? _touch(_Tile tile) {
+    final data = _tiles[tile];
+    if (data != null) data.lastAccessOrder = ++_accessSequence;
+    return data;
+  }
+
+  void _purgeExpired(DateTime now) {
+    final deadline = now.subtract(retentionAge);
+    _tiles.removeWhere((_, data) => !data.fetchedAt.isAfter(deadline));
+  }
+
+  void _enforceCapacity() {
+    final overflow = _tiles.length - maxTileCount;
+    if (overflow <= 0) return;
+
+    final leastRecentlyUsed = _tiles.entries.toList(growable: false)
+      ..sort(
+        (a, b) => a.value.lastAccessOrder.compareTo(b.value.lastAccessOrder),
+      );
+    for (final entry in leastRecentlyUsed.take(overflow)) {
+      _tiles.remove(entry.key);
     }
   }
 
@@ -219,15 +281,17 @@ class _Tile {
 }
 
 class _TileData {
-  const _TileData({
+  _TileData({
     required this.springs,
     required this.fetchedAt,
     required this.languageTag,
+    required this.lastAccessOrder,
   });
 
   final List<SpringMarkerEntity> springs;
   final DateTime fetchedAt;
   final String languageTag;
+  int lastAccessOrder;
 
   bool isFreshAt(DateTime deadline, {required String languageTag}) =>
       this.languageTag == languageTag && fetchedAt.isAfter(deadline);

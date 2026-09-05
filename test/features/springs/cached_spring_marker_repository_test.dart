@@ -7,10 +7,72 @@ import 'package:studanky_flutter_app/core/api/utils/api_result.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
 import 'package:studanky_flutter_app/features/springs/data/cached_spring_marker_repository.dart';
 import 'package:studanky_flutter_app/features/springs/data/spring_repository.dart';
+import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 
 import '../../support/map_marker_test_support.dart';
 
 void main() {
+  group('cache retention', () {
+    const first = SpringBounds(
+      west: 14.1,
+      east: 14.2,
+      south: 50.1,
+      north: 50.2,
+    );
+    const second = SpringBounds(
+      west: 15.1,
+      east: 15.2,
+      south: 50.1,
+      north: 50.2,
+    );
+    const third = SpringBounds(
+      west: 16.1,
+      east: 16.2,
+      south: 50.1,
+      north: 50.2,
+    );
+
+    test('evicts the least recently used tile at the capacity bound', () async {
+      final source = FakeSpringRepository([]);
+      var now = DateTime(2026, 9, 5, 12);
+      final cache = CachedSpringMarkerRepository(
+        source,
+        clock: () => now,
+        maxTileCount: 2,
+      );
+
+      await cache.load(first, languageTag: testLanguageTag);
+      now = now.add(const Duration(seconds: 1));
+      await cache.load(second, languageTag: testLanguageTag);
+      now = now.add(const Duration(seconds: 1));
+      expect(cache.covers(first, languageTag: testLanguageTag), isTrue);
+      now = now.add(const Duration(seconds: 1));
+      await cache.load(third, languageTag: testLanguageTag);
+
+      expect(cache.covers(first, languageTag: testLanguageTag), isTrue);
+      expect(cache.covers(second, languageTag: testLanguageTag), isFalse);
+      expect(cache.covers(third, languageTag: testLanguageTag), isTrue);
+    });
+
+    test('purges stale tiles after the retention window', () async {
+      final source = FakeSpringRepository([]);
+      var now = DateTime(2026, 9, 5, 12);
+      final cache = CachedSpringMarkerRepository(
+        source,
+        clock: () => now,
+        maxAge: const Duration(minutes: 5),
+        retentionAge: const Duration(minutes: 30),
+      );
+
+      await cache.load(first, languageTag: testLanguageTag);
+      expect(cache.hasDataFor(first, languageTag: testLanguageTag), isTrue);
+
+      now = now.add(const Duration(minutes: 31));
+
+      expect(cache.hasDataFor(first, languageTag: testLanguageTag), isFalse);
+    });
+  });
+
   test('returning to a visited area does not re-fetch', () async {
     final repository = FakeSpringRepository([prague, pragueNear, zdar]);
     final container = containerWith(repository);

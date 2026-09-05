@@ -3,10 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:studanky_flutter_app/core/api/utils/api_result.dart';
 import 'package:studanky_flutter_app/features/springs/data/cached_spring_marker_repository.dart';
+import 'package:studanky_flutter_app/features/springs/data/spring_marker_repository.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/providers/spring_markers_state.dart';
-
-export 'package:studanky_flutter_app/features/springs/providers/spring_markers_state.dart';
 
 /// Deliberately **not** `autoDispose`: this is the session cache. The map page
 /// and its cluster index come and go with the route, the fetched springs do
@@ -32,10 +31,11 @@ class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
   /// The running drain, so concurrent callers join it instead of stacking.
   Future<void>? _inFlight;
 
-  /// Camera waiting to be fetched. Latest wins — an area the user has already
-  /// panned past is not worth a request.
-  SpringBounds? _pending;
-  bool _pendingForce = false;
+  /// Camera waiting to be fetched. Keeping its locale and force flag in the
+  /// same value makes an impossible half-updated pending state unrepresentable.
+  /// Latest camera wins — an area the user has already panned past is not worth
+  /// a request.
+  _PendingMarkerLoad? _pending;
 
   @override
   SpringMarkersState build() {
@@ -55,6 +55,14 @@ class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
     if (_disposed) return;
     if (state.languageTag == languageTag) return;
     state = state.copyWith(languageTag: languageTag);
+    final pending = _pending;
+    if (pending != null) {
+      _pending = _PendingMarkerLoad(
+        bounds: pending.bounds,
+        languageTag: languageTag,
+        force: pending.force,
+      );
+    }
   }
 
   /// Whether [bounds] already has data to draw, however old.
@@ -84,29 +92,32 @@ class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
       return Future<void>.value();
     }
 
-    _pending = bounds;
-    _pendingForce |= force;
+    _pending = _PendingMarkerLoad(
+      bounds: bounds,
+      languageTag: languageTag,
+      force: force || (_pending?.force ?? false),
+    );
 
     return _inFlight ??= _drain().whenComplete(() => _inFlight = null);
   }
 
   Future<void> _drain() async {
-    while (_pending != null) {
-      final bounds = _pending!;
-      final force = _pendingForce;
-      // [ensureLoaded] writes the tag before starting the drain. Reading it
-      // here lets a locale flip retarget a queued latest-camera round.
-      final languageTag = state.languageTag!;
+    while (true) {
+      final request = _pending;
+      if (request == null) return;
       _pending = null;
-      _pendingForce = false;
 
       // The round that just finished may already have covered this camera —
       // a wide fetch usually subsumes the pan that was queued behind it.
-      if (!force && _repository.covers(bounds, languageTag: languageTag)) {
+      if (!request.force &&
+          _repository.covers(
+            request.bounds,
+            languageTag: request.languageTag,
+          )) {
         continue;
       }
 
-      await _load(bounds, languageTag);
+      await _load(request.bounds, request.languageTag);
     }
   }
 
@@ -149,4 +160,16 @@ class SpringMarkersNotifier extends Notifier<SpringMarkersState> {
         );
     }
   }
+}
+
+class _PendingMarkerLoad {
+  const _PendingMarkerLoad({
+    required this.bounds,
+    required this.languageTag,
+    required this.force,
+  });
+
+  final SpringBounds bounds;
+  final String languageTag;
+  final bool force;
 }
