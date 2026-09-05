@@ -6,13 +6,15 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/core/haptics/haptics.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_camera_animator.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_camera_commands.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/map_detail_focus.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/map_view_config.dart';
-import 'package:studanky_flutter_app/features/map_page/utils/map_camera_animator.dart';
 
 typedef MapCompassState = ({double rotationRad, bool centered});
 
 /// Owns map-camera feedback and camera commands used by the map view.
-class MapCameraCoordinator {
+class MapCameraCoordinator implements MapCameraCommands {
   MapCameraCoordinator({
     required TickerProvider vsync,
     required double initialDetailSheetExtent,
@@ -36,6 +38,10 @@ class MapCameraCoordinator {
   int? _lastZoomDetent;
   double _detailSheetExtent;
 
+  @override
+  MapCamera get currentCamera => mapController.camera;
+
+  @override
   Future<void> animateTo({LatLng? center, double? zoom, double? rotation}) =>
       _animator.animateTo(center: center, zoom: zoom, rotation: rotation);
 
@@ -115,25 +121,20 @@ class MapCameraCoordinator {
     unawaited(animateTo(center: targetCenter, zoom: targetZoom));
   }
 
+  @override
   LatLng detailFocusCenter(
     LatLng target, {
     required double topInset,
     double? zoom,
     double? sheetExtent,
   }) {
-    final onTarget = mapController.camera.withPosition(
-      center: target,
+    return calculateMapDetailFocusCenter(
+      camera: currentCamera,
+      target: target,
+      topInset: topInset,
       zoom: zoom,
-    );
-    final size = onTarget.nonRotatedSize;
-    final extent = (sheetExtent ?? _detailSheetExtent)
-        .clamp(0.0, 1.0)
-        .toDouble();
-    final shift =
-        ((size.height - topInset) * extent - topInset) / 2 -
-        MapViewConfig.detailFocusDownwardOffset;
-    return onTarget.screenOffsetToLatLng(
-      size.center(Offset.zero) + Offset(0, shift),
+      sheetExtent: sheetExtent ?? _detailSheetExtent,
+      downwardOffset: MapViewConfig.detailFocusDownwardOffset,
     );
   }
 
@@ -143,6 +144,7 @@ class MapCameraCoordinator {
 
   void dispose() {
     _animator.dispose();
+    mapController.dispose();
     compass.dispose();
     zoom.dispose();
     quickZoomGestureActive.dispose();

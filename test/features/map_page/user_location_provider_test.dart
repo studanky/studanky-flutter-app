@@ -4,7 +4,10 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
+import 'package:studanky_flutter_app/features/map_page/data/services/geolocator_user_location_service.dart';
+import 'package:studanky_flutter_app/features/map_page/data/services/user_location_service.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/user_location_controller.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/user_location_state.dart';
 
 class _FakeUserLocationService implements UserLocationService {
   _FakeUserLocationService({

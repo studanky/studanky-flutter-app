@@ -9,9 +9,8 @@ import 'package:studanky_flutter_app/features/map_page/presentation/controllers/
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/features/springs/providers/spring_markers_provider.dart';
+import 'package:studanky_flutter_app/features/springs/providers/spring_markers_state.dart';
 import 'package:supercluster/supercluster.dart';
-
-export 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_marker_state.dart';
 
 final mapMarkerProvider =
     NotifierProvider.autoDispose<MapMarkerNotifier, MapMarkerState>(

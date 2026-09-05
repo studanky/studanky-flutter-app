@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/spring_marker_icon.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/widgets/spring_marker_icon.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
 
 class SpringLegendRow extends StatelessWidget {

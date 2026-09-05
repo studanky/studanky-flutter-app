@@ -3,7 +3,7 @@
 /// Deliberately free of any `go_router` / widget imports so it sits at the
 /// bottom of the dependency graph: both the router (`app_router.dart`, whose
 /// `ShareRoute` `@TypedGoRoute` references [springSharePattern]) and feature
-/// code (the spring detail actions controller) depend on it — never the
+/// code (the spring detail action service) depend on it — never the
 /// other way round. This breaks the import cycle that would otherwise form when
 /// a feature reaches back into the widget-heavy router just to reuse a path.
 class DeepLinks {

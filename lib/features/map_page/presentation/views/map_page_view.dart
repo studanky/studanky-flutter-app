@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/core/widgets/backdrop_blur_scope.dart';
-import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_camera_coordinator.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_empty_state_controller.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/map_view_config.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/views/map_page_callbacks.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/views/map_page_view_controllers.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/views/map_page_view_state.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/widgets/map_canvas.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/widgets/map_overlay_controls.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/widgets/spring_marker_layer.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/map_marker_provider.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
-import 'package:studanky_flutter_app/features/map_page/utils/map_backdrop_blur_controller.dart';
-import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/widgets/map_search_status.dart';
-import 'package:studanky_flutter_app/features/platform_config/entities/platform_config.dart';
 import 'package:studanky_flutter_app/features/spring_detail/spring_detail_overlay.dart';
-import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 /// Declarative map screen. State subscriptions and imperative orchestration
@@ -26,69 +20,29 @@ import 'package:studanky_flutter_app/l10n/extension.dart';
 /// events.
 class MapPageView extends StatelessWidget {
   const MapPageView({
-    required this.camera,
-    required this.backdropBlur,
-    required this.markerState,
-    required this.platformConfig,
-    required this.locationState,
-    required this.locationNotifier,
-    required this.emptyState,
-    required this.isOffline,
-    required this.isLocating,
-    required this.detailDocumentId,
-    required this.detailMarker,
-    required this.onMapReady,
-    required this.onMapEvent,
-    required this.onMapTap,
-    required this.onDismissKeyboard,
-    required this.onLocation,
-    required this.onFavorites,
-    required this.onHelp,
-    required this.searchOrigin,
-    required this.onSearchResultSelected,
-    required this.onSpringTap,
-    required this.onDisclaimer,
-    required this.onCloseDetail,
-    required this.onDetailSheetExtentChanged,
+    required this.state,
+    required this.controllers,
+    required this.callbacks,
     super.key,
   });
 
-  final MapCameraCoordinator camera;
-  final MapBackdropBlurController backdropBlur;
-  final MapMarkerState markerState;
-  final PlatformConfig platformConfig;
-  final UserLocationState locationState;
-  final UserLocationNotifier locationNotifier;
-  final MapEmptyStateController emptyState;
-  final bool isOffline;
-  final bool isLocating;
-  final String? detailDocumentId;
-  final SpringMarkerEntity? detailMarker;
-  final VoidCallback onMapReady;
-  final ValueChanged<MapEvent> onMapEvent;
-  final VoidCallback onMapTap;
-  final VoidCallback onDismissKeyboard;
-  final VoidCallback onLocation;
-  final VoidCallback onFavorites;
-  final VoidCallback onHelp;
-  final LatLng? Function() searchOrigin;
-  final ValueChanged<MapSearchResult> onSearchResultSelected;
-  final ValueChanged<SpringMarkerEntity> onSpringTap;
-  final VoidCallback onDisclaimer;
-  final VoidCallback onCloseDetail;
-  final ValueChanged<double> onDetailSheetExtentChanged;
+  final MapPageViewState state;
+  final MapPageViewControllers controllers;
+  final MapPageCallbacks callbacks;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final detailOpen = detailDocumentId != null;
+    final camera = controllers.camera;
+    final emptyVisible = state.emptyMode != MapEmptyOverlayMode.hidden;
+    final detailOpen = state.detailDocumentId != null;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final searchBarHideDuration = MediaQuery.disableAnimationsOf(context)
         ? Duration.zero
         : MapViewConfig.searchBarHideDuration;
 
     final MapSearchStatus? searchStatus;
-    if (isOffline) {
+    if (state.isOffline) {
       searchStatus = MapSearchStatus(
         id: 'offline',
         icon: Icons.wifi_off_rounded,
@@ -96,30 +50,30 @@ class MapPageView extends StatelessWidget {
         message: l10n.offline_banner_message,
         accent: context.appColors.secondaryVariant1,
       );
-    } else if (emptyState.isVisible) {
+    } else if (emptyVisible) {
       searchStatus = MapSearchStatus(
         id: 'empty',
         icon: Icons.search_off_rounded,
         title: l10n.map_empty_title,
         message: l10n.map_empty_message,
         accent: context.appColors.primaryMain,
-        busy: emptyState.isRefreshing,
+        busy: state.emptyMode == MapEmptyOverlayMode.refreshing,
       );
     } else {
       searchStatus = null;
     }
 
     final markerLayer = SpringMarkerLayer(
-      items: markerState.items,
-      config: platformConfig,
-      selectedDocumentId: detailDocumentId,
+      items: state.markers.items,
+      config: state.platformConfig,
+      selectedDocumentId: state.detailDocumentId,
       l10n: l10n,
       onClusterTap: (cluster) => camera.expandCluster(
         cluster,
         detailOpen: detailOpen,
         topInset: MediaQuery.viewPaddingOf(context).top,
       ),
-      onSpringTap: onSpringTap,
+      onSpringTap: callbacks.onSpringTap,
     );
 
     final content = SizedBox.expand(
@@ -132,13 +86,13 @@ class MapPageView extends StatelessWidget {
               markerLayer: markerLayer,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               isDarkMode: isDarkMode,
-              locationActivated: locationState.activated,
-              positionStream: locationNotifier.positionStream,
-              headingStream: locationNotifier.headingStream,
-              onMapReady: onMapReady,
-              onMapEvent: onMapEvent,
-              onMapTap: onMapTap,
-              onZoomStart: onDismissKeyboard,
+              locationActivated: state.location.activated,
+              positionStream: controllers.location.positionStream,
+              headingStream: controllers.location.headingStream,
+              onMapReady: callbacks.onMapReady,
+              onMapEvent: callbacks.onMapEvent,
+              onMapTap: callbacks.onMapTap,
+              onZoomStart: callbacks.onDismissKeyboard,
               onQuickZoomGestureActiveChanged: camera.setQuickZoomGestureActive,
             ),
           ),
@@ -146,33 +100,33 @@ class MapPageView extends StatelessWidget {
             child: MapOverlayControls(
               zoom: camera.zoom,
               compass: camera.compass,
-              locationStatus: locationState.status,
-              isLocating: isLocating,
+              locationStatus: state.location.status,
+              isLocating: state.isLocating,
               showProgress:
-                  markerState.status.isLoading &&
-                  !markerState.visibleBoundsLoaded &&
-                  !markerState.hasVisibleMarkers &&
-                  !emptyState.isVisible &&
-                  !isOffline,
+                  state.markers.status.isLoading &&
+                  !state.markers.visibleBoundsLoaded &&
+                  !state.markers.hasVisibleMarkers &&
+                  !emptyVisible &&
+                  !state.isOffline,
               detailOpen: detailOpen,
               searchBarHideDuration: searchBarHideDuration,
               searchHint: l10n.map_search_hint,
-              searchOrigin: searchOrigin,
+              searchOrigin: callbacks.searchOrigin,
               searchStatus: searchStatus,
               onZoomChanged: camera.changeZoom,
               onZoomStep: camera.stepZoom,
-              onLocation: onLocation,
-              onFavorites: onFavorites,
-              onHelp: onHelp,
-              onSearchResultSelected: onSearchResultSelected,
-              onDisclaimer: onDisclaimer,
+              onLocation: callbacks.onLocation,
+              onFavorites: callbacks.onFavorites,
+              onHelp: callbacks.onHelp,
+              onSearchResultSelected: callbacks.onSearchResultSelected,
+              onDisclaimer: callbacks.onDisclaimer,
             ),
           ),
           SpringDetailOverlay(
-            documentId: detailDocumentId,
-            marker: detailMarker,
-            onDismissed: onCloseDetail,
-            onExtentChanged: onDetailSheetExtentChanged,
+            documentId: state.detailDocumentId,
+            marker: state.detailMarker,
+            onDismissed: callbacks.onCloseDetail,
+            onExtentChanged: callbacks.onDetailSheetExtentChanged,
           ),
         ],
       ),
@@ -181,7 +135,7 @@ class MapPageView extends StatelessWidget {
     return PopScope(
       canPop: !detailOpen,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) onCloseDetail();
+        if (!didPop) callbacks.onCloseDetail();
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: isDarkMode
@@ -189,7 +143,7 @@ class MapPageView extends StatelessWidget {
             : SystemUiOverlayStyle.dark,
         child: BackdropGroup(
           child: ValueListenableBuilder<bool>(
-            valueListenable: backdropBlur,
+            valueListenable: controllers.backdropBlur,
             child: content,
             builder: (context, blurEnabled, child) =>
                 BackdropBlurScope(enabled: blurEnabled, child: child!),

@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
-import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_camera_coordinator.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_camera_commands.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/map_view_config.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
@@ -16,12 +16,12 @@ import 'package:studanky_flutter_app/features/springs/entities/spring_marker_ent
 class MapSearchSelectionController {
   MapSearchSelectionController(this._camera, this._detailSheetInitialExtent);
 
-  final MapCameraCoordinator _camera;
+  final MapCameraCommands _camera;
   final double _detailSheetInitialExtent;
   final Logger _logger = Logger('MapSearchSelectionController');
   int _selectionToken = 0;
 
-  LatLng get origin => _camera.mapController.camera.center;
+  LatLng get origin => _camera.currentCamera.center;
 
   Future<void> select(
     MapSearchResult result, {
@@ -58,7 +58,7 @@ class MapSearchSelectionController {
         bounds: LatLngBounds(bounds.southWest, bounds.northEast),
         padding: EdgeInsets.fromLTRB(48, 110, 48, 96 + bottomOverlayLift),
         maxZoom: MapViewConfig.searchMaxFitZoom,
-      ).fit(_camera.mapController.camera);
+      ).fit(_camera.currentCamera);
       unawaited(_camera.animateTo(center: fitted.center, zoom: fitted.zoom));
       return;
     }

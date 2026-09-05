@@ -7,8 +7,8 @@ import 'package:studanky_flutter_app/features/spring_detail/data/services/spring
 import 'package:studanky_flutter_app/features/springs/presentation/formatters/spring_formatters.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
-class SpringDetailActionsController {
-  const SpringDetailActionsController(
+class SpringDetailActionService {
+  const SpringDetailActionService(
     this._shareService,
     this._mapService,
     this._clipboardService,
@@ -48,11 +48,12 @@ class SpringDetailActionsController {
       _clipboardService.copy(SpringFormatters.coordinates(position));
 }
 
-final springDetailActionsControllerProvider =
-    Provider<SpringDetailActionsController>((ref) {
-      return SpringDetailActionsController(
-        ref.watch(springShareServiceProvider),
-        ref.watch(springMapServiceProvider),
-        ref.watch(springClipboardServiceProvider),
-      );
-    });
+final springDetailActionServiceProvider = Provider<SpringDetailActionService>((
+  ref,
+) {
+  return SpringDetailActionService(
+    ref.watch(springShareServiceProvider),
+    ref.watch(springMapServiceProvider),
+    ref.watch(springClipboardServiceProvider),
+  );
+});

@@ -7,13 +7,13 @@ import 'package:studanky_flutter_app/core/widgets/error_widget.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/core/widgets/scroll_edge_effect.dart';
 import 'package:studanky_flutter_app/features/spring_detail/data/services/spring_map_service.dart';
-import 'package:studanky_flutter_app/features/spring_detail/presentation/controllers/spring_detail_actions_controller.dart';
 import 'package:studanky_flutter_app/features/spring_detail/presentation/controllers/spring_detail_controller.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/services/spring_detail_action_service.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/map_picker_sheet.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/report_history_section.dart';
 import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/sheet_grabber.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/map_picker_sheet.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/report_history_section.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_header.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_photo_view.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/spring_detail_header.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/spring_photo_view.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
@@ -149,8 +149,8 @@ class _SpringDetailViewState extends ConsumerState<SpringDetailView> {
     );
   }
 
-  SpringDetailActionsController get _actions =>
-      ref.read(springDetailActionsControllerProvider);
+  SpringDetailActionService get _actions =>
+      ref.read(springDetailActionServiceProvider);
 
   Future<void> _share(String name, LatLng position) {
     return _actions.share(

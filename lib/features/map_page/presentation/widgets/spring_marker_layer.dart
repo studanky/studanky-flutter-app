@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:studanky_flutter_app/features/map_page/entities/map_cluster_item.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/cluster_marker.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/marker.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/widgets/cluster_marker.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/widgets/marker.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/platform_config.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';

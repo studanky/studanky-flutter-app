@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/centered_content.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/inline_retry_message.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/report_history_spinner.dart';
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_reports_provider.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/centered_content.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/inline_retry_message.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/report_history_spinner.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 class ReportHistoryFooter extends StatelessWidget {

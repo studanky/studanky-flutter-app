@@ -13,6 +13,7 @@ import 'package:studanky_flutter_app/features/map_page/map_page_content.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/platform_config.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
 import 'package:studanky_flutter_app/features/springs/data/cached_spring_marker_repository.dart';
+import 'package:studanky_flutter_app/features/springs/data/spring_marker_repository.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_bounds.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_status.dart';

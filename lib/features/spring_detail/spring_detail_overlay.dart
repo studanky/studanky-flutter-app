@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_frost_backdrop.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/spring_detail_frost_backdrop.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/spring_detail_sheet.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 
 /// Max width of the sheet on large screens (tablets); below this it stretches

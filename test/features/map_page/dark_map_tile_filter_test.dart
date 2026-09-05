@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/dark_map_tile_filter.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/widgets/dark_map_tile_filter.dart';
 
 void main() {
   testWidgets('applies one urban night filter and preserves its child', (

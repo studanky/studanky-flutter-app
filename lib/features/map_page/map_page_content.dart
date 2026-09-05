@@ -12,19 +12,24 @@ import 'package:studanky_flutter_app/core/widgets/glass_snack_bar.dart';
 import 'package:studanky_flutter_app/features/favorites/widgets/favorites_dialog.dart';
 import 'package:studanky_flutter_app/features/legal/providers/legal_onboarding_provider.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/controllers/deep_link_spring_focus_controller.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_backdrop_blur_controller.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_camera_coordinator.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_empty_state_controller.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_marker_state.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_search_selection_controller.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/user_location_controller.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/user_location_state.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/map_view_config.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/views/map_page_callbacks.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/views/map_page_view.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/views/map_page_view_controllers.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/views/map_page_view_state.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/widgets/about_dialog.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/widgets/disclaimer_dialog.dart';
 import 'package:studanky_flutter_app/features/map_page/providers/map_marker_provider.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
-import 'package:studanky_flutter_app/features/map_page/utils/map_backdrop_blur_controller.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/about_dialog.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/disclaimer_dialog.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/platform_config/providers/platform_config_provider.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_sheet.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/spring_detail_sheet.dart';
 import 'package:studanky_flutter_app/features/springs/entities/spring_marker_entity.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
@@ -471,32 +476,38 @@ class _MapPageContentState extends ConsumerState<MapPageContent>
       });
 
     return MapPageView(
-      camera: _camera,
-      backdropBlur: _backdropBlur,
-      markerState: ref.watch(mapMarkerProvider),
-      platformConfig: ref.watch(platformConfigControllerProvider),
-      locationState: ref.watch(userLocationProvider),
-      locationNotifier: ref.read(userLocationProvider.notifier),
-      emptyState: _emptyState,
-      isOffline: ref.watch(
-        connectivityStatusProvider.select((status) => status.isOffline),
+      state: MapPageViewState(
+        markers: ref.watch(mapMarkerProvider),
+        platformConfig: ref.watch(platformConfigControllerProvider),
+        location: ref.watch(userLocationProvider),
+        emptyMode: _emptyState.mode,
+        isOffline: ref.watch(
+          connectivityStatusProvider.select((status) => status.isOffline),
+        ),
+        isLocating: _isLocating,
+        detailDocumentId: widget.detailDocumentId,
+        detailMarker: widget.detailMarker,
       ),
-      isLocating: _isLocating,
-      detailDocumentId: widget.detailDocumentId,
-      detailMarker: widget.detailMarker,
-      onMapReady: _onMapReady,
-      onMapEvent: _onMapEvent,
-      onMapTap: _onMapTap,
-      onDismissKeyboard: _dismissKeyboard,
-      onLocation: _onLocationButtonTap,
-      onFavorites: _openFavorites,
-      onHelp: () => unawaited(showAppAboutDialog(context)),
-      searchOrigin: _searchOrigin,
-      onSearchResultSelected: _onSearchResultSelected,
-      onSpringTap: _onSpringTap,
-      onDisclaimer: () => unawaited(showDisclaimerDialog(context)),
-      onCloseDetail: _closeSpringDetail,
-      onDetailSheetExtentChanged: _onDetailSheetExtentChanged,
+      controllers: MapPageViewControllers(
+        camera: _camera,
+        backdropBlur: _backdropBlur,
+        location: ref.read(userLocationProvider.notifier),
+      ),
+      callbacks: MapPageCallbacks(
+        onMapReady: _onMapReady,
+        onMapEvent: _onMapEvent,
+        onMapTap: _onMapTap,
+        onDismissKeyboard: _dismissKeyboard,
+        onLocation: _onLocationButtonTap,
+        onFavorites: _openFavorites,
+        onHelp: () => unawaited(showAppAboutDialog(context)),
+        searchOrigin: _searchOrigin,
+        onSearchResultSelected: _onSearchResultSelected,
+        onSpringTap: _onSpringTap,
+        onDisclaimer: () => unawaited(showDisclaimerDialog(context)),
+        onCloseDetail: _closeSpringDetail,
+        onDetailSheetExtentChanged: _onDetailSheetExtentChanged,
+      ),
     );
   }
 }

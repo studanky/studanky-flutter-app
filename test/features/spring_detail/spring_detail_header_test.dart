@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/spring_icon.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/spring_detail_header.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/spring_detail_header.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
 void main() {

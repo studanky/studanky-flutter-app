@@ -5,8 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors_light.dart';
 import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/map_control_stack.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/user_location_state.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/widgets/map_control_stack.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
 void main() {

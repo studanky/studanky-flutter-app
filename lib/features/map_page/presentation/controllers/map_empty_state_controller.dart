@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_marker_state.dart';
 import 'package:studanky_flutter_app/features/map_page/presentation/map_view_config.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/map_marker_provider.dart';
 
 enum MapEmptyOverlayMode { hidden, empty, refreshing }
 

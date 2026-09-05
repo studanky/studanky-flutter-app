@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/shapes.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/centered_content.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/inline_retry_message.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/report_history_card.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/report_history_footer.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/report_history_section_title.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/report_history_spinner.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/report_tile.dart';
 import 'package:studanky_flutter_app/features/spring_detail/providers/spring_reports_provider.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/centered_content.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/inline_retry_message.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/report_history_card.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/report_history_footer.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/report_history_section_title.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/report_history_spinner.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/report_tile.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 List<Widget> buildReportHistorySlivers(

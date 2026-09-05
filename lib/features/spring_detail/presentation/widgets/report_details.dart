@@ -3,9 +3,9 @@ import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/spring_detail/entities/report.dart';
 import 'package:studanky_flutter_app/features/spring_detail/entities/water_clarity.dart';
 import 'package:studanky_flutter_app/features/spring_detail/presentation/formatters/water_clarity_label.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/detail_section.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/metric_scale_value.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/segment_scale.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/detail_section.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/metric_scale_value.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/segment_scale.dart';
 import 'package:studanky_flutter_app/features/springs/presentation/formatters/spring_formatters.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 

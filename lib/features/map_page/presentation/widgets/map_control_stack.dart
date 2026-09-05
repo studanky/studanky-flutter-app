@@ -2,8 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
-import 'package:studanky_flutter_app/features/map_page/providers/user_location_provider.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/glass_icon_button.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/user_location_state.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/widgets/glass_icon_button.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
 
 const double _northEpsilonRad = math.pi / 180;

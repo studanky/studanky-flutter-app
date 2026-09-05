@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/styles.dart';
 import 'package:studanky_flutter_app/features/spring_detail/entities/report.dart';
-import 'package:studanky_flutter_app/features/spring_detail/widgets/report_details.dart';
+import 'package:studanky_flutter_app/features/spring_detail/presentation/widgets/report_details.dart';
 import 'package:studanky_flutter_app/features/springs/presentation/formatters/spring_formatters.dart';
 import 'package:studanky_flutter_app/features/springs/presentation/widgets/spring_status_visuals.dart';
 import 'package:studanky_flutter_app/l10n/extension.dart';
