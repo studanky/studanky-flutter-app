@@ -14,9 +14,14 @@ import 'package:studanky_flutter_app/core/styles/text_styles/text_styles.dart';
 /// Custom app tokens are registered as immutable [ThemeExtension]s so widgets
 /// resolve the correct palette and typography from their own context.
 abstract final class AppTheme {
-  static ThemeData light() => _build(AppColorsLight());
+  static final ThemeData _light = _build(AppColorsLight());
+  static final ThemeData _dark = _build(AppColorsDark());
 
-  static ThemeData dark() => _build(AppColorsDark());
+  /// Stable theme instances prevent [MaterialApp] from starting an implicit
+  /// theme transition when an unrelated provider rebuilds the app root.
+  static ThemeData light() => _light;
+
+  static ThemeData dark() => _dark;
 
   static ThemeData _build(AppColorsScheme c) {
     final isDark = c.brightness == Brightness.dark;

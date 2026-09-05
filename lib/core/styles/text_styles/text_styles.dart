@@ -94,4 +94,22 @@ class TextStyles extends ThemeExtension<TextStyles> {
       button: TextStyle.lerp(button, other.button, t)!,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TextStyles &&
+          h3 == other.h3 &&
+          h4 == other.h4 &&
+          h5 == other.h5 &&
+          title1 == other.title1 &&
+          title2 == other.title2 &&
+          body1 == other.body1 &&
+          body2 == other.body2 &&
+          link == other.link &&
+          button == other.button;
+
+  @override
+  int get hashCode =>
+      Object.hash(h3, h4, h5, title1, title2, body1, body2, link, button);
 }

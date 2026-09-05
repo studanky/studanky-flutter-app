@@ -170,4 +170,73 @@ class AppColors extends ThemeExtension<AppColors> implements AppColorsScheme {
       statusUnknown: blend(statusUnknown, other.statusUnknown),
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppColors &&
+          brightness == other.brightness &&
+          background == other.background &&
+          glassFill == other.glassFill &&
+          glassBorder == other.glassBorder &&
+          neutral900 == other.neutral900 &&
+          neutral800 == other.neutral800 &&
+          neutral700 == other.neutral700 &&
+          neutral500 == other.neutral500 &&
+          neutral300 == other.neutral300 &&
+          neutral200 == other.neutral200 &&
+          onNeutral == other.onNeutral &&
+          textHint == other.textHint &&
+          primary900 == other.primary900 &&
+          primaryMain == other.primaryMain &&
+          primary100 == other.primary100 &&
+          onPrimary == other.onPrimary &&
+          primaryInteractive == other.primaryInteractive &&
+          secondaryVariant1 == other.secondaryVariant1 &&
+          secondaryBeige == other.secondaryBeige &&
+          onSecondary == other.onSecondary &&
+          error == other.error &&
+          errorText == other.errorText &&
+          onError == other.onError &&
+          verified == other.verified &&
+          saved == other.saved &&
+          statusFlowing == other.statusFlowing &&
+          markerRing == other.markerRing &&
+          statusNotFlowing == other.statusNotFlowing &&
+          statusStale == other.statusStale &&
+          statusUnknown == other.statusUnknown;
+
+  @override
+  int get hashCode => Object.hashAll([
+    brightness,
+    background,
+    glassFill,
+    glassBorder,
+    neutral900,
+    neutral800,
+    neutral700,
+    neutral500,
+    neutral300,
+    neutral200,
+    onNeutral,
+    textHint,
+    primary900,
+    primaryMain,
+    primary100,
+    onPrimary,
+    primaryInteractive,
+    secondaryVariant1,
+    secondaryBeige,
+    onSecondary,
+    error,
+    errorText,
+    onError,
+    verified,
+    saved,
+    statusFlowing,
+    markerRing,
+    statusNotFlowing,
+    statusStale,
+    statusUnknown,
+  ]);
 }
