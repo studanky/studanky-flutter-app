@@ -23,7 +23,8 @@ lib/
 Feature-root Dart files are public entrypoints that are consumed by another
 feature or the router (for example `map_page.dart`, `map_page_content.dart`, and
 `spring_detail_overlay.dart`). Feature-local widgets do not live in a second
-root `widgets/` directory.
+root `widgets/` directory. This placement rule is enforced by
+`test/architecture/feature_structure_test.dart`.
 
 ## Dependency rules
 
