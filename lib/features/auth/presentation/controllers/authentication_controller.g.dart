@@ -9,14 +9,26 @@ part of 'authentication_controller.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 /// Presentation controller for authentication flows.
+///
+/// It intentionally has no production UI consumer yet. The lower-level
+/// session refresher is active in the API interceptor; this controller becomes
+/// the UI entrypoint when login and registration screens are introduced.
 
 @ProviderFor(AuthenticationController)
 final authenticationControllerProvider = AuthenticationControllerProvider._();
 
 /// Presentation controller for authentication flows.
+///
+/// It intentionally has no production UI consumer yet. The lower-level
+/// session refresher is active in the API interceptor; this controller becomes
+/// the UI entrypoint when login and registration screens are introduced.
 final class AuthenticationControllerProvider
     extends $NotifierProvider<AuthenticationController, AuthenticationState> {
   /// Presentation controller for authentication flows.
+  ///
+  /// It intentionally has no production UI consumer yet. The lower-level
+  /// session refresher is active in the API interceptor; this controller becomes
+  /// the UI entrypoint when login and registration screens are introduced.
   AuthenticationControllerProvider._()
     : super(
         from: null,
@@ -45,9 +57,13 @@ final class AuthenticationControllerProvider
 }
 
 String _$authenticationControllerHash() =>
-    r'972929480d657c77fe418234db55befeb7e6bb93';
+    r'66b0803bdaed9737497850a6451faab142121b53';
 
 /// Presentation controller for authentication flows.
+///
+/// It intentionally has no production UI consumer yet. The lower-level
+/// session refresher is active in the API interceptor; this controller becomes
+/// the UI entrypoint when login and registration screens are introduced.
 
 abstract class _$AuthenticationController
     extends $Notifier<AuthenticationState> {
