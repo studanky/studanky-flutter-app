@@ -1,0 +1,294 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'map_marker_state.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format off
+T _$identity<T>(T value) => value;
+/// @nodoc
+mixin _$MapMarkerState {
+
+ AsyncValue<void> get status; List<MapClusterItem> get items; bool get visibleBoundsLoaded; bool get hasVisibleMarkers;
+/// Create a copy of MapMarkerState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MapMarkerStateCopyWith<MapMarkerState> get copyWith => _$MapMarkerStateCopyWithImpl<MapMarkerState>(this as MapMarkerState, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as MapMarkerState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapMarkerState&&(identical(other.status, _this.status) || other.status == _this.status)&&const DeepCollectionEquality().equals(other.items, _this.items)&&(identical(other.visibleBoundsLoaded, _this.visibleBoundsLoaded) || other.visibleBoundsLoaded == _this.visibleBoundsLoaded)&&(identical(other.hasVisibleMarkers, _this.hasVisibleMarkers) || other.hasVisibleMarkers == _this.hasVisibleMarkers));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as MapMarkerState;
+  return Object.hash(runtimeType,_this.status,const DeepCollectionEquality().hash(_this.items),_this.visibleBoundsLoaded,_this.hasVisibleMarkers);
+}
+
+@override
+String toString() {
+  final _this = this as MapMarkerState;
+  return 'MapMarkerState(status: ${_this.status}, items: ${_this.items}, visibleBoundsLoaded: ${_this.visibleBoundsLoaded}, hasVisibleMarkers: ${_this.hasVisibleMarkers})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MapMarkerStateCopyWith<$Res>  {
+  factory $MapMarkerStateCopyWith(MapMarkerState value, $Res Function(MapMarkerState) _then) = _$MapMarkerStateCopyWithImpl;
+@useResult
+$Res call({
+ AsyncValue<void> status, List<MapClusterItem> items, bool visibleBoundsLoaded, bool hasVisibleMarkers
+});
+
+
+
+
+}
+/// @nodoc
+class _$MapMarkerStateCopyWithImpl<$Res>
+    implements $MapMarkerStateCopyWith<$Res> {
+  _$MapMarkerStateCopyWithImpl(this._self, this._then);
+
+  final MapMarkerState _self;
+  final $Res Function(MapMarkerState) _then;
+
+/// Create a copy of MapMarkerState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? items = null,Object? visibleBoundsLoaded = null,Object? hasVisibleMarkers = null,}) {
+  return _then(MapMarkerState(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as AsyncValue<void>,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as List<MapClusterItem>,visibleBoundsLoaded: null == visibleBoundsLoaded ? _self.visibleBoundsLoaded : visibleBoundsLoaded // ignore: cast_nullable_to_non_nullable
+as bool,hasVisibleMarkers: null == hasVisibleMarkers ? _self.hasVisibleMarkers : hasVisibleMarkers // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [MapMarkerState].
+extension MapMarkerStatePatterns on MapMarkerState {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _MapMarkerState value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _MapMarkerState() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _MapMarkerState value)  $default,){
+final _that = this;
+switch (_that) {
+case _MapMarkerState():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _MapMarkerState value)?  $default,){
+final _that = this;
+switch (_that) {
+case _MapMarkerState() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<MapClusterItem> items,  bool visibleBoundsLoaded,  bool hasVisibleMarkers)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _MapMarkerState() when $default != null:
+return $default(_that.status,_that.items,_that.visibleBoundsLoaded,_that.hasVisibleMarkers);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncValue<void> status,  List<MapClusterItem> items,  bool visibleBoundsLoaded,  bool hasVisibleMarkers)  $default,) {final _that = this;
+switch (_that) {
+case _MapMarkerState():
+return $default(_that.status,_that.items,_that.visibleBoundsLoaded,_that.hasVisibleMarkers);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncValue<void> status,  List<MapClusterItem> items,  bool visibleBoundsLoaded,  bool hasVisibleMarkers)?  $default,) {final _that = this;
+switch (_that) {
+case _MapMarkerState() when $default != null:
+return $default(_that.status,_that.items,_that.visibleBoundsLoaded,_that.hasVisibleMarkers);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _MapMarkerState implements MapMarkerState {
+  const _MapMarkerState({this.status = const AsyncValue<void>.data(null),  List<MapClusterItem> items = const <MapClusterItem>[], this.visibleBoundsLoaded = false, this.hasVisibleMarkers = false}): _items = items;
+  
+
+@override@JsonKey() final  AsyncValue<void> status;
+ final  List<MapClusterItem> _items;
+@override@JsonKey() List<MapClusterItem> get items {
+  if (_items is EqualUnmodifiableListView) return _items;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_items);
+}
+
+@override@JsonKey() final  bool visibleBoundsLoaded;
+@override@JsonKey() final  bool hasVisibleMarkers;
+
+/// Create a copy of MapMarkerState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MapMarkerStateCopyWith<_MapMarkerState> get copyWith => __$MapMarkerStateCopyWithImpl<_MapMarkerState>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapMarkerState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.items, _items)&&(identical(other.visibleBoundsLoaded, visibleBoundsLoaded) || other.visibleBoundsLoaded == visibleBoundsLoaded)&&(identical(other.hasVisibleMarkers, hasVisibleMarkers) || other.hasVisibleMarkers == hasVisibleMarkers));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_items),visibleBoundsLoaded,hasVisibleMarkers);
+}
+
+@override
+String toString() {
+    return 'MapMarkerState(status: $status, items: $items, visibleBoundsLoaded: $visibleBoundsLoaded, hasVisibleMarkers: $hasVisibleMarkers)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$MapMarkerStateCopyWith<$Res> implements $MapMarkerStateCopyWith<$Res> {
+  factory _$MapMarkerStateCopyWith(_MapMarkerState value, $Res Function(_MapMarkerState) _then) = __$MapMarkerStateCopyWithImpl;
+@override @useResult
+$Res call({
+ AsyncValue<void> status, List<MapClusterItem> items, bool visibleBoundsLoaded, bool hasVisibleMarkers
+});
+
+
+
+
+}
+/// @nodoc
+class __$MapMarkerStateCopyWithImpl<$Res>
+    implements _$MapMarkerStateCopyWith<$Res> {
+  __$MapMarkerStateCopyWithImpl(this._self, this._then);
+
+  final _MapMarkerState _self;
+  final $Res Function(_MapMarkerState) _then;
+
+/// Create a copy of MapMarkerState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? items = null,Object? visibleBoundsLoaded = null,Object? hasVisibleMarkers = null,}) {
+  return _then(_MapMarkerState(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as AsyncValue<void>,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as List<MapClusterItem>,visibleBoundsLoaded: null == visibleBoundsLoaded ? _self.visibleBoundsLoaded : visibleBoundsLoaded // ignore: cast_nullable_to_non_nullable
+as bool,hasVisibleMarkers: null == hasVisibleMarkers ? _self.hasVisibleMarkers : hasVisibleMarkers // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+// dart format on

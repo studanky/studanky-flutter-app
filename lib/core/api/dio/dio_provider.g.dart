@@ -57,7 +57,7 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$dioHash() => r'8b9ca4060d7f49bb34febe0f792358f776903a81';
+String _$dioHash() => r'6ae08e9a568a249f18ce6cecf3c6c3ca35fbc84c';
 
 /// Dedicated [Dio] for the authentication endpoints (login, register, refresh,
 /// `/users/me`).
@@ -126,4 +126,4 @@ final class AuthDioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$authDioHash() => r'984767d222aba16139d19f200c8d1d127e178ca4';
+String _$authDioHash() => r'573efb89c67b2fd337114ecb2bbf83b5930c9b7e';

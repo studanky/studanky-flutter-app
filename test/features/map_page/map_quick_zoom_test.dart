@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/map_quick_zoom.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/widgets/map_quick_zoom.dart';
 
 // These tests belong to the temporary flutter_map#2246 workaround. When the
 // upstream fix allows MapQuickZoom to be deleted, keep the user-facing

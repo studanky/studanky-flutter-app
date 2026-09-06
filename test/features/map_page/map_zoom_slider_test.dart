@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:studanky_flutter_app/features/map_page/widgets/map_zoom_slider.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/widgets/map_zoom_slider.dart';
 import 'package:studanky_flutter_app/l10n/app_localizations.dart';
 
 void main() {

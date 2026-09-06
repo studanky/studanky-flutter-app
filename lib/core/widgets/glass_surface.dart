@@ -40,7 +40,7 @@ List<BoxShadow> glassShadows(bool isDark) => [
 /// Frosted-glass surface used by every floating map control. Renders a backdrop
 /// blur behind a translucent fill, a subtle top sheen highlight, a hairline edge
 /// (painted above the sheen so it stays crisp) and the shared drop shadow — the
-/// design's glassmorphism look, theme-aware via `Styles.appColors`. Corners are
+/// design's glassmorphism look, theme-aware via `context.appColors`. Corners are
 /// squircles ([ClipRSuperellipse] + [squircleBorderFrom]) so the clip, the
 /// hairline and the shape read as one continuous curve.
 class GlassSurface extends StatelessWidget {
@@ -70,7 +70,7 @@ class GlassSurface extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Styles.appColors;
+    final colors = context.appColors;
     final isDark = colors.brightness == Brightness.dark;
     final blurEnabled = BackdropBlurScope.enabledOf(context);
 

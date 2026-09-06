@@ -1,0 +1,232 @@
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+import 'package:studanky_flutter_app/core/haptics/haptics.dart';
+import 'package:studanky_flutter_app/core/styles/styles.dart';
+import 'package:studanky_flutter_app/core/widgets/glass_surface.dart';
+import 'package:studanky_flutter_app/l10n/extension.dart';
+
+/// Vertical zoom control whose horizontal centre is meant to sit on the right
+/// viewport edge. The parent clips the outside half, leaving a larger
+/// semicircular thumb to drag.
+class MapZoomSlider extends StatelessWidget {
+  const MapZoomSlider({
+    super.key,
+    required this.zoom,
+    required this.minZoom,
+    required this.maxZoom,
+    required this.onChanged,
+    required this.onStep,
+  });
+
+  /// Current camera zoom.
+  final double zoom;
+  final double minZoom;
+  final double maxZoom;
+
+  /// Continuous target zoom while dragging the thumb / tapping the track.
+  final ValueChanged<double> onChanged;
+
+  /// Stepped zoom change for semantic increase/decrease actions.
+  final ValueChanged<double> onStep;
+
+  /// The map page positions the slider with `right: -width / 2`, so this value
+  /// is part of the component contract.
+  static const double width = 88;
+  static const double preferredHeight = 480;
+
+  static const double _thumbDiameter = 56;
+  static const double _thumbRadius = _thumbDiameter / 2;
+  static const double _edgeShadowPadding = 30;
+
+  /// 0 (min zoom, top) … 1 (max zoom, bottom).
+  double get _fraction =>
+      ((zoom - minZoom) / (maxZoom - minZoom)).clamp(0.0, 1.0);
+
+  String _semanticValue(double value) => value.toStringAsFixed(1);
+
+  static double _verticalInsetFor(double height) {
+    if (height <= 1) return 0;
+    return math.min(_thumbRadius + _edgeShadowPadding, (height - 1) / 2);
+  }
+
+  static double _trackTravelFor(double height) {
+    final verticalInset = _verticalInsetFor(height);
+    return math.max(1.0, height - verticalInset * 2);
+  }
+
+  void _step(double delta) {
+    Haptics.selection();
+    onStep(delta);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return Semantics(
+      slider: true,
+      label: '${l10n.map_zoom_in} / ${l10n.map_zoom_out}',
+      value: _semanticValue(zoom.clamp(minZoom, maxZoom)),
+      increasedValue: _semanticValue((zoom + 1).clamp(minZoom, maxZoom)),
+      decreasedValue: _semanticValue((zoom - 1).clamp(minZoom, maxZoom)),
+      onIncrease: () => _step(1),
+      onDecrease: () => _step(-1),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final availableHeight = constraints.hasBoundedHeight
+              ? constraints.maxHeight
+              : preferredHeight;
+          final height = math.min(preferredHeight, availableHeight);
+
+          return SizedBox(
+            width: width,
+            height: height,
+            child: _ZoomTrack(
+              fraction: _fraction,
+              minZoom: minZoom,
+              maxZoom: maxZoom,
+              onChanged: onChanged,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _ZoomTrack extends StatelessWidget {
+  const _ZoomTrack({
+    required this.fraction,
+    required this.minZoom,
+    required this.maxZoom,
+    required this.onChanged,
+  });
+
+  final double fraction;
+  final double minZoom;
+  final double maxZoom;
+  final ValueChanged<double> onChanged;
+
+  void _emit(double localY, double height) {
+    final verticalInset = MapZoomSlider._verticalInsetFor(height);
+    final trackTravel = MapZoomSlider._trackTravelFor(height);
+
+    // Match one-finger quick zoom: dragging down zooms in, dragging up zooms
+    // out. Therefore the top is min zoom and the bottom is max zoom.
+    final y = localY.clamp(verticalInset, height - verticalInset);
+    final f = ((y - verticalInset) / trackTravel).clamp(0.0, 1.0);
+    onChanged(minZoom + f * (maxZoom - minZoom));
+  }
+
+  /// Maps a global drag position into the track's local Y (via [trackContext]'s
+  /// render box — the full-height rail) and emits the matching zoom, so the
+  /// thumb follows the finger no matter where on the thumb the drag started.
+  void _emitFromGlobal(
+    BuildContext trackContext,
+    Offset globalPosition,
+    double height,
+  ) {
+    final box = trackContext.findRenderObject() as RenderBox?;
+    if (box == null) return;
+    _emit(box.globalToLocal(globalPosition).dy, height);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final height = constraints.maxHeight;
+        final centerY =
+            MapZoomSlider._verticalInsetFor(height) +
+            fraction * MapZoomSlider._trackTravelFor(height);
+
+        // Only the thumb is interactive — dragging it changes the zoom. The
+        // rest of the rail is inert (no tap-to-jump, no drag-from-anywhere), so
+        // a stray touch near the screen edge, where this half-off-screen slider
+        // lives, never fires an accidental zoom.
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              left: MapZoomSlider.width / 2 - MapZoomSlider._thumbRadius,
+              top: centerY - MapZoomSlider._thumbRadius,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onVerticalDragStart: (d) =>
+                    _emitFromGlobal(context, d.globalPosition, height),
+                onVerticalDragUpdate: (d) =>
+                    _emitFromGlobal(context, d.globalPosition, height),
+                child: const _ZoomThumb(),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ZoomThumb extends StatelessWidget {
+  const _ZoomThumb();
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassSurface(
+      borderRadius: BorderRadius.circular(MapZoomSlider._thumbRadius),
+      child: const SizedBox.square(
+        dimension: MapZoomSlider._thumbDiameter,
+        child: _ThumbDragIndicator(),
+      ),
+    );
+  }
+}
+
+class _ThumbDragIndicator extends StatelessWidget {
+  const _ThumbDragIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+
+    return CustomPaint(
+      painter: _ThumbDragIndicatorPainter(
+        color: colors.neutral700.withValues(alpha: 0.82),
+      ),
+    );
+  }
+}
+
+class _ThumbDragIndicatorPainter extends CustomPainter {
+  const _ThumbDragIndicatorPainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final visibleHalfCenter = Offset(size.width / 4, size.height / 2);
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 2.2
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..style = PaintingStyle.stroke;
+
+    final up = Path()
+      ..moveTo(visibleHalfCenter.dx - 5, visibleHalfCenter.dy - 3)
+      ..lineTo(visibleHalfCenter.dx, visibleHalfCenter.dy - 8)
+      ..lineTo(visibleHalfCenter.dx + 5, visibleHalfCenter.dy - 3);
+    final down = Path()
+      ..moveTo(visibleHalfCenter.dx - 5, visibleHalfCenter.dy + 3)
+      ..lineTo(visibleHalfCenter.dx, visibleHalfCenter.dy + 8)
+      ..lineTo(visibleHalfCenter.dx + 5, visibleHalfCenter.dy + 3);
+
+    canvas
+      ..drawPath(up, paint)
+      ..drawPath(down, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ThumbDragIndicatorPainter oldDelegate) =>
+      oldDelegate.color != color;
+}

@@ -7,6 +7,9 @@ import 'package:studanky_flutter_app/core/api/interceptors/auth_interceptor.dart
 import 'package:studanky_flutter_app/core/api/interceptors/bearer_token_interceptor.dart';
 import 'package:studanky_flutter_app/core/api/interceptors/connectivity_interceptor.dart';
 import 'package:studanky_flutter_app/core/api/interceptors/logging_interceptor.dart';
+import 'package:studanky_flutter_app/core/connectivity/platform_connectivity_service.dart';
+import 'package:studanky_flutter_app/features/auth/data/repositories/strapi_auth_repository.dart';
+import 'package:studanky_flutter_app/features/auth/data/services/auth_token_provider.dart';
 
 part 'dio_provider.g.dart';
 
@@ -34,12 +37,16 @@ Dio dio(Ref ref) {
   final dio = Dio(_strapiBaseOptions());
 
   dio.interceptors.addAll([
-    AuthInterceptor(dio: dio, ref: ref),
+    AuthInterceptor(
+      dio: dio,
+      readToken: () => ref.read(authTokenProvider),
+      reAuthenticate: () => ref.read(sessionRefresherProvider).reAuthenticate(),
+    ),
     _retryInterceptor(dio),
     // After retries (so it sees the final outcome), before logging (Dio
     // convention keeps the log interceptor last): reports the request outcome
     // to the connectivity signal that drives the offline banner.
-    ConnectivityInterceptor(ref),
+    ConnectivityInterceptor(ref.watch(connectivityServiceProvider)),
     LoggingInterceptor(),
   ]);
 
@@ -61,9 +68,9 @@ Dio authDio(Ref ref) {
   final dio = Dio(_strapiBaseOptions());
 
   dio.interceptors.addAll([
-    BearerTokenInterceptor(ref),
+    BearerTokenInterceptor(() => ref.read(authTokenProvider)),
     _retryInterceptor(dio),
-    ConnectivityInterceptor(ref),
+    ConnectivityInterceptor(ref.watch(connectivityServiceProvider)),
     LoggingInterceptor(),
   ]);
 

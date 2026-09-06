@@ -74,7 +74,6 @@ void main() {
       final source = SpringMapSearchSource(
         repository: repository,
         languageTag: 'en-AU',
-        springLabel: 'Studánka',
       );
 
       final results = await source.search('o');
@@ -85,7 +84,7 @@ void main() {
   );
 
   test(
-    'maps springs to first-party search results with distance subtitle',
+    'maps springs to first-party search results with structured distance',
     () async {
       const spring = SpringMarkerEntity(
         documentId: 'd1',
@@ -99,7 +98,6 @@ void main() {
       final source = SpringMapSearchSource(
         repository: repository,
         languageTag: 'en-AU',
-        springLabel: 'Studánka',
         limit: 7,
       );
       const origin = LatLng(50.1, 17.0);
@@ -114,7 +112,8 @@ void main() {
       expect(results, hasLength(1));
       expect(results.single.label, 'Ostružná');
       expect(results.single.type, MapSearchResultType.spring);
-      expect(results.single.subtitle, 'Studánka • 2,3 km');
+      expect(results.single.subtitle, isNull);
+      expect(results.single.distanceMeters, 2310);
       expect(results.single.spring, spring);
     },
   );
@@ -123,7 +122,6 @@ void main() {
     final source = SpringMapSearchSource(
       repository: _FailingSpringRepository(),
       languageTag: 'sr-Latn-RS',
-      springLabel: 'Studánka',
     );
 
     await expectLater(source.search('ostr'), throwsA(isA<NetworkException>()));

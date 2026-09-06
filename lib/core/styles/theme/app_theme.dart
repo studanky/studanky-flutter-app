@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:studanky_flutter_app/core/styles/colors/app_colors.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors_dark.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors_light.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors_scheme.dart';
 import 'package:studanky_flutter_app/core/styles/dimens.dart';
 import 'package:studanky_flutter_app/core/styles/shapes.dart';
+import 'package:studanky_flutter_app/core/styles/text_styles/text_styles.dart';
 
 /// Builds the app's light and dark [ThemeData] from the shared
 /// [AppColorsScheme] tokens, using Plus Jakarta Sans (the design typeface).
 ///
-/// These [ThemeData]s drive Material widgets; the `Styles.appColors` singleton
-/// is kept in sync separately (see the `MaterialApp.builder` in main.dart) so
-/// hand-rolled widgets read the same palette.
+/// Custom app tokens are registered as immutable [ThemeExtension]s so widgets
+/// resolve the correct palette and typography from their own context.
 abstract final class AppTheme {
-  static ThemeData light() => _build(AppColorsLight());
+  static final ThemeData _light = _build(AppColorsLight());
+  static final ThemeData _dark = _build(AppColorsDark());
 
-  static ThemeData dark() => _build(AppColorsDark());
+  /// Stable theme instances prevent [MaterialApp] from starting an implicit
+  /// theme transition when an unrelated provider rebuilds the app root.
+  static ThemeData light() => _light;
+
+  static ThemeData dark() => _dark;
 
   static ThemeData _build(AppColorsScheme c) {
     final isDark = c.brightness == Brightness.dark;
@@ -48,9 +54,8 @@ abstract final class AppTheme {
     final baseTextTheme = isDark
         ? Typography.material2021().white
         : Typography.material2021().black;
-    final textTheme = GoogleFonts.plusJakartaSansTextTheme(
-      baseTextTheme,
-    ).apply(bodyColor: c.neutral900, displayColor: c.neutral900);
+    final textTheme = GoogleFonts.plusJakartaSansTextTheme(baseTextTheme)
+        .apply(bodyColor: c.neutral900, displayColor: c.neutral900);
 
     // Single source of truth for button shape/typography so every button in the
     // app (Navigovat, Sdílet, Rozumím, Zkusit znovu…) reads identically.
@@ -67,6 +72,7 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: c.brightness,
+      extensions: [AppColors.fromScheme(c), TextStyles()],
       colorScheme: colorScheme,
       scaffoldBackgroundColor: c.background,
       canvasColor: c.background,

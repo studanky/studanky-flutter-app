@@ -1,22 +1,18 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:studanky_flutter_app/core/providers/connectivity_status_provider.dart';
+import 'package:studanky_flutter_app/core/connectivity/reachability_reporter.dart';
 
-/// Feeds the app's real request outcomes into [connectivityStatusProvider], so
+/// Feeds the app's real request outcomes into the connectivity signal, so
 /// the offline banner reflects whether the backend is actually reachable rather
 /// than a fragile interface check.
 ///
 /// Placed **after** the retry interceptor so it only reacts to the final,
 /// post-retry outcome, not to transient errors that a retry recovers.
 class ConnectivityInterceptor extends Interceptor {
-  ConnectivityInterceptor(this._ref);
+  ConnectivityInterceptor(this._reporter);
 
-  final Ref _ref;
-
-  ConnectivityController get _controller =>
-      _ref.read(connectivityStatusProvider.notifier);
+  final ReachabilityReporter _reporter;
 
   @override
   void onResponse(
@@ -24,7 +20,7 @@ class ConnectivityInterceptor extends Interceptor {
     ResponseInterceptorHandler handler,
   ) {
     // A response — even an HTTP error status — proves we reached the server.
-    _controller.reportReachable();
+    _reporter.reportReachable();
     super.onResponse(response, handler);
   }
 
@@ -32,9 +28,9 @@ class ConnectivityInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     switch (classify(err)) {
       case RequestReachability.reachable:
-        _controller.reportReachable();
+        _reporter.reportReachable();
       case RequestReachability.unreachable:
-        _controller.reportUnreachable();
+        _reporter.reportUnreachable();
       case RequestReachability.inconclusive:
         // No evidence either way — a slow/hung backend (send/receive timeout),
         // a cancelled request or a TLS error doesn't prove the network is down,

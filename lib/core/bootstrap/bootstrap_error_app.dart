@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:studanky_flutter_app/core/styles/colors/app_colors.dart';
+import 'package:studanky_flutter_app/core/styles/colors/app_colors_dark.dart';
+import 'package:studanky_flutter_app/core/styles/colors/app_colors_light.dart';
 
 class BootstrapErrorApp extends StatelessWidget {
   const BootstrapErrorApp({
@@ -16,7 +18,9 @@ class BootstrapErrorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final brightness =
         WidgetsBinding.instance.platformDispatcher.platformBrightness;
-    final colors = AppColors()..setBrightness(brightness);
+    final colors = AppColors.fromScheme(
+      brightness == Brightness.dark ? AppColorsDark() : AppColorsLight(),
+    );
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,

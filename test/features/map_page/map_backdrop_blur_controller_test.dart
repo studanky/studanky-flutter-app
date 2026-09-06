@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:studanky_flutter_app/features/map_page/utils/map_backdrop_blur_controller.dart';
+import 'package:studanky_flutter_app/features/map_page/presentation/controllers/map_backdrop_blur_controller.dart';
 
 void main() {
   testWidgets('restores blur only after the final camera update', (

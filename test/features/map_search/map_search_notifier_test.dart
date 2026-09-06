@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_search_repository.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result_type.dart';
+import 'package:studanky_flutter_app/features/map_search/providers/map_search_dependencies.dart';
 import 'package:studanky_flutter_app/features/map_search/providers/map_search_provider.dart';
-import 'package:studanky_flutter_app/features/map_search/providers/map_search_source_provider.dart';
 
 MapSearchResult _result(String label) => MapSearchResult(
   label: label,
@@ -22,21 +21,20 @@ const _enAuLocale = Locale('en', 'AU');
 
 /// A source whose requests never resolve on their own, so a test can hold one
 /// "in flight" and decide exactly when (and whether) it completes.
-class _ControllableSource implements MapSearchSource {
+class _ControllableSource implements MapSearchRepository {
   final List<Completer<List<MapSearchResult>>> completers = [];
-  CancelToken? lastCancelToken;
+  bool wasCancelled = false;
 
   @override
-  Future<List<MapSearchResult>> search(
-    String query, {
-    LatLng? origin,
-    CancelToken? cancelToken,
-  }) {
-    lastCancelToken = cancelToken;
+  Future<List<MapSearchResult>> search(String query, {LatLng? origin}) {
+    wasCancelled = false;
     final completer = Completer<List<MapSearchResult>>();
     completers.add(completer);
     return completer.future;
   }
+
+  @override
+  void cancel() => wasCancelled = true;
 }
 
 void main() {
@@ -54,8 +52,9 @@ void main() {
     englishSource = _ControllableSource();
     container = ProviderContainer(
       overrides: [
-        mapSearchSourceProvider(_csLocale).overrideWithValue(source),
-        mapSearchSourceProvider(_enAuLocale).overrideWithValue(englishSource),
+        mapSearchRepositoryProvider(_csLocale).overrideWithValue(source),
+        mapSearchRepositoryProvider(_enAuLocale)
+            .overrideWithValue(englishSource),
       ],
     );
     // Hold a listener so the autoDispose notifier survives the test.
@@ -78,7 +77,7 @@ void main() {
 
       notifier.select(_result('Ostrava'));
       expect(container.read(mapSearchProvider).query, 'Ostrava');
-      expect(source.lastCancelToken?.isCancelled, isTrue);
+      expect(source.wasCancelled, isTrue);
 
       // The superseded request finishes late — it must not resurface.
       source.completers.first.complete([_result('stale')]);
@@ -99,7 +98,7 @@ void main() {
       await pumpPastDebounce();
 
       notifier.clear();
-      expect(source.lastCancelToken?.isCancelled, isTrue);
+      expect(source.wasCancelled, isTrue);
 
       source.completers.first.complete([_result('stale')]);
       await Future<void>.delayed(Duration.zero);
@@ -117,48 +116,42 @@ void main() {
         ..setQuery('ostr', locale: _csLocale);
 
       await pumpPastDebounce();
-      final firstToken = source.lastCancelToken;
-
       // Down to a single character: no new request fires, but the old one must
       // still be cancelled instead of running to completion.
       notifier.setQuery('o', locale: _csLocale);
-      expect(firstToken?.isCancelled, isTrue);
+      expect(source.wasCancelled, isTrue);
     },
   );
 
-  test(
-    'a request completing after dispose neither writes state nor throws',
-    () async {
-      container
-          .read(mapSearchProvider.notifier)
-          .setQuery('ostr', locale: _csLocale);
-      await pumpPastDebounce();
-      expect(source.completers, hasLength(1));
+  test('a request completing after dispose neither writes state nor throws', () async {
+    container
+        .read(mapSearchProvider.notifier)
+        .setQuery('ostr', locale: _csLocale);
+    await pumpPastDebounce();
+    expect(source.completers, hasLength(1));
 
-      // Drop the only listener so the autoDispose notifier disposes.
-      keepAlive.close();
-      await Future<void>.delayed(Duration.zero);
+    // Drop the only listener so the autoDispose notifier disposes.
+    keepAlive.close();
+    await Future<void>.delayed(Duration.zero);
 
-      // A Spring-like request that ignored the cancel token finishes late. The
-      // dispose-time token bump must make this a no-op: no write to the disposed
-      // notifier and no uncaught async error (either would fail this test).
-      source.completers.first.complete([_result('late')]);
-      await Future<void>.delayed(Duration.zero);
+    // A Spring-like request that ignored the cancel token finishes late. The
+    // dispose-time token bump must make this a no-op: no write to the disposed
+    // notifier and no uncaught async error (either would fail this test).
+    source.completers.first.complete([_result('late')]);
+    await Future<void>.delayed(Duration.zero);
 
-      expect(source.completers.first.isCompleted, isTrue);
-    },
-  );
+    expect(source.completers.first.isCompleted, isTrue);
+  });
 
   test('a locale change preserves and repeats the active query', () async {
     final notifier = container.read(mapSearchProvider.notifier)
       ..setQuery('ostr', locale: _csLocale);
     await pumpPastDebounce();
 
-    final czechToken = source.lastCancelToken;
     notifier.updateLocale(_enAuLocale);
 
     expect(container.read(mapSearchProvider).query, 'ostr');
-    expect(czechToken?.isCancelled, isTrue);
+    expect(source.wasCancelled, isTrue);
 
     await pumpPastDebounce();
     expect(englishSource.completers, hasLength(1));

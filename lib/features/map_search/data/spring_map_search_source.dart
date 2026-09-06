@@ -13,7 +13,6 @@ class SpringMapSearchSource implements MapSearchSource {
   SpringMapSearchSource({
     required this.repository,
     required this.languageTag,
-    required this.springLabel,
     this.limit = 5,
   });
 
@@ -26,7 +25,6 @@ class SpringMapSearchSource implements MapSearchSource {
 
   final SpringRepository repository;
   final String languageTag;
-  final String springLabel;
   final int limit;
 
   final _logger = Logger('SpringMapSearchSource');
@@ -81,25 +79,8 @@ class SpringMapSearchSource implements MapSearchSource {
       label: spring.name,
       position: spring.position,
       type: MapSearchResultType.spring,
-      subtitle: _subtitle(result.distanceMeters),
       spring: spring,
+      distanceMeters: result.distanceMeters,
     );
-  }
-
-  String _subtitle(int? distanceMeters) {
-    final distance = distanceMeters == null
-        ? null
-        : _formatDistance(distanceMeters);
-    return distance == null ? springLabel : '$springLabel • $distance';
-  }
-
-  String _formatDistance(int meters) {
-    if (meters < 1000) return '$meters m';
-
-    final kilometers = meters / 1000;
-    final value = kilometers < 10
-        ? kilometers.toStringAsFixed(1)
-        : kilometers.round().toString();
-    return '${value.replaceAll('.', ',')} km';
   }
 }

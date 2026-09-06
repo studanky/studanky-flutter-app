@@ -8,7 +8,9 @@ class AppProgressIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: CircularProgressIndicator.adaptive(
-        valueColor: AlwaysStoppedAnimation<Color>(Styles.appColors.primaryMain),
+        valueColor: AlwaysStoppedAnimation<Color>(
+          context.appColors.primaryMain,
+        ),
       ),
     );
   }

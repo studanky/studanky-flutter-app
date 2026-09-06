@@ -4,16 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:studanky_flutter_app/core/api/utils/api_result.dart';
-import 'package:studanky_flutter_app/core/providers/shared_preferences_provider.dart';
-import 'package:studanky_flutter_app/features/platform_config/data/platform_config_cache.dart';
 import 'package:studanky_flutter_app/features/platform_config/data/platform_config_repository.dart';
 import 'package:studanky_flutter_app/features/platform_config/entities/platform_config.dart';
 
 part 'platform_config_provider.g.dart';
-
-@Riverpod(keepAlive: true)
-PlatformConfigCache platformConfigCache(Ref ref) =>
-    PlatformConfigCache(ref.watch(sharedPreferencesProvider));
 
 /// App-wide platform configuration, initialised right after startup.
 ///
@@ -39,8 +33,7 @@ class PlatformConfigController extends _$PlatformConfigController {
     // Kick off the initial network refresh without blocking the first frame.
     Future.microtask(refresh);
 
-    return ref.read(platformConfigCacheProvider).read() ??
-        PlatformConfig.fallback;
+    return ref.read(platformConfigRepositoryProvider).loadCached();
   }
 
   /// Fetches the live config and, on success, persists it and updates state.
@@ -49,10 +42,9 @@ class PlatformConfigController extends _$PlatformConfigController {
     if (_isRefreshing) return;
     _isRefreshing = true;
     try {
-      final result = await ref.read(platformConfigRepositoryProvider).fetch();
+      final result = await ref.read(platformConfigRepositoryProvider).refresh();
       switch (result) {
         case Success(:final data):
-          await ref.read(platformConfigCacheProvider).write(data);
           state = data;
           _logger.fine('Platform config refreshed');
         case Failure(:final exception):

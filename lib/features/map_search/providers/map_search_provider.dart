@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logging/logging.dart';
-import 'package:studanky_flutter_app/features/map_search/data/map_search_source.dart';
+import 'package:studanky_flutter_app/features/map_search/data/map_search_repository.dart';
 import 'package:studanky_flutter_app/features/map_search/entities/map_search_result.dart';
-import 'package:studanky_flutter_app/features/map_search/providers/map_search_source_provider.dart';
+import 'package:studanky_flutter_app/features/map_search/providers/map_search_dependencies.dart';
 
 part 'map_search_provider.freezed.dart';
 
@@ -40,18 +39,13 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
   Timer? _debounceTimer;
   int _lastToken = 0;
 
-  /// The active backend request, cancelled whenever the query is superseded,
-  /// cleared, or a result is selected — so the client stops waiting for and
-  /// processing a now-outdated response. Owned here, not in the source, so it
-  /// can be aborted even when no new request is issued (e.g. clear, or a
-  /// backspace down to a sub-threshold query).
-  CancelToken? _inFlightRequest;
+  MapSearchRepository? _activeRepository;
 
   Locale? _locale;
   bool _hasActiveQuery = false;
 
-  MapSearchSource _searchSource(Locale locale) =>
-      ref.read(mapSearchSourceProvider(locale));
+  MapSearchRepository _repository(Locale locale) =>
+      ref.read(mapSearchRepositoryProvider(locale));
 
   bool _activateLocale(Locale locale) {
     final previous = _locale;
@@ -61,7 +55,9 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
     // The source family is keepAlive so its small first-party query cache
     // survives debounce reads. Explicitly evict the previous locale on a switch
     // so repeated OS-language changes cannot accumulate immortal families.
-    if (previous != null) ref.invalidate(mapSearchSourceProvider(previous));
+    if (previous != null) {
+      ref.invalidate(mapSearchRepositoryProvider(previous));
+    }
     return true;
   }
 
@@ -82,8 +78,8 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
   /// Cancels the running request (if any) and forgets it. Callers must also
   /// advance [_lastToken] so a request that completes mid-flight is dropped.
   void _cancelInFlight() {
-    _inFlightRequest?.cancel();
-    _inFlightRequest = null;
+    _activeRepository?.cancel();
+    _activeRepository = null;
   }
 
   /// Sets the current query and schedules a debounced backend request.
@@ -167,12 +163,10 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
     LatLng? origin,
     Locale locale,
   ) async {
-    final cancelToken = CancelToken();
-    _inFlightRequest = cancelToken;
+    final repository = _repository(locale);
+    _activeRepository = repository;
     try {
-      final results = await _searchSource(
-        locale,
-      ).search(query, origin: origin, cancelToken: cancelToken);
+      final results = await repository.search(query, origin: origin);
       if (token != _lastToken) return;
 
       state = state.copyWith(
@@ -189,7 +183,9 @@ class MapSearchNotifier extends Notifier<MapSearchState> {
         ),
       );
     } finally {
-      if (identical(_inFlightRequest, cancelToken)) _inFlightRequest = null;
+      if (identical(_activeRepository, repository)) {
+        _activeRepository = null;
+      }
     }
   }
 }
