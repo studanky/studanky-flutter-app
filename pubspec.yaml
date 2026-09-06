@@ -1,7 +1,7 @@
 name: studanky_flutter_app
 description: "Mapa studánek a pramenů pro plánování cest v přírodě."
 publish_to: 'none'
-version: 1.1.0+3
+version: 1.2.0+4
 
 environment:
   sdk: ^3.13.0
